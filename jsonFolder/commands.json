@@ -1,0 +1,94 @@
+[
+  {
+    "CommandName": "shutdown",
+    "CommandDescription": "Shuts down the bot. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
+    "CommandName": "apistatus",
+    "CommandDescription": "Returns the status(es) of used API(s).",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "purge",
+    "CommandDescription": "Purges a number of messages. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "INTEGER",
+        "OptionName": "number",
+        "OptionDescription": "How many messages to purge?",
+        "MandatoryOption": true
+      }
+    ]
+  },
+  {
+    "CommandName": "gw2dailyfractals",
+    "CommandDescription": "Displays currently active fractals.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "gw2accountraidinfo",
+    "CommandDescription": "Displays information about your weekly raids. [API key req.]",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "gw2account",
+    "CommandDescription": "Displays information about your guild wars 2 profile. [API key req.]",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "resetslashcommands",
+    "CommandDescription": "Resets the slash commands of this server `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
+    "CommandName": "gw2character",
+    "CommandDescription": "Displays information about your character in guild wars 2. [API key req.]",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "profile",
+    "CommandDescription": "Displays your profile for this server.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "help",
+    "CommandDescription": "Lists all commands from this bot.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "ping",
+    "CommandDescription": "Returns the ping of the bot.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "add_api",
+    "CommandDescription": "Adds your API key to the bot.",
+    "AdminOnly": false,
+    "Options": [
+      {
+        "OptionType": "STRING",
+        "OptionName": "apikey",
+        "OptionDescription": "The designated API key you wish to assign to your account.",
+        "MandatoryOption": true
+      }
+    ]
+  },
+  {
+    "CommandName": "delete_api",
+    "CommandDescription": "Deletes your APi key from the bot, if you had already added it.",
+    "AdminOnly": false,
+    "Options": []
+  }
+]
