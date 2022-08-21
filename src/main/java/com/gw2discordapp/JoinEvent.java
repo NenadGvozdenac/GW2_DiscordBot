@@ -34,7 +34,7 @@ public class JoinEvent extends ListenerAdapter {
 
         event.getGuild().getTextChannelById(channelWelcomeId).sendMessage(event.getMember().getAsMention()).queue(k -> k.delete().queue());
         event.getGuild().getTextChannelById(channelWelcomeId).sendMessageEmbeds(eb.build()).queue();
-        event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("1007918477719388231")).queue();
+        event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("1010591706883838042")).queue();
     }
 
 }

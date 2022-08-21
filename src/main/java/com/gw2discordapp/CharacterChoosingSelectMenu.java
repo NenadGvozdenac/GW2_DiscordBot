@@ -18,7 +18,12 @@ public class CharacterChoosingSelectMenu extends ListenerAdapter {
 
             UserApi api = UserApi.GET_API_INFO(event.getUser().getId());
 
-            MessageEmbed embedForEditing = Gw2Api.GET_CHARACTER_INFO(api.getApiKey(), event.getSelectedOptions().get(0).getLabel(), event.getGuild().getName());
+            MessageEmbed embedForEditing;
+
+            if(event.isFromGuild())
+                embedForEditing = Gw2Api.GET_CHARACTER_INFO(api.getApiKey(), event.getSelectedOptions().get(0).getLabel(), event.getGuild().getName());
+            else
+                embedForEditing = Gw2Api.GET_CHARACTER_INFO(api.getApiKey(), event.getSelectedOptions().get(0).getLabel());
 
             SelectMenu selectMenu = event.getSelectMenu();
             SelectMenu.Builder selectMenuBuilder = selectMenu.createCopy();

@@ -65,7 +65,7 @@ public class HelpButtonEventListener extends ListenerAdapter {
             }
 
             for(EmbedBuilder eb : embedBuilders) {
-                eb.setFooter("[Guild Wars 2 Helper]", Constants.gw2LogoNoBackground);
+                eb.setFooter("Usable in DMs also!", Constants.gw2LogoNoBackground);
                 eb.setThumbnail(Constants.gw2LogoNoBackground);
                 eb.setColor(Color.pink);
                 eb.setTitle("HELP COMMAND");

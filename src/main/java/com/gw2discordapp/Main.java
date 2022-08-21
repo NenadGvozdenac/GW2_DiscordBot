@@ -34,10 +34,12 @@ public class Main {
 
     static {
         commandData = new SlashCommandData[] {
+            new SlashCommandData("invite", "Gives you an invite to this guild.", false, new Option(OptionType.BOOLEAN, "private", "Whether this message is private or not. Default: true", false)),
+            new SlashCommandData("contact-developer", "Prompts you to send a support ticket.", false),
             new SlashCommandData("shutdown", "Shuts down the bot.", true),
             new SlashCommandData("apistatus", "Returns the status(es) of used API(s).", false),
             new SlashCommandData("purge", "Purges a number of messages.", true, new Option(OptionType.INTEGER, "number", "How many messages to purge?", true)),
-            new SlashCommandData("gw2dailyfractals", "Displays currently active fractals.", false),
+            new SlashCommandData("gw2dailies", "Displays currently active dailies.", false),
             new SlashCommandData("gw2accountraidinfo", "Displays information about your weekly raids. [API key req.]", false),
             new SlashCommandData("gw2account", "Displays information about your guild wars 2 profile. [API key req.]", false),
             new SlashCommandData("resetslashcommands", "Resets the slash commands of this server", true),
@@ -75,13 +77,20 @@ public class Main {
             }
         }
 
-        jda = JDABuilder.createLight(loginToken.getTokenValue(), GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES).addEventListeners(
-            new JoinEvent(),
-            new LeaveEvent(),
-            new SlashCommandInteraction(),
-            new CharacterChoosingSelectMenu(),
-            new MessageEVTCLoggingEvent(),
-            new HelpButtonEventListener()
+        jda = JDABuilder.createLight(loginToken.getTokenValue(), 
+            GatewayIntent.GUILD_MESSAGES, 
+            GatewayIntent.MESSAGE_CONTENT, 
+            GatewayIntent.GUILD_MEMBERS, 
+            GatewayIntent.GUILD_PRESENCES,
+            GatewayIntent.GUILD_MESSAGE_REACTIONS).addEventListeners(
+                new JoinEvent(),
+                new LeaveEvent(),
+                new SlashCommandInteraction(),
+                new CharacterChoosingSelectMenu(),
+                new MessageEVTCLoggingEvent(),
+                new HelpButtonEventListener(),
+                new NewUserReactEmoteEvent(),
+                new ModalContactDeveloper()
          ).enableCache(CacheFlag.CLIENT_STATUS).build();
 
         mainLogger.info("Token gotten from JSON file: " + loginToken);
@@ -96,13 +105,20 @@ public class Main {
              token = map.get("token");
          }
 
-         jda = JDABuilder.createLight(token, GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES).addEventListeners(
-            new JoinEvent(),
-            new LeaveEvent(),
-            new SlashCommandInteraction(),
-            new CharacterChoosingSelectMenu(),
-            new MessageEVTCLoggingEvent(),
-            new HelpButtonEventListener()
+         jda = JDABuilder.createLight(token, 
+            GatewayIntent.GUILD_MESSAGES, 
+            GatewayIntent.MESSAGE_CONTENT, 
+            GatewayIntent.GUILD_MEMBERS, 
+            GatewayIntent.GUILD_PRESENCES,
+            GatewayIntent.GUILD_MESSAGE_REACTIONS).addEventListeners(
+                new JoinEvent(),
+                new LeaveEvent(),
+                new SlashCommandInteraction(),
+                new CharacterChoosingSelectMenu(),
+                new MessageEVTCLoggingEvent(),
+                new HelpButtonEventListener(),
+                new NewUserReactEmoteEvent(),
+                new ModalContactDeveloper()
          ).enableCache(CacheFlag.CLIENT_STATUS).build();
 
         mainLogger.info("Token gotten from OS env. variable: " + token);
@@ -114,10 +130,10 @@ public class Main {
          
          public String[] messages = {
                  "GW2 Bot",
-                 "use / for commands",
+                 "Use / for commands",
                  "/help",
                  "by NenadG",
-                 "v1.0.1"
+                 "v1.1.0"
          };	
          
          @Override
@@ -135,16 +151,18 @@ public class Main {
      
     Thread threadServera = HttpSrv.getServerThread();
 
-    threadServera.run();
-    threadAktivnosti.run();
+    threadServera.start();
+    threadAktivnosti.start();
 
     RssReaderClass newsReader = new RssReaderClass("https://www.guildwars2.com/en-gb/feed/");
     newsReader.ReadNewsFromSite();
 
     RssReaderClass forumsReader = new RssReaderClass("https://en-forum.guildwars2.com/forum/6-game-update-notes.xml/");
     forumsReader.ReadNewsFromForums();
-     
-     jda.awaitReady();
+    
+    new DailyAchievements().ReadFractalsFromApi();
+
+    jda.awaitReady();
 
     // -.- ADDING COMMANDS -.-
 
@@ -154,8 +172,6 @@ public class Main {
     }
 
     SlashCommandData.insertIntoJson(commandData);
-
-    // Gw2ForumsUpdates.StartForumsThread();
 
     mainLogger.info("Bot successfully started.");
  }

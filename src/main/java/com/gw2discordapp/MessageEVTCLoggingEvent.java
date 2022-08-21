@@ -156,14 +156,12 @@ public class MessageEVTCLoggingEvent extends ListenerAdapter {
                         } catch (InterruptedException | ExecutionException | IOException e) {
                             e.printStackTrace();
                         }
-
-                        
                     }
                 });
             }
         });
 
-        thread.run();
+        thread.start();
     }
 
 }

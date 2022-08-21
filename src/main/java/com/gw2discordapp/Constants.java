@@ -30,7 +30,7 @@ public class Constants {
     public static String gemIconEmoji = "<:Gems:1008370017106141344>";
     public static String fractalIconEmoji = "<:Fractals:1008640406373810237>";
     public static String gw2IconEmoji = "<:gw2:1009081342916571196>";
-    public static String gw2LogoNoBackground = "https://cdn.discordapp.com/attachments/1007917782601572352/1009068839574716426/kisspng-guild-wars-2-heart-of-thorns-guild-wars-2-path-o-5b37c7ef657558.1878307415303823194156.png";
+    public static String gw2LogoNoBackground = "https://cdn.discordapp.com/attachments/1007924091015143474/1010499402735030332/kisspng-guild-wars-2-heart-of-thorns-guild-wars-2-path-o-5b37c7ef657558.1878307415303823194156.png";
     public static String loadingIconImage = "https://emoji.discord.st/emojis/8104LoadingEmote.gif";
 
     public static String guildID = "1007915730928418856";
@@ -137,7 +137,7 @@ public class Constants {
         eb.setTitle("`LOADING INFO...`");
         eb.setDescription("`THANK YOU FOR WAITING...`");
         eb.setThumbnail(Constants.loadingIconImage);
-        eb.setFooter("[GW2 Raid Static]", Constants.gw2LogoNoBackground);
+        eb.setFooter("Usable in DMs also!", Constants.gw2LogoNoBackground);
         loadingEmbedBuilder = eb.build();
     }
 }
