@@ -1,0 +1,7 @@
+jsonFolder/token.json
+jsonFolder/api.json
+.vscode
+data
+test
+target/classes
+target/generated-sources
