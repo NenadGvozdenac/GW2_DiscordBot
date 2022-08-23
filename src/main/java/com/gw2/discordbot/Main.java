@@ -33,6 +33,7 @@ public class Main {
             new SlashCommandData("invite", "Gives you an invite to this guild.", false, new Option(OptionType.BOOLEAN, "private", "Whether this message is private or not. Default: true", false)),
             new SlashCommandData("contact-developer", "Prompts you to send a support ticket.", false),
             new SlashCommandData("shutdown", "Shuts down the bot.", true),
+            new SlashCommandData("announce", "Announces a message to the discord server.", true),
             new SlashCommandData("apistatus", "Returns the status(es) of used API(s).", false),
             new SlashCommandData("purge", "Purges a number of messages.", true, new Option(OptionType.INTEGER, "number", "How many messages to purge?", true)),
             new SlashCommandData("gw2dailies", "Displays currently active dailies.", false),
@@ -84,7 +85,8 @@ public class Main {
                 new MessageEVTCLoggingEvent(),
                 new HelpButtonEventListener(),
                 new NewUserReactEmoteEvent(),
-                new ModalContactDeveloper()
+                new ModalContactDeveloper(),
+                new ModalAnnouncement()
          ).enableCache(CacheFlag.CLIENT_STATUS).build();
 
         Logging.LOG(Main.class, "Token gotten from JSON file: " + loginToken);
@@ -113,7 +115,8 @@ public class Main {
                 new MessageEVTCLoggingEvent(),
                 new HelpButtonEventListener(),
                 new NewUserReactEmoteEvent(),
-                new ModalContactDeveloper()
+                new ModalContactDeveloper(),
+                new ModalAnnouncement()
         ).enableCache(CacheFlag.CLIENT_STATUS).build();
 
         Logging.LOG(Main.class, "Token gotten from OS env. variable: " + token);

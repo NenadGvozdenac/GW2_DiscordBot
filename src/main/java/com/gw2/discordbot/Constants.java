@@ -40,6 +40,7 @@ public class Constants {
 
     public static String generalLogUploadsChannelID = "1009064617038843914";
     public static String staticLogUploadsChannelID = "1007917782601572352";
+    public static String announcementChannelID = "1011718027080904725";
 
     public static Map<String, String> specializationEmojis;
 

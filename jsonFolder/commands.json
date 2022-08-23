@@ -25,6 +25,12 @@
     "Options": []
   },
   {
+    "CommandName": "announce",
+    "CommandDescription": "Announces a message to the discord server. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
     "CommandName": "apistatus",
     "CommandDescription": "Returns the status(es) of used API(s).",
     "AdminOnly": false,

@@ -99,7 +99,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
             break;
 
             case "test":
-                TEST_ALL_REGISTERED_LISTENERS(event);
+                TEST_COMMAND(event);
             break;
 
             case "contact-developer":
@@ -110,12 +110,36 @@ public class SlashCommandInteraction extends ListenerAdapter {
                 INVITE_EVENT(event);
             break;
 
+            case "announce":
+                ANNOUNCE_EVENT(event);
+            break;
+
             default:
                 event.deferReply(true).queue();
                 event.getHook().sendMessage("Unfortunately, I cannot find that command.").queue();
         }
     }
     
+    private void ANNOUNCE_EVENT(@NotNull SlashCommandInteractionEvent event) {
+        Modal modal = Modal.create("announcementmodal", "#" + event.getGuild().getTextChannelById(Constants.announcementChannelID).getName())
+            .addActionRows(
+                ActionRow.of(
+                    TextInput.create("title", "Announcement Title", TextInputStyle.SHORT)
+                    .setMinLength(5)
+                    .setPlaceholder("The title for the announcement!")
+                    .setRequired(true).build()
+                ),
+                ActionRow.of(
+                    TextInput.create("content", "Announcement body", TextInputStyle.PARAGRAPH)
+                    .setMinLength(5)
+                    .setPlaceholder("The body for the announcement!")
+                    .setRequired(true).build()
+                )
+                ).build();
+                
+        event.replyModal(modal).queue();
+    }
+
     private void INVITE_EVENT(@NotNull SlashCommandInteractionEvent event) {
 
         if(event.getOptions().isEmpty()) {
@@ -152,17 +176,8 @@ public class SlashCommandInteraction extends ListenerAdapter {
         event.replyModal(modal).queue();
     }
 
-    private void TEST_ALL_REGISTERED_LISTENERS(@NotNull SlashCommandInteractionEvent event) {
-
-        event.deferReply(true).queue();
-
-        String eventListeners = "";
-
-        for(Object o : event.getJDA().getRegisteredListeners()) {
-            eventListeners += o.getClass().getName().toString() + ";\n";
-        }
-
-        event.getHook().sendMessage("`" + eventListeners + "`").queue();
+    private void TEST_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+        
     }
 
     private void SHUTDOWN_EVENT(@NotNull SlashCommandInteractionEvent event) {
