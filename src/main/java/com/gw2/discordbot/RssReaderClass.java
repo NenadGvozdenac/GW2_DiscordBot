@@ -118,7 +118,7 @@ public class RssReaderClass {
                     builder.build().send(messageBuilder.build());
                 } 
             }
-        }, 0 * 60 * 1000, 15 * 60 * 1000); // every 30 minutes check for new update
+        }, 0 * 60 * 1000, 2 * 60 * 1000); // every 15 minutes check for new update
     }
 
     public void ReadNewsFromForums() {
@@ -199,7 +199,7 @@ public class RssReaderClass {
                     builder.build().send(messageBuilder.build());
                 } 
             }
-        }, 0 * 60 * 1000, 15 * 60 * 1000); // every 30 minutes check for new update
+        }, 0 * 60 * 1000, 2 * 60 * 1000); // every 2 minutes check for new update
     }
 
     protected Boolean getIsNewsAlreadySent(String newsChannelID) {

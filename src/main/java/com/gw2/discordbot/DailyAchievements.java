@@ -63,7 +63,7 @@ public class DailyAchievements {
                     builder.build().send(messageBuilder.build());
                 }
             }
-        }, 0 * 60 * 1000, 30 * 6 * 1000);
+        }, 0 * 60 * 1000, 30 * 60 * 1000);
     }
 
     protected Boolean getIsFractalAlreadySent(String dailyAchievementsChannelID) {
