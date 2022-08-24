@@ -4,12 +4,18 @@
 - It has three main gamemodes: PvE, PvP and WvW. 
 - This bot tries to help the users of my Discord Server by providing useful PvE information.
 
+# Newest update: v2.1.0
+- Added an AUTOUPLOADER that works on the basis of Client-Server.
+- On the hosting server, there exists a possibility to have a server. A server is hosted on a certain port.
+- The server can be created by doing `/startstaticraid`, which makes the server active.
+- Upon doing `/stopstaticraid`, the server deactivates.
+- This server is one of the features for automatic uploading logs.
+- A client application (also made), sends the log to the server via a link.
+- Server responds if they got the file, and if the return is **200**, log is uploaded to a discord text channel.
+
 # Newest update: v2.0.0
 - Hosting moved to a PAID service. The hosting should now be 24/7 active!
 - Hosting uses [link](https://sparkedhost.com/).
-
-# Update: v1.1.0
-- The new update can be found via this [link](https://github.com/NenadGvozdenac/GW2_DiscordBot/releases/tag/v1.1.0).
 
 # Features
 - This bot comes with many features.
