@@ -13,7 +13,7 @@
 - A client application (also made), sends the log to the server via a link.
 - Server responds if they got the file, and if the return is **200**, log is uploaded to a discord text channel.
 
-# Newest update: v2.0.0
+# Previous update: v2.0.0
 - Hosting moved to a PAID service. The hosting should now be 24/7 active!
 - Hosting uses [link](https://sparkedhost.com/).
 
