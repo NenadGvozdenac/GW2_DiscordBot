@@ -37,6 +37,18 @@
     "Options": []
   },
   {
+    "CommandName": "startstaticraid",
+    "CommandDescription": "Starts the static raid time. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
+    "CommandName": "stopstaticraid",
+    "CommandDescription": "Stops the static raid time. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
     "CommandName": "purge",
     "CommandDescription": "Purges a number of messages. `(ADMIN)`",
     "AdminOnly": true,

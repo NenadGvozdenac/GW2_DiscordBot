@@ -25,6 +25,7 @@ com\gw2\discordbot\ModalContactDeveloper.class
 com\gw2\discordbot\SlashCommandInteraction$4.class
 com\gw2\discordbot\DpsReportApi.class
 com\gw2\discordbot\MessageEVTCLoggingEvent.class
+com\gw2\discordbot\HttpServerHosting$FileHandler.class
 com\gw2\discordbot\Gw2Dailies$3.class
 com\gw2\discordbot\MessageEVTCLoggingEvent$1.class
 com\gw2\discordbot\Gw2Dailies$1.class
@@ -38,6 +39,7 @@ com\gw2\discordbot\HelpButtonEventListener$1.class
 com\gw2\discordbot\UserApi.class
 com\gw2\discordbot\SlashCommandInteraction$2.class
 com\gw2\discordbot\SlashCommandInteraction.class
+com\gw2\discordbot\HttpServerHosting.class
 com\gw2\discordbot\Gw2Dailies$4.class
 com\gw2\discordbot\RssReaderClass$2.class
 com\gw2\discordbot\Token.class

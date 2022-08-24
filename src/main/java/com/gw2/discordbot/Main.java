@@ -35,6 +35,8 @@ public class Main {
             new SlashCommandData("shutdown", "Shuts down the bot.", true),
             new SlashCommandData("announce", "Announces a message to the discord server.", true),
             new SlashCommandData("apistatus", "Returns the status(es) of used API(s).", false),
+            new SlashCommandData("startstaticraid", "Starts the static raid time.", true),
+            new SlashCommandData("stopstaticraid", "Stops the static raid time.", true),
             new SlashCommandData("purge", "Purges a number of messages.", true, new Option(OptionType.INTEGER, "number", "How many messages to purge?", true)),
             new SlashCommandData("gw2dailies", "Displays currently active dailies.", false),
             new SlashCommandData("gw2accountraidinfo", "Displays information about your weekly raids. [API key req.]", false),

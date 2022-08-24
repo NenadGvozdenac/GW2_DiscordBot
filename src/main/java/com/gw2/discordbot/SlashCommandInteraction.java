@@ -118,9 +118,32 @@ public class SlashCommandInteraction extends ListenerAdapter {
                 ANNOUNCE_EVENT(event);
             break;
 
+            case "startstaticraid":
+                START_STATIC_RAID_EVENT(event);
+            break;
+
+            case "stopstaticraid":
+                STOP_STATIC_RAID_EVENT(event);
+            break;
+
             default:
                 event.deferReply(true).queue();
                 event.getHook().sendMessage("Unfortunately, I cannot find that command.").queue();
+        }
+    }
+
+    private void STOP_STATIC_RAID_EVENT(@NotNull SlashCommandInteractionEvent event) {
+        event.deferReply(true).queue();
+        HttpServerHosting.stopServer();
+        event.getHook().sendMessage("Stopped the server port.").queue();
+    }
+
+    private void START_STATIC_RAID_EVENT(@NotNull SlashCommandInteractionEvent event) {
+        event.deferReply(true).queue();
+        if(HttpServerHosting.activateServer()) {
+            event.getHook().sendMessage("Activated the server port.").queue();
+        } else {
+            event.getHook().sendMessage("Server is already activated there.").queue();
         }
     }
 
