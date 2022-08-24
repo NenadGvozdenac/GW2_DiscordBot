@@ -21,7 +21,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 public class DailyAchievements {
 
     public void ReadFractalsFromApi() {
-
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -62,11 +61,9 @@ public class DailyAchievements {
                     messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
 
                     builder.build().send(messageBuilder.build());
-                } else {
-                    Logging.LOG(this.getClass(), "The fractals are the same currently.");
                 }
             }
-        }, 0 * 60 * 1000, 2 * 60 * 1000);
+        }, 0 * 60 * 1000, 30 * 6 * 1000);
     }
 
     protected Boolean getIsFractalAlreadySent(String dailyAchievementsChannelID) {
@@ -99,8 +96,10 @@ public class DailyAchievements {
         String nameOfOneFractal = achievementName.getAsJsonObject().get("name").getAsString();
 
         if(trimmedListOFAchievements.contains(nameOfOneFractal)) {
+            Logging.LOG(this.getClass(), trimmedListOFAchievements + " contains [" + nameOfOneFractal + "].");
             return true;
         } else {
+            Logging.LOG(this.getClass(), trimmedListOFAchievements + " does NOT contain [" + nameOfOneFractal + "].");
             return false;
         }
     }

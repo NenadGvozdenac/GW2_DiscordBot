@@ -58,6 +58,10 @@ public class SlashCommandInteraction extends ListenerAdapter {
                 DELETE_API_COMMAND(event);
             break;
 
+            case "get_api":
+                GET_API_COMMAND(event);
+            break;
+
             case "help":
                 HELP_COMMAND(event);
             break;
@@ -119,7 +123,54 @@ public class SlashCommandInteraction extends ListenerAdapter {
                 event.getHook().sendMessage("Unfortunately, I cannot find that command.").queue();
         }
     }
-    
+
+    private void GET_API_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+        Gson gson;
+        String userId = event.getUser().getId();
+        event.deferReply(true).queue();
+
+        try (FileReader reader = new FileReader(new File(new File("jsonFolder"), "api.json"))) {
+            
+            gson = new GsonBuilder()
+                        .disableHtmlEscaping()
+                        .setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+                        .setPrettyPrinting()
+                        .serializeNulls()
+                        .create();
+            
+            Type founderTypeSet = new TypeToken<List<UserApi>>(){}.getType();
+            List<UserApi> listUserApi = gson.fromJson(reader, founderTypeSet);
+
+            reader.close();
+
+            UserApi theApiKey = null;
+
+            for(UserApi userApi : listUserApi) {
+                if(userApi.getUserId().equals(userId)) {
+                    theApiKey = userApi;
+                }
+            }
+
+            if(theApiKey == null) {
+                event.getHook().sendMessage("Unfortunately. You have not added an API key to the bot.").queue();
+                return;
+            }
+
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setColor(Color.CYAN);
+            eb.setTitle(theApiKey.getUsername());
+            eb.setThumbnail(Constants.gw2LogoNoBackground);
+            eb.addField("USER ID", theApiKey.getUserId(), false);
+            eb.addField("API KEY", theApiKey.getApiKey(), false);
+
+            event.getHook().sendMessageEmbeds(eb.build()).queue();
+        } catch(IOException | NullPointerException e) {
+            event.getHook().sendMessage("Unfortunately, I couldn't write your API key. If this persists, contact an Administrator.").queue();
+            e.printStackTrace();
+            return;
+        }
+    }
+
     private void ANNOUNCE_EVENT(@NotNull SlashCommandInteractionEvent event) {
         Modal modal = Modal.create("announcementmodal", "#" + event.getGuild().getTextChannelById(Constants.announcementChannelID).getName())
             .addActionRows(
@@ -181,7 +232,11 @@ public class SlashCommandInteraction extends ListenerAdapter {
     }
 
     private void SHUTDOWN_EVENT(@NotNull SlashCommandInteractionEvent event) {
-        event.getJDA().shutdown();
+        event.deferReply(true).queue();
+        event.getHook().sendMessage("Shutting down...").queue(message -> {
+            event.getJDA().shutdown();
+        });
+        
     }
 
     private void API_STATUS(@NotNull SlashCommandInteractionEvent event) {
@@ -665,7 +720,6 @@ public class SlashCommandInteraction extends ListenerAdapter {
             e.printStackTrace();
             return;
         }
-
     }
 
     private void ADD_API_COMMAND(@NotNull SlashCommandInteractionEvent event) {

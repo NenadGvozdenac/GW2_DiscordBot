@@ -45,7 +45,8 @@ public class Main {
             new SlashCommandData("help", "Lists all commands from this bot.", false),
             new SlashCommandData("ping", "Returns the ping of the bot.", false),
             new SlashCommandData("add_api",  "Adds your API key to the bot.", false, new Option(OptionType.STRING, "apikey", "The designated API key you wish to assign to your account.", true)),
-            new SlashCommandData("delete_api", "Deletes your APi key from the bot, if you had already added it.", false)
+            new SlashCommandData("delete_api", "Deletes your APi key from the bot, if you had already added it.", false),
+            new SlashCommandData("get_api", "Lists your API key that you added.", false)
         };
     }
   

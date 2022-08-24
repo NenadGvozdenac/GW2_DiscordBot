@@ -5,6 +5,7 @@ com\gw2\discordbot\NewUserReactEmoteEvent.class
 com\gw2\discordbot\ModalAnnouncement.class
 com\gw2\discordbot\Constants.class
 com\gw2\discordbot\Constants$1.class
+com\gw2\discordbot\SlashCommandInteraction$5.class
 com\gw2\discordbot\DailyAchievements$1.class
 com\gw2\discordbot\SlashCommandData.class
 com\gw2\discordbot\Gw2Dailies$2.class

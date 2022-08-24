@@ -115,5 +115,11 @@
     "CommandDescription": "Deletes your APi key from the bot, if you had already added it.",
     "AdminOnly": false,
     "Options": []
+  },
+  {
+    "CommandName": "get_api",
+    "CommandDescription": "Lists your API key that you added.",
+    "AdminOnly": false,
+    "Options": []
   }
 ]

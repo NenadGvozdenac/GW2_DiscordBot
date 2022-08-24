@@ -116,11 +116,9 @@ public class RssReaderClass {
                     messageBuilder.addEmbeds(embedBuilder.build());
 
                     builder.build().send(messageBuilder.build());
-                } else {
-                    Logging.LOG(this.getClass(), "The news are the same currently.");
-                }
+                } 
             }
-        }, 0 * 60 * 1000, 2 * 60 * 1000); // every 30 minutes check for new update
+        }, 0 * 60 * 1000, 15 * 60 * 1000); // every 30 minutes check for new update
     }
 
     public void ReadNewsFromForums() {
@@ -199,11 +197,9 @@ public class RssReaderClass {
                     messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
 
                     builder.build().send(messageBuilder.build());
-                } else {
-                    Logging.LOG(this.getClass(), "The forums are the same currently.");
-                }
+                } 
             }
-        }, 0 * 60 * 1000, 2 * 60 * 1000); // every 30 minutes check for new update
+        }, 0 * 60 * 1000, 15 * 60 * 1000); // every 30 minutes check for new update
     }
 
     protected Boolean getIsNewsAlreadySent(String newsChannelID) {
