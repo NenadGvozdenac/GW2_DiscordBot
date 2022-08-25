@@ -17,6 +17,7 @@ com\gw2\discordbot\LeaveEvent.class
 com\gw2\discordbot\Gw2Dailies$5.class
 com\gw2\discordbot\RssReaderClass$1.class
 com\gw2\discordbot\Option.class
+com\gw2\discordbot\SignupExcelWriting.class
 com\gw2\discordbot\SlashCommandInteraction$3.class
 com\gw2\discordbot\Gw2Api.class
 com\gw2\discordbot\Gw2Dailies.class
@@ -30,6 +31,7 @@ com\gw2\discordbot\Gw2Dailies$3.class
 com\gw2\discordbot\MessageEVTCLoggingEvent$1.class
 com\gw2\discordbot\Gw2Dailies$1.class
 com\gw2\discordbot\RssReaderClass.class
+com\gw2\discordbot\SignupDeleteMenu.class
 com\gw2\discordbot\JoinEvent.class
 com\gw2\discordbot\SlashCommandInteraction$1.class
 com\gw2\discordbot\Main$1.class

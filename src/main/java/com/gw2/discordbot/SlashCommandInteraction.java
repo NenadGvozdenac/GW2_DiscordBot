@@ -2,17 +2,23 @@ package com.gw2.discordbot;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.gson.FieldNamingPolicy;
@@ -24,10 +30,14 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.mashape.unirest.http.HttpResponse;
 
+import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -126,9 +136,294 @@ public class SlashCommandInteraction extends ListenerAdapter {
                 STOP_STATIC_RAID_EVENT(event);
             break;
 
+            case "signup":
+                SIGNUP_EVENT(event);
+            break;
+
+            case "unsignup":
+                UNSIGNUP_EVENT(event);
+            break;
+
+            case "signupform":
+                SIGNUPFORM_EVENT(event);
+            break;
+
+            case "signupcheck":
+                SIGNUPCHECK_EVENT(event);
+            break;
+
+            case "signupclear":
+                SIGNUPCLEAR_EVENT(event);
+            break;
+
+            case "signupplayer":
+                SIGNUPPLAYER_EVENT(event);
+            break;
+
+            case "signupdelete":
+                SIGNUPDELETE_EVENT(event);
+            break;
+
+            case "qtpfires":
+                QTP_FIRES_EVENT(event);
+            break;
+
             default:
                 event.deferReply(true).queue();
                 event.getHook().sendMessage("Unfortunately, I cannot find that command.").queue();
+        }
+    }
+
+    private void QTP_FIRES_EVENT(@NotNull SlashCommandInteractionEvent event) {
+        event.deferReply(false).queue();
+
+        String qtpFires = Constants.QTP_FIRES;
+
+        event.getHook().sendMessage(qtpFires).queue();
+    }
+
+    private void SIGNUPDELETE_EVENT(@NotNull SlashCommandInteractionEvent event) {
+
+        event.deferReply(true).queue();
+
+        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+
+        if(!event.getMember().getRoles().contains(staticRole)) {
+            event.getHook().sendMessage("You cannot do that command as of this time.").queue();
+            return;
+        }
+
+        try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+            Row firstOpenRow = sheet.getRow(0);
+
+            List<String> listOfIds = new ArrayList<>();
+
+            for(Integer i = 1; i < 11; i++) {
+                if(!firstOpenRow.getCell(i).getStringCellValue().equals("")) {
+                    listOfIds.add(firstOpenRow.getCell(i).getStringCellValue());
+                }
+            }
+
+            if(listOfIds.isEmpty()) {
+                event.getHook().sendMessage("Unfortunately, the signup sheet is empty.").queue();
+                workbook.close();
+                return;
+            }
+
+            List<SelectOption> listOfAvailableSlots = new ArrayList<>();
+
+            listOfIds.forEach(id -> {
+                SelectOption option = SelectOption.of(event.getJDA().retrieveUserById(id).complete().getAsTag(), id);
+                listOfAvailableSlots.add(option);
+            });
+
+            SelectMenu menu = SelectMenu.create("signupdeletemenu")
+                .setPlaceholder("Which person do you wish to delete from the list?").addOptions(listOfAvailableSlots).build();
+
+            event.getHook().sendMessage("`Select which person you wish to delete from signups:`").addActionRow(menu).queue();
+            workbook.close();
+        } catch(IOException e) {
+
+        }
+    }
+
+    private void SIGNUPPLAYER_EVENT(@NotNull SlashCommandInteractionEvent event) {
+
+        event.deferReply(true).queue();
+
+        User user = event.getOption("user").getAsUser();
+
+        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+
+        if(!event.getMember().getRoles().contains(staticRole)) {
+            event.getHook().sendMessage("You cannot do that command as of this time.").queue();
+            return;
+        }
+
+        if(SignupExcelWriting.checkIfUserAlreadyPresent(user)) {
+            event.getHook().sendMessage("That user is already present in the signups!").queue();
+            return;
+        }
+
+        try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+            Row firstOpenRow = sheet.getRow(0);
+            Row secondRow = sheet.getRow(1);
+
+            HashSet<String> hashSet = new HashSet<>();
+
+            for(Integer i = 1; i < 11; i++) {
+                if(firstOpenRow.getCell(i).getStringCellValue().equals("")) {
+                    hashSet.add(secondRow.getCell(i).getStringCellValue());
+                }
+            }
+
+            List<SelectOption> listOfAvailableSlots = new ArrayList<>();
+
+            hashSet.forEach(string -> {
+                listOfAvailableSlots.add(SelectOption.of(string, string));
+            });
+
+            SelectMenu menu = SelectMenu.create("signupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
+            event.getHook().sendMessage("`Select which class you wish to select for the player: `").addActionRow(menu).queue();
+
+            for(Object o : event.getJDA().getRegisteredListeners()) {
+                if(o instanceof SignupExcelWriting) {
+                    event.getJDA().removeEventListener(o);
+                }
+            }
+
+            event.getJDA().addEventListener(new SignupExcelWriting(user));
+            workbook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void SIGNUPCLEAR_EVENT(@NotNull SlashCommandInteractionEvent event) {
+
+        event.deferReply(true).queue();
+
+        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+
+        if(!event.getMember().getRoles().contains(staticRole)) {
+            event.getHook().sendMessage("You cannot do that command as of this time.").queue();
+            return;
+        }
+
+        SignupExcelWriting.clearSignups();
+
+        event.getHook().sendMessage("Cleared the signups!").queue();
+    }
+
+    private void SIGNUPCHECK_EVENT(@NotNull SlashCommandInteractionEvent event) {
+
+        event.deferReply(true).queue();
+
+        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+
+        if(!event.getMember().getRoles().contains(staticRole)) {
+            event.getHook().sendMessage("You cannot do that command as of this time.").queue();
+            return;
+        }
+
+        List<Pair<String, String>> listOfPeopleSignedUp = SignupExcelWriting.getCurrentSignups();
+
+        if(listOfPeopleSignedUp.isEmpty()) {
+            event.getHook().sendMessage("Nobody signed up yet!").queue();
+        } else {
+            String stringToPing = "";
+
+            for(Pair<String, String> pair : listOfPeopleSignedUp) {
+                stringToPing += UserSnowflake.fromId(pair.getFirst()).getAsMention() + " - " + pair.getSecond() + "\n";
+            }
+    
+            event.getHook().sendMessage("People signed up: \n" + stringToPing).queue();
+        }
+    }
+
+    private void SIGNUPFORM_EVENT(@NotNull SlashCommandInteractionEvent event) {
+
+        event.deferReply(false).queue();
+
+        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+
+        if(!event.getMember().getRoles().contains(staticRole)) {
+            event.getHook().sendMessage("You cannot signup for the raid as of this time.").queue();
+            return;
+        }
+
+        event.getHook().sendMessage(Constants.signUpFormMessage).queue();
+    }
+
+    private void UNSIGNUP_EVENT(@NotNull SlashCommandInteractionEvent event) {
+
+        event.deferReply(true).queue();
+
+        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+
+        if(!event.getMember().getRoles().contains(staticRole)) {
+            event.getHook().sendMessage("You cannot unsignup for the raid as of this time.").queue();
+            return;
+        }
+
+        if(!SignupExcelWriting.checkIfUserAlreadyPresent(event.getUser())) {
+            event.getHook().sendMessage("You aren't signed up for this week in the first place!").queue();
+            return;
+        }
+
+        try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+            Row firstOpenRow = sheet.getRow(0);
+
+            for(Integer i = 1; i < 11; i++) {
+                if(firstOpenRow.getCell(i).getStringCellValue().equals(event.getUser().getId())) {
+                    firstOpenRow.getCell(i).setCellValue("");
+                }
+            }
+
+            FileOutputStream fileOutputStream = new FileOutputStream(new File("static.xlsx"));
+            workbook.write(fileOutputStream);
+
+            fileOutputStream.close();
+            workbook.close();
+
+            event.getHook().sendMessage("You have been unsigned for this week!").queue();
+        } catch(IOException e) {
+
+        }
+    }
+
+    private void SIGNUP_EVENT(@NotNull SlashCommandInteractionEvent event) {
+
+        event.deferReply(true).queue();
+
+        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+
+        if(!event.getMember().getRoles().contains(staticRole)) {
+            event.getHook().sendMessage("You cannot unsign for the raid as of this time.").queue();
+            return;
+        }
+
+        if(SignupExcelWriting.checkIfUserAlreadyPresent(event.getUser())) {
+            event.getHook().sendMessage("You already signed up this week! Please use `/unsignup` first.").queue();
+            return;
+        }
+
+        try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+            Row firstOpenRow = sheet.getRow(0);
+            Row secondRow = sheet.getRow(1);
+
+            HashSet<String> hashSet = new HashSet<>();
+
+            for(Integer i = 1; i < 11; i++) {
+                if(firstOpenRow.getCell(i).getStringCellValue().equals("")) {
+                    hashSet.add(secondRow.getCell(i).getStringCellValue());
+                }
+            }
+
+            List<SelectOption> listOfAvailableSlots = new ArrayList<>();
+
+            hashSet.forEach(string -> {
+                listOfAvailableSlots.add(SelectOption.of(string, string));
+            });
+
+            SelectMenu menu = SelectMenu.create("signupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
+            event.getHook().sendMessage("`Select which class you wish to select: `").addActionRow(menu).queue();
+            workbook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

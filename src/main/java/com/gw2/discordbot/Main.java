@@ -33,6 +33,14 @@ public class Main {
             new SlashCommandData("invite", "Gives you an invite to this guild.", false, new Option(OptionType.BOOLEAN, "private", "Whether this message is private or not. Default: true", false)),
             new SlashCommandData("contact-developer", "Prompts you to send a support ticket.", false),
             new SlashCommandData("shutdown", "Shuts down the bot.", true),
+            new SlashCommandData("qtpfires", "Gives the optimal QTP fires.", false),
+            new SlashCommandData("signup", "Signs you up for the static raid.", false),
+            new SlashCommandData("unsignup", "Unsigns you from the static raid.", false),
+            new SlashCommandData("signupform", "Sends the signup form.", false),
+            new SlashCommandData("signupcheck", "Check who has signed up so far.", true),
+            new SlashCommandData("signupclear", "Clears the current week's signups.", true),
+            new SlashCommandData("signupplayer", "Signs up a player to the current week's signups.", true, new Option(OptionType.USER, "user", "Which user do you wish to sign up?", true)),
+            new SlashCommandData("signupdelete", "Deletes a signup by will.", true),
             new SlashCommandData("announce", "Announces a message to the discord server.", true),
             new SlashCommandData("apistatus", "Returns the status(es) of used API(s).", false),
             new SlashCommandData("startstaticraid", "Starts the static raid time.", true),
@@ -89,7 +97,9 @@ public class Main {
                 new HelpButtonEventListener(),
                 new NewUserReactEmoteEvent(),
                 new ModalContactDeveloper(),
-                new ModalAnnouncement()
+                new ModalAnnouncement(),
+                new SignupExcelWriting(),
+                new SignupDeleteMenu()
          ).enableCache(CacheFlag.CLIENT_STATUS).build();
 
         Logging.LOG(Main.class, "Token gotten from JSON file: " + loginToken);
@@ -119,7 +129,9 @@ public class Main {
                 new HelpButtonEventListener(),
                 new NewUserReactEmoteEvent(),
                 new ModalContactDeveloper(),
-                new ModalAnnouncement()
+                new ModalAnnouncement(),
+                new SignupExcelWriting(),
+                new SignupDeleteMenu()
         ).enableCache(CacheFlag.CLIENT_STATUS).build();
 
         Logging.LOG(Main.class, "Token gotten from OS env. variable: " + token);
@@ -134,7 +146,7 @@ public class Main {
                  "Use / for commands",
                  "/help",
                  "by NenadG",
-                 "v1.1.0",
+                 "v3.0.0",
                  "new PAID hosting!"
          };
          

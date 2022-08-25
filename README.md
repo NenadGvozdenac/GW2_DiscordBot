@@ -4,7 +4,22 @@
 - It has three main gamemodes: PvE, PvP and WvW. 
 - This bot tries to help the users of my Discord Server by providing useful PvE information.
 
-# Newest update: v2.1.0
+# Newest update: v3.0.0
+- Added static commands that will be used for the static group I am leader of!
+- `/signup`, signs the person up for a certain role on that week.
+- `/unsignup`, unsigns the person from this week's raids.
+- `/signupform`, gives the person the form for the signups.
+
+- `/signupcheck`, admin command that lets the admins see the list of people signed up and their roles.
+- `/signupdelete`, admin command that lets the admins delete a signup forcefully.
+- `/signupplayer`, admin command that lets the admins sign up a person forcefully.
+- `/signupclear`, admin command that lets the admins clear all signups for that week.
+
+- A sheet is stored in the database of the server. All data is saved there, if need comes that it should be retrieved.
+
+- `/qtpfires`, gives the picture of the qadim the peerless fires that are optimal.
+
+# Previous update: v2.1.0
 - Added an AUTOUPLOADER that works on the basis of Client-Server.
 - On the hosting server, there exists a possibility to have a server. A server is hosted on a certain port.
 - The server can be created by doing `/startstaticraid`, which makes the server active.
@@ -12,10 +27,6 @@
 - This server is one of the features for automatic uploading logs.
 - A client application (also made), sends the log to the server via a link.
 - Server responds if they got the file, and if the return is **200**, log is uploaded to a discord text channel.
-
-# Previous update: v2.0.0
-- Hosting moved to a PAID service. The hosting should now be 24/7 active!
-- Hosting uses [link](https://sparkedhost.com/).
 
 # Features
 - This bot comes with many features.

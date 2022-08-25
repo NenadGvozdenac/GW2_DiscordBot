@@ -25,6 +25,61 @@
     "Options": []
   },
   {
+    "CommandName": "qtpfires",
+    "CommandDescription": "Gives the optimal QTP fires.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "signup",
+    "CommandDescription": "Signs you up for the static raid.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "unsignup",
+    "CommandDescription": "Unsigns you from the static raid.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "signupform",
+    "CommandDescription": "Sends the signup form.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "signupcheck",
+    "CommandDescription": "Check who has signed up so far. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
+    "CommandName": "signupclear",
+    "CommandDescription": "Clears the current week's signups. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
+    "CommandName": "signupplayer",
+    "CommandDescription": "Signs up a player to the current week's signups. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "USER",
+        "OptionName": "user",
+        "OptionDescription": "Which user do you wish to sign up?",
+        "MandatoryOption": true
+      }
+    ]
+  },
+  {
+    "CommandName": "signupdelete",
+    "CommandDescription": "Deletes a signup by will. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
     "CommandName": "announce",
     "CommandDescription": "Announces a message to the discord server. `(ADMIN)`",
     "AdminOnly": true,
