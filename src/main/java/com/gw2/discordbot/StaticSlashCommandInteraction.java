@@ -539,5 +539,4 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             }, minutesToWait * 60 * 1000, 1);
         }
     }
-
 }

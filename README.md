@@ -4,7 +4,25 @@
 - It has three main gamemodes: PvE, PvP and WvW. 
 - This bot tries to help the users of my Discord Server by providing useful PvE information.
 
-# Newest update: v3.0.0
+# Newest update: v3.1.0
+- Separated commands into three files: `StaticSlashCommandInteraction.java`, `SlashCommandInteraction.java` & `Gw2SlashCommandInteraction.java`
+- Added new commands to help with static needs:
+- `/signupsheet`, admin command that returns the data storage for all static needs
+- `/signupcheckmyloadout`, public command that returns the loadout required by the player for that static raid
+- Made all static commands not doable in DM with the bot. It just felt weird.
+- `/startstaticraid`, admin command that starts the raid, now pings everyone at the start. It also lists everyone's roles below the ping.
+- `/startstaticraid`, also now takes an input of minutes. After minutes have passed, everyone will be pinged. It opens the port on the server for logs to flow into. After 4 hours, if the port is still open, it closes the port. (Administrator probably forgot to close it manually)
+- `/stopstaticraid`, only stops the server.
+
+# Previous update: v2.1.0
+- Added an AUTOUPLOADER that works on the basis of Client-Server.
+- On the hosting server, there exists a possibility to have a server. A server is hosted on a certain port.
+- The server can be created by doing `/startstaticraid`, which makes the server active.
+- Upon doing `/stopstaticraid`, the server deactivates.
+- This server is one of the features for automatic uploading logs.
+- A client application (also made), sends the log to the server via a link.
+- Server responds if they got the file, and if the return is **200**, log is uploaded to a discord text channel.
+
 - Added static commands that will be used for the static group I am leader of!
 - `/signup`, signs the person up for a certain role on that week.
 - `/unsignup`, unsigns the person from this week's raids.
@@ -18,15 +36,6 @@
 - A sheet is stored in the database of the server. All data is saved there, if need comes that it should be retrieved.
 
 - `/qtpfires`, gives the picture of the qadim the peerless fires that are optimal.
-
-# Previous update: v2.1.0
-- Added an AUTOUPLOADER that works on the basis of Client-Server.
-- On the hosting server, there exists a possibility to have a server. A server is hosted on a certain port.
-- The server can be created by doing `/startstaticraid`, which makes the server active.
-- Upon doing `/stopstaticraid`, the server deactivates.
-- This server is one of the features for automatic uploading logs.
-- A client application (also made), sends the log to the server via a link.
-- Server responds if they got the file, and if the return is **200**, log is uploaded to a discord text channel.
 
 # Features
 - This bot comes with many features.
