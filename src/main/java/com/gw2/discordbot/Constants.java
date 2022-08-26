@@ -42,6 +42,7 @@ public class Constants {
     public static String staticLogUploadsChannelID = "1007917782601572352";
     public static String announcementChannelID = "1011718027080904725";
     public static String logsChannelID = "1011932036711321641";
+    public static String staticAnnouncementChannelID = "1007917722413322300";
 
     public static String signUpFormMessage = "https://cdn.discordapp.com/attachments/1007924091015143474/1012365527504670760/unknown.png";
     public static String QTP_FIRES = "https://cdn.discordapp.com/attachments/1007924091015143474/1012439689686429696/download.png";
@@ -122,7 +123,7 @@ public class Constants {
                 }
             }
 
-            Logging.LOG(Main.class, "Gotten DPSREPORTTOKEN from .JSON file: " + DPS_REPORT_TOKEN);
+            Logging.LOG(Main.class, "DPSREPORTTOKEN gotten from .JSON file: " + DPS_REPORT_TOKEN);
 
         } catch(IOException e) {
             Map<String, String> envVariables = System.getenv();
@@ -135,7 +136,7 @@ public class Constants {
                 DPS_REPORT_TOKEN = new Token(tokenName, tokenValue);
             }
 
-            Logging.LOG(Main.class, "Gotten DPSREPORTTOKEN from env. variable: " + DPS_REPORT_TOKEN);
+            Logging.LOG(Main.class, "DPSREPORTTOKEN gotten from env. variable: " + DPS_REPORT_TOKEN);
         }
     }
 

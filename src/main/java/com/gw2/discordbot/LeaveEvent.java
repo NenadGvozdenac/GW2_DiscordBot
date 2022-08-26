@@ -25,7 +25,7 @@ public class LeaveEvent extends ListenerAdapter {
 
         eb.setDescription(
             "- Member " + event.getUser().getName() + " just left the guild.\n" +
-            "- Hopefully we see them again!\n" +
+            "- Hopefully we see them again!\n\n" +
             "**Current member count: " + (event.getGuild().getMemberCount() - 1) + 
             "**\n\uD83D\uDE1E \uD83D\uDE1E"
         );

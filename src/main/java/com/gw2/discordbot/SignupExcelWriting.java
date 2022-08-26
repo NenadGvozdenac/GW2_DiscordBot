@@ -68,7 +68,7 @@ public class SignupExcelWriting extends ListenerAdapter {
     public static boolean checkIfUserAlreadyPresent(User user) {
         try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
-            XSSFSheet sheet = workbook.getSheetAt(0);
+            XSSFSheet sheet = workbook.getSheet("Signups");
 
             Row firstOpenRow = sheet.getRow(0);
 
@@ -99,7 +99,7 @@ public class SignupExcelWriting extends ListenerAdapter {
             ArrayList<Pair<String, String>> arrayListOfPairs = new  ArrayList<Pair<String, String>>();
 
             for(int i = 1; i < 11; i++) {
-                if(!firstOpenRow.getCell(i).getStringCellValue().equals("")) {
+                if(!firstOpenRow.getCell(i).getStringCellValue().equals("EMPTY")) {
                     arrayListOfPairs.add(new Pair<String, String>(firstOpenRow.getCell(i).getStringCellValue(), secondOpenRow.getCell(i).getStringCellValue()));
                 }
             }
@@ -123,7 +123,7 @@ public class SignupExcelWriting extends ListenerAdapter {
             Row firstRow = sheet.getRow(0);
 
             for(int i = 1; i < 11; i++) {
-                firstRow.getCell(i).setCellValue("");
+                firstRow.getCell(i).setCellValue("EMPTY");
             }
 
             FileOutputStream fileOutputStream = new FileOutputStream(new File("static.xlsx"));

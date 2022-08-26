@@ -80,6 +80,18 @@
     "Options": []
   },
   {
+    "CommandName": "signupsheet",
+    "CommandDescription": "Returns the signup sheet. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
+    "CommandName": "signupcheckmyloadout",
+    "CommandDescription": "Returns your loadout for this week's static.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
     "CommandName": "announce",
     "CommandDescription": "Announces a message to the discord server. `(ADMIN)`",
     "AdminOnly": true,
@@ -95,7 +107,14 @@
     "CommandName": "startstaticraid",
     "CommandDescription": "Starts the static raid time. `(ADMIN)`",
     "AdminOnly": true,
-    "Options": []
+    "Options": [
+      {
+        "OptionType": "INTEGER",
+        "OptionName": "minutes_to_wait",
+        "OptionDescription": "How many minutes before I ping everyone for the start?",
+        "MandatoryOption": true
+      }
+    ]
   },
   {
     "CommandName": "stopstaticraid",

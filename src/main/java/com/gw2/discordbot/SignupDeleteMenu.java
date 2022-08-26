@@ -30,7 +30,7 @@ public class SignupDeleteMenu extends ListenerAdapter {
 
                 for(int i = 1; i < 11; i++) {
                     if(firstRow.getCell(i).getStringCellValue().equals(key)) {
-                        firstRow.getCell(i).setCellValue("");
+                        firstRow.getCell(i).setCellValue("EMPTY");
                     }
                 }
 
