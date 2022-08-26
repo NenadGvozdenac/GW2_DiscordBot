@@ -94,19 +94,16 @@ public class MessageEVTCLoggingEvent extends ListenerAdapter {
 
                             JsonArray logPlayers = jsonEliteInsightsResponse.getAsJsonObject().get("players").getAsJsonArray();
     
-                            ArrayList<String> playerAccountNames = new ArrayList<>();
                             ArrayList<String> playerProfession = new ArrayList<>();
                             ArrayList<String> playerCharacterNames = new ArrayList<>();
+                            ArrayList<Integer> playerDps = new ArrayList<>();
     
                             logPlayers.forEach(player -> {
-                                Boolean isCommander = player.getAsJsonObject().get("hasCommanderTag").getAsBoolean();
-                                if(isCommander) {
-                                    playerAccountNames.add(Constants.commanderIconEmoji + " " + player.getAsJsonObject().get("account").getAsString());
-                                } else
-                                    playerAccountNames.add(player.getAsJsonObject().get("account").getAsString());
-    
                                 playerProfession.add(player.getAsJsonObject().get("profession").getAsString().toLowerCase());
                                 playerCharacterNames.add(player.getAsJsonObject().get("name").getAsString());
+
+                                Integer i = player.getAsJsonObject().get("dpsAll").getAsJsonArray().get(0).getAsJsonObject().get("dps").getAsInt();
+                                playerDps.add(i);
                             });
 
                             EmbedBuilder eb = new EmbedBuilder();
@@ -125,15 +122,16 @@ public class MessageEVTCLoggingEvent extends ListenerAdapter {
                             eb.addField("END TIME", logTimeEnd.split(" ")[0] + "\n" + logTimeEnd.split(" ")[1], true);
                             eb.addField("ARCDPS VERSION", arcDpsVersion, true);
     
-                            eb.addBlankField(false);
+                            String stringToSend = "```";
 
-                            for(int i = 0; i < playerAccountNames.size(); i++) {
-                                eb.addField(playerAccountNames.get(i), "→ " + playerCharacterNames.get(i) + "\n→ " + playerProfession.get(i).toUpperCase(), true);
+                            for(int i = 0; i < playerCharacterNames.size(); i++) {
+                                String currentString = String.format("%-20s | %-10s | %-5s DPS\n", playerCharacterNames.get(i), playerProfession.get(i).toUpperCase(), String.valueOf(playerDps.get(i)));
+                                stringToSend += currentString;
                             }
 
-                            if(playerAccountNames.size() % 3 == 2) {
-                                eb.addBlankField(true);
-                            }
+                            stringToSend += "```";
+
+                            eb.addField("", stringToSend, false);
 
                             WebhookEmbedBuilder embedForSending;
                             embedForSending = WebhookEmbedBuilder.fromJDA(eb.build());
@@ -157,7 +155,7 @@ public class MessageEVTCLoggingEvent extends ListenerAdapter {
                                         break;
                                     }
                                 }
-            
+
                                 if(needToCreateWebhook) {
                                     webhook = Main.jda.getTextChannelById(Constants.staticLogUploadsChannelID).createWebhook("Guild Wars 2 Logs").complete();
                                 }

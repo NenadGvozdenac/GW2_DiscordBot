@@ -474,6 +474,11 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
 
         Integer minutesToWait = event.getOption("minutes_to_wait").getAsInt();
 
+        if(minutesToWait > 15 || minutesToWait < 5) {
+            event.getHook().sendMessage("That is invalid time. `5 min < time < 15 min`").queue();
+            return;
+        }
+
         if(HttpServerHosting.activateServer()) {
             EmbedBuilder eb = new EmbedBuilder();
             List<Pair<String, String>> listOfPeopleSignedUp = SignupExcelWriting.getCurrentSignups();

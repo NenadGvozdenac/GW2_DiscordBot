@@ -34,7 +34,7 @@ public class DailyAchievements {
 
                 Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).getIterableHistory().takeAsync(1).thenAcceptAsync(listOfMessages -> {
                     Message latestMessage = listOfMessages.get(0);
-        
+
                     MessageEmbed messageEmbed = latestMessage.getEmbeds().get(0);
                     Field mainField = null;
         
