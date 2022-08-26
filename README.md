@@ -4,7 +4,14 @@
 - It has three main gamemodes: PvE, PvP and WvW. 
 - This bot tries to help the users of my Discord Server by providing useful PvE information.
 
-# Newest update: v3.1.0
+# Newest update: v3.2.0
+- Fixed daily achievements sometimes not being sent, by utilising asynchronous functions.
+- Added buttons to `/signup` and `/signupplayer` messages. 
+- `Cancel` button cancels the action, editing the message, and removing the ActionRows.
+- `Help` button removes the ActionRows, and sends the message explaining the command to the user.
+- Formatted the dps.reports logging, now indicating the group's dps.
+
+# Update: v3.0.0
 - Separated commands into three files: `StaticSlashCommandInteraction.java`, `SlashCommandInteraction.java` & `Gw2SlashCommandInteraction.java`
 - Added new commands to help with static needs:
 - `/signupsheet`, admin command that returns the data storage for all static needs
@@ -14,7 +21,7 @@
 - `/startstaticraid`, also now takes an input of minutes. After minutes have passed, everyone will be pinged. It opens the port on the server for logs to flow into. After 4 hours, if the port is still open, it closes the port. (Administrator probably forgot to close it manually)
 - `/stopstaticraid`, only stops the server.
 
-# Previous update: v2.1.0
+# Update: v2.1.0
 - Added an AUTOUPLOADER that works on the basis of Client-Server.
 - On the hosting server, there exists a possibility to have a server. A server is hosted on a certain port.
 - The server can be created by doing `/startstaticraid`, which makes the server active.
