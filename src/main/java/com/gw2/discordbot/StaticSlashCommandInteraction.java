@@ -22,8 +22,11 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 
@@ -236,6 +239,11 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
+        if(!event.getGuild().retrieveMember(user).complete().getRoles().contains(staticRole)) {
+            event.getHook().sendMessage("You cannot do that, because the user is not part of this static!").queue();
+            return;
+        }
+
         if(SignupExcelWriting.checkIfUserAlreadyPresent(user)) {
             event.getHook().sendMessage("That user is already present in the signups!").queue();
             return;
@@ -265,12 +273,17 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             List<SelectOption> listOfAvailableSlots = new ArrayList<>();
 
             hashSet.forEach(string -> {
-                listOfAvailableSlots.add(SelectOption.of(string, string));
+                listOfAvailableSlots.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));
             });
 
             SelectMenu menu = SelectMenu.create("signupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
-            event.getHook().sendMessage("`Select which class you wish to select for the player: `").addActionRow(menu).queue();
 
+            Button buttonCancel = Button.danger("cancelsignupmenu", "CANCEL")
+                .withEmoji(Emoji.fromFormatted("\uD83D\uDED1"));
+            Button buttonHelp = Button.primary("helpsignupmenu", "HELP")
+                .withEmoji(Emoji.fromFormatted("\u2753"));
+
+            event.getHook().sendMessage("`Select which class you wish for the player to play, or press CANCEL if you wish to cancel the action:`").addActionRows(ActionRow.of(menu), ActionRow.of(buttonCancel, buttonHelp)).queue();
             for(Object o : event.getJDA().getRegisteredListeners()) {
                 if(o instanceof SignupExcelWriting) {
                     event.getJDA().removeEventListener(o);
@@ -446,11 +459,17 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             List<SelectOption> listOfAvailableSlots = new ArrayList<>();
 
             hashSet.forEach(string -> {
-                listOfAvailableSlots.add(SelectOption.of(string, string));
+                listOfAvailableSlots.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));
             });
 
             SelectMenu menu = SelectMenu.create("signupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
-            event.getHook().sendMessage("`Select which class you wish to select: `").addActionRow(menu).queue();
+
+            Button buttonCancel = Button.danger("cancelsignupmenu", "CANCEL")
+                .withEmoji(Emoji.fromFormatted("\uD83D\uDED1"));
+            Button buttonHelp = Button.primary("helpsignupmenu", "HELP")
+                .withEmoji(Emoji.fromFormatted("\u2753"));
+
+            event.getHook().sendMessage("`Select which class you wish to play: `").addActionRows(ActionRow.of(menu), ActionRow.of(buttonCancel, buttonHelp)).queue();
             workbook.close();
         } catch (IOException e) {
             e.printStackTrace();

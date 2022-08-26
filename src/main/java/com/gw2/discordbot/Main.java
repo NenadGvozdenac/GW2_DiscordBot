@@ -74,7 +74,8 @@ public class Main {
             new SignupExcelWriting(),
             new SignupDeleteMenu(),
             new StaticSlashCommandInteraction(),
-            new Gw2SlashCommandInteraction()
+            new Gw2SlashCommandInteraction(),
+            new ButtonSignUpPressEvent()
         ).enableCache(CacheFlag.CLIENT_STATUS).build();
     
         Thread threadActivity = new Thread(new Runnable() {

@@ -63,9 +63,11 @@ public class SignupExcelWriting extends ListenerAdapter {
                 workbook.close();
 
                 if(this.user != null) {
-                    this.user.openPrivateChannel().queue(channel -> 
+                    if(!this.user.equals(event.getJDA().getSelfUser())) {
+                        this.user.openPrivateChannel().queue(channel -> 
                         channel.sendMessage("`You have been signed up as " + selectedItem.toUpperCase() + " by " + event.getUser().getAsTag() + " for this week's static raid!`").queue()
-                    );
+                        );
+                    }
                 }
 
                 event.getJDA().addEventListener(new SignupExcelWriting());

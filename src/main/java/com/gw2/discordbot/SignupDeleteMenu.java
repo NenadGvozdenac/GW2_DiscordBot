@@ -39,9 +39,11 @@ public class SignupDeleteMenu extends ListenerAdapter {
                 fileOutputStream.close();
                 event.deferEdit().queue(edit -> edit.editMessageById(event.getMessageId(), "Successfully deleted user with ID `" + key + "`!").setActionRows().queue());
 
-                event.getJDA().retrieveUserById(key).complete().openPrivateChannel().queue(channel -> 
-                    channel.sendMessage("`Your signup has been deleted by an administrator " + event.getUser().getAsTag() + "!`").queue()
-                );
+                if(!event.getUser().equals(event.getJDA().getSelfUser())) {
+                    event.getJDA().retrieveUserById(key).complete().openPrivateChannel().queue(channel -> 
+                        channel.sendMessage("`Your signup has been deleted by an administrator " + event.getUser().getAsTag() + "!`").queue()
+                    );
+                }
 
                 workbook.close();
             } catch(IOException e) {
