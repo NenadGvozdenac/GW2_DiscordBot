@@ -534,7 +534,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                     HttpServerHosting.stopServer();
                     this.cancel();
                 }
-            }, 4 * 60 * 1000, 1);
+            }, 4 * 60 * 60 * 1000, 1);
 
         } else {
             event.getHook().sendMessage("Server is already activated there, but I pinged raid static in <#" + Constants.staticAnnouncementChannelID + ">, and opened the sheet for editing.").queue();
