@@ -86,7 +86,7 @@ public class Main {
                     "Use / for commands",
                     "/help",
                     "by NenadG",
-                    "v3.1.0",
+                    "v3.2.0",
                     "new PAID hosting!"
             };
             

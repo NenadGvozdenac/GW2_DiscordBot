@@ -31,8 +31,8 @@ public class DailyAchievements {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-
-                Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).getIterableHistory().takeAsync(1).thenAcceptAsync(listOfMessages -> {
+                
+                    Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).getIterableHistory().takeAsync(1).thenAcceptAsync(listOfMessages -> {
                     Message latestMessage = listOfMessages.get(0);
 
                     MessageEmbed messageEmbed = latestMessage.getEmbeds().get(0);
@@ -44,7 +44,7 @@ public class DailyAchievements {
                             break;
                         }
                     }
-        
+
                     List<String> listOfAchievements = Arrays.asList((mainField.getValue().split("\n")));
                     List<String> trimmedListOFAchievements = new ArrayList<>();
         

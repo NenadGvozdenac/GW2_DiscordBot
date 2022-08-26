@@ -43,7 +43,7 @@ public class SignupExcelWriting extends ListenerAdapter {
                 Row firstRow = sheet.getRow(0);
 
                 for(int i = 1; i < 11; i++) {
-                    if(secondRow.getCell(i).getStringCellValue().equals(selectedItem)) {
+                    if(secondRow.getCell(i).getStringCellValue().equals(selectedItem) && firstRow.getCell(i).getStringCellValue().equals("EMPTY")) {
                         firstRow.getCell(i).setCellValue(this.user == null ? event.getUser().getId() : user.getId());
                         break;
                     }
@@ -53,10 +53,20 @@ public class SignupExcelWriting extends ListenerAdapter {
                 workbook.write(fileOutputStream);
 
                 fileOutputStream.close();
-                event.deferEdit().queue(edit -> edit.editMessageById(event.getMessageId(), "`You chose " + selectedItem + "!`").setActionRows().queue());
+                event.deferEdit().queue(edit -> 
+                    edit.editMessageById(
+                        event.getMessageId(), "`You chose " + selectedItem + ((this.user == null) ? "!`" : " for " + this.user.getAsTag() + "!`")
+                    ).setActionRows().queue()
+                );
 
                 event.getJDA().removeEventListener(this);
                 workbook.close();
+
+                if(this.user != null) {
+                    this.user.openPrivateChannel().queue(channel -> 
+                        channel.sendMessage("`You have been signed up as " + selectedItem.toUpperCase() + " by " + event.getUser().getAsTag() + " for this week's static raid!`").queue()
+                    );
+                }
 
                 event.getJDA().addEventListener(new SignupExcelWriting());
             } catch(IOException e) {

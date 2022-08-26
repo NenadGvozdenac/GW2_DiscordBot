@@ -19,7 +19,6 @@ public class SignupDeleteMenu extends ListenerAdapter {
     public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
 
         if(event.getSelectMenu().getId().equals("signupdeletemenu")) {
-
             try(FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
                 XSSFWorkbook workbook = new XSSFWorkbook(file);
                 XSSFSheet sheet = workbook.getSheetAt(0);
@@ -39,6 +38,10 @@ public class SignupDeleteMenu extends ListenerAdapter {
 
                 fileOutputStream.close();
                 event.deferEdit().queue(edit -> edit.editMessageById(event.getMessageId(), "Successfully deleted user with ID `" + key + "`!").setActionRows().queue());
+
+                event.getJDA().retrieveUserById(key).complete().openPrivateChannel().queue(channel -> 
+                    channel.sendMessage("`Your signup has been deleted by an administrator " + event.getUser().getAsTag() + "!`").queue()
+                );
 
                 workbook.close();
             } catch(IOException e) {

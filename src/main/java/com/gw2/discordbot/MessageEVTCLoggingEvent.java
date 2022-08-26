@@ -142,11 +142,11 @@ public class MessageEVTCLoggingEvent extends ListenerAdapter {
 
                             WebhookClientBuilder clientBuilder = null;
 
-                            if(event.getChannel().getId().equals(Constants.staticLogUploadsChannelID)) {
+                            if(event.getChannel().getId().equals(Constants.staticChatChannelID)) {
                                 Boolean needToCreateWebhook = true;
                                 Webhook webhook = null;
             
-                                List<Webhook> availableWebhooks = Main.jda.getTextChannelById(Constants.staticLogUploadsChannelID).retrieveWebhooks().complete();
+                                List<Webhook> availableWebhooks = Main.jda.getTextChannelById(Constants.staticChatChannelID).retrieveWebhooks().complete();
             
                                 for(Webhook webhookName : availableWebhooks) {
                                     if(webhookName.getName().equals("Guild Wars 2 Logs")) {
@@ -157,12 +157,12 @@ public class MessageEVTCLoggingEvent extends ListenerAdapter {
                                 }
 
                                 if(needToCreateWebhook) {
-                                    webhook = Main.jda.getTextChannelById(Constants.staticLogUploadsChannelID).createWebhook("Guild Wars 2 Logs").complete();
+                                    webhook = Main.jda.getTextChannelById(Constants.staticChatChannelID).createWebhook("Guild Wars 2 Logs").complete();
                                 }
             
                                 event.getMessage().delete().queue();
 
-                                messageBuilder.setContent("New log! <@&1007918310190501948>");
+                                messageBuilder.setContent("New log! " + event.getAuthor().getAsMention());
                                 clientBuilder = WebhookClientBuilder.fromJDA(webhook);
                             } else {
                                 Boolean needToCreateWebhook = true;
