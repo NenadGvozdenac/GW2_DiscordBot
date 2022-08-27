@@ -502,6 +502,11 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             EmbedBuilder eb = new EmbedBuilder();
             List<Pair<String, String>> listOfPeopleSignedUp = SignupExcelWriting.getCurrentSignups();
 
+            if(listOfPeopleSignedUp.isEmpty()) {
+                event.getHook().sendMessage("Nobody signed up, but I opened the port to receive raid logs.").queue();
+                return;
+            }
+
             String string = "```";
 
             for(Pair<String, String> pair : listOfPeopleSignedUp) {

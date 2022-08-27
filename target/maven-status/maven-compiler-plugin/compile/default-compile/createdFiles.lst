@@ -41,7 +41,6 @@ com\gw2\discordbot\Gw2SlashCommandInteraction$5.class
 com\gw2\discordbot\HttpServerHosting$FileHandler.class
 com\gw2\discordbot\Token$1.class
 com\gw2\discordbot\Gw2SlashCommandInteraction$4.class
-com\gw2\discordbot\MessageEVTCLoggingEvent$1.class
 com\gw2\discordbot\Gw2Dailies$1.class
 com\gw2\discordbot\RssReaderClass.class
 com\gw2\discordbot\JoinEvent.class
