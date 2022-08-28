@@ -1,7 +1,6 @@
 package com.gw2.discordbot;
 
 import java.awt.Color;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -12,7 +11,6 @@ import com.google.gson.JsonParser;
 import com.mashape.unirest.http.HttpResponse;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -149,7 +147,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         eb.setTitle("API STATUS");
         eb.setDescription("Returns the current API availability.");
         eb.setThumbnail(Constants.gw2LogoNoBackground);
-        eb.setFooter("Usable in DMs also!", Constants.gw2LogoNoBackground);
+        eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName() + "!", Constants.gw2LogoNoBackground);
 
         event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue(message -> {
             Boolean everythingOK = true;
@@ -187,6 +185,8 @@ public class SlashCommandInteraction extends ListenerAdapter {
 		
 		Integer numberOfMessages = event.getOption("number").getAsInt();
 
+        System.out.println(numberOfMessages);
+
         if(numberOfMessages > 100) {
             event.getHook().sendMessage("`Unfortunately. Max messages purged -- at once --  can be 100.`").queue();
             return;
@@ -198,9 +198,9 @@ public class SlashCommandInteraction extends ListenerAdapter {
 			String message = channel.getLatestMessageId();
 			channel.deleteMessageById(message).queue();
 		} else {
-			List<Message> messages = channel.getHistory().retrievePast(numberOfMessages).complete();
-			channel.deleteMessages(messages).queue();
+			channel.getIterableHistory().queue(history -> channel.deleteMessages(history).queue());
 		}
+
 
         event.getHook().sendMessage("Successfully purged " + numberOfMessages + " messages!").queue();
     }
@@ -234,7 +234,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         eb.setColor(Color.pink);
         eb.setTitle(event.getUser().getAsTag());
         eb.setThumbnail(event.getUser().getEffectiveAvatarUrl());
-        eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName(), Constants.gw2LogoNoBackground);
+        eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName() + "!", Constants.gw2LogoNoBackground);
 
         eb.addField("USER", event.getUser().getAsTag(), true);
         eb.addField("DAY JOINED", 

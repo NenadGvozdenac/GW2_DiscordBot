@@ -147,6 +147,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle(event.getUser().getAsTag());
             eb.setDescription(stringToDisplay);
+            eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName() + "!", Constants.gw2LogoNoBackground);
 
             event.getHook().sendMessageEmbeds(eb.build()).queue();
 
@@ -518,6 +519,8 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
 
             eb.setDescription(string);
             eb.setColor(Color.CYAN);
+            eb.setFooter("/sqjoin NenadG   OR   /sqjoin NenadG.4682", Constants.gw2LogoNoBackground);
+            eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName() + "!", Constants.gw2LogoNoBackground);
 
             event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID)
                 .sendMessage("<@&1007918310190501948>, Static weekly clear is starting in " + minutesToWait + " minutes. Please get ready in time.")

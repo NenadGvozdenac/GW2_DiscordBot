@@ -19,7 +19,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -32,12 +31,16 @@ public class StaticApplyEvents extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
 
         switch(event.getName()) {
-            case "staticapply":
-                STATIC_APPLY_EVENT(event);
+            case "staticaddtryout":
+                STATIC_ADD_TRYOUT_EVENT(event);
             break;
 
             case "staticaddplayer":
                 STATIC_ADD_PLAYER_EVENT(event);
+            break;
+
+            case "staticrejecttryout":
+                STATIC_REJECT_TRYOUT(event);
             break;
 
             case "staticremoveplayer":
@@ -48,6 +51,27 @@ public class StaticApplyEvents extends ListenerAdapter {
                 STATIC_GET_ALL_PLAYERS_EVENT(event);
             break;
         }
+    }
+
+    private void STATIC_REJECT_TRYOUT(@NotNull SlashCommandInteractionEvent event) {
+
+        event.deferReply(true).queue();
+
+        User user = event.getOption("user").getAsUser();
+
+        Role staticApplicantRole = event.getGuild().getRoleById("1013185863116660838");
+
+        if(event.getGuild().retrieveMember(user).complete().getRoles().contains(staticApplicantRole)) {
+            event.getHook().sendMessage("Rejected the user " + user.getAsTag() + " for this static!").queue(message -> 
+                {
+                    event.getGuild().retrieveMember(user).queue(member -> event.getGuild().removeRoleFromMember(member, staticApplicantRole).queue());
+                    user.openPrivateChannel().queue(channel -> channel.sendMessage("```You have been denied your application as a static member, unfortunately. \nYou can apply again if you wish to do so.```").queue());
+                }
+            );
+        } else {
+            event.getHook().sendMessage("That user does not contain the applicant role, therefore is not an applicant for this static.").queue();
+        }
+
     }
 
     private void STATIC_GET_ALL_PLAYERS_EVENT(@NotNull SlashCommandInteractionEvent event) {
@@ -88,7 +112,7 @@ public class StaticApplyEvents extends ListenerAdapter {
     }
 
     private void STATIC_REMOVE_PLAYER_EVENT(@NotNull SlashCommandInteractionEvent event) {
-        event.deferReply().queue();
+        event.deferReply(true).queue();
 
         ArrayList<String> listOfMembersWithRolesIds = SignupExcelWriting.getAllActiveMembersIds();
         ArrayList<SelectOption> listOfSelectOptions = new ArrayList<>();
@@ -108,28 +132,9 @@ public class StaticApplyEvents extends ListenerAdapter {
     }
 
     @Override
-    public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
-        if(event.getComponentId().equals("staticapplystartmenu")) {
-            String value = event.getSelectedOptions().get(0).getValue();
-            event.deferEdit().setContent("`You decided to apply for " + value + ". An administrator will be in touch with you soon.`").setActionRows().queue(
-                message -> {
-                    event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("1013185863116660838")).queue();
-
-                    EmbedBuilder eb = new EmbedBuilder();
-                    eb.setTitle(event.getUser().getAsTag());
-                    eb.setThumbnail(event.getUser().getAvatarUrl());
-                    eb.setDescription("```User applied for the static.\nRole: " + value + "```");
-
-                    event.getGuild().getTextChannelById(Constants.staticApplicationsChannelID).sendMessageEmbeds(eb.build()).queue();
-                }
-            );
-        }
-    }
-
-    @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         switch(event.getButton().getId()) {
-            case "cancelstaticapply":
+            case "cancelstaticaddtryout":
                 event.deferEdit().setContent("`You cancelled the action.`").setActionRows().queue();
             break;
 
@@ -142,11 +147,11 @@ public class StaticApplyEvents extends ListenerAdapter {
             break;
 
             case "helpstaticadd":
-                event.deferEdit().setContent("```This is a command that lets you add players to the static. \nYou will be prompted with a menu to add the player.\nIf you wish to continue, run this commanda again.```").setActionRows().queue();
+                event.deferEdit().setContent("```This is a command that lets you add players to the static. \nYou will be prompted with a menu to add the player.\nIf you wish to continue, run this command again.```").setActionRows().queue();
             break;
 
-            case "helpstaticapply":
-                event.deferEdit().setContent("```This is a command that lets you apply for the static. \nYou will be prompted with a menu to select which position you wish to apply for.\nIf you wish to continue, run this commanda again.```").setActionRows().queue();
+            case "helpstaticaddtryout":
+                event.deferEdit().setContent("```This is a command that lets you add a tryout for the static. \nYou will be prompted with a menu to select which position you wish for the tryout to be.\nIf you wish to continue, run this command again.```").setActionRows().queue();
             break;
 
             case "helpstaticremove":
@@ -165,6 +170,11 @@ public class StaticApplyEvents extends ListenerAdapter {
             return;
         }
 
+        if(event.getUser().equals(event.getJDA().getSelfUser())) {
+            event.getHook().sendMessage("How did you message yourself?").queue();
+            return;
+        }
+
         Role staticRole = event.getGuild().getRoleById("1007918310190501948");
 
         if(!event.getMember().getRoles().contains(staticRole)) {
@@ -176,6 +186,11 @@ public class StaticApplyEvents extends ListenerAdapter {
 
         if(event.getGuild().retrieveMember(user).complete().getRoles().contains(staticRole)) {
             event.getHook().sendMessage("That user is already part of the static...").queue();
+            return;
+        }
+
+        if(user.equals(event.getJDA().getSelfUser())) {
+            event.getHook().sendMessage("Unfortunately, you cannot add a bot as a static member.").queue();
             return;
         }
 
@@ -218,7 +233,7 @@ public class StaticApplyEvents extends ListenerAdapter {
 
     }
 
-    private void STATIC_APPLY_EVENT(@NotNull SlashCommandInteractionEvent event) {
+    private void STATIC_ADD_TRYOUT_EVENT(@NotNull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         if(!event.isFromGuild()) {
@@ -226,11 +241,18 @@ public class StaticApplyEvents extends ListenerAdapter {
             return;
         }
 
+        User user = event.getOption("user").getAsUser();
+
         Role staticRole = event.getGuild().getRoleById("1007918310190501948");
         Role staticApplicantRole = event.getGuild().getRoleById("1013185863116660838");
 
-        if(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole)) {
-            event.getHook().sendMessage("You cannot do that command as of this time. Probably because you already are part of the static or applying?").queue();
+        if(!(event.getMember().getRoles().contains(staticRole) && !event.getGuild().retrieveMember(user).complete().getRoles().contains(staticApplicantRole) && !event.getGuild().retrieveMember(user).complete().getRoles().contains(staticRole))) {
+            event.getHook().sendMessage("You cannot do that command as of this time. Probably because that user already is either part of the static or applying?").queue();
+            return;
+        }
+
+        if(user.equals(event.getJDA().getSelfUser())) {
+            event.getHook().sendMessage("Unfortunately, you cannot add a bot as a static member.").queue();
             return;
         }
 
@@ -255,15 +277,17 @@ public class StaticApplyEvents extends ListenerAdapter {
                 listOfAvailableSlots.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));
             });
 
-            SelectMenu menu = SelectMenu.create("staticapplystartmenu").setPlaceholder("Select from available classes you wish to apply for.").addOptions(listOfAvailableSlots).build();
+            SelectMenu menu = SelectMenu.create("staticaddtryout").setPlaceholder("Select from available classes that are still free:").addOptions(listOfAvailableSlots).build();
 
-            Button buttonCancel = Button.danger("cancelstaticapply", "CANCEL")
+            Button buttonCancel = Button.danger("cancelstaticaddtryout", "CANCEL")
                 .withEmoji(Emoji.fromFormatted("\uD83D\uDED1"));
-            Button buttonHelp = Button.primary("helpstaticapply", "HELP")
+            Button buttonHelp = Button.primary("helpstaticaddtryout", "HELP")
                 .withEmoji(Emoji.fromFormatted("\u2753"));
 
             event.getHook().sendMessage("`Select from available classes that are still free:`").addActionRows(ActionRow.of(menu), ActionRow.of(buttonCancel, buttonHelp)).queue();
         
+            event.getJDA().addEventListener(new StaticAddTryout(user));
+
             workbook.close();
         } catch(IOException e) {
             

@@ -33,7 +33,8 @@ public class Main {
             new SlashCommandData("signupdelete", "Deletes a signup by will.", true),
             new SlashCommandData("signupsheet", "Returns the signup sheet.", true),
             new SlashCommandData("signupcheckmyloadout", "Returns your loadout for this week's static.", false),
-            new SlashCommandData("staticapply", "Command that lets you apply to the guild's static.", false),
+            new SlashCommandData("staticaddtryout", "Command that lets you add a tryout for the static.", true, new Option(OptionType.USER, "user", "User to add as a tryout", true)),
+            new SlashCommandData("staticrejecttryout", "Command that lets you reject a tryout for the static", true, new Option(OptionType.USER, "user", "User to reject for this static", true)),
             new SlashCommandData("staticaddplayer", "Command that lets you add this member to the static.", true, new Option(OptionType.USER, "user", "User you wish to add to the static.", true)),
             new SlashCommandData("staticremoveplayer", "Command that removes a player from the static.", true),
             new SlashCommandData("staticplayersget", "Returns a list of static members and they roles.", false),
@@ -89,11 +90,11 @@ public class Main {
             public int currentIndex = 0;		
             
             public String[] messages = {
-                    "GW2 Bot",
+                    "[BA]",
                     "Use / for commands",
                     "/help",
                     "by NenadG",
-                    "v3.2.0",
+                    "v3.5.0",
                     "new PAID hosting!"
             };
             

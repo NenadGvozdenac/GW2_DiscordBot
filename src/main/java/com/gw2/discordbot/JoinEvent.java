@@ -32,9 +32,18 @@ public class JoinEvent extends ListenerAdapter {
             "**\n\u2764\uFE0F \u2764\uFE0F"
         );
 
-        event.getGuild().getTextChannelById(channelWelcomeId).sendMessage(event.getMember().getAsMention()).queue(k -> k.delete().queue());
         event.getGuild().getTextChannelById(channelWelcomeId).sendMessageEmbeds(eb.build()).queue();
         event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("1010591706883838042")).queue();
+
+        event.getUser().openPrivateChannel().queue(channel -> {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+
+            embedBuilder.setFooter("Welcome to [BA] Bananas!");
+            embedBuilder.setThumbnail(event.getUser().getAvatarUrl());
+            embedBuilder.setDescription("- Welcome to the server [BA]!\n- Enjoy your stay!\n- Please take a look at <#1007916790963253320> for information.\n- If you are here for the static group, you will be given your permissions soon.\n- Once you read <#1007916790963253320>, click on the emoji on the bottom!\nFor any concerns, ask <@374913214636359681>!\n\n- Thank you for joining!");
+    
+            channel.sendMessageEmbeds(embedBuilder.build()).queue();
+        });
     }
 
 }

@@ -25,6 +25,9 @@ public class StaticMemberAddEvent extends ListenerAdapter {
 
             event.getGuild().removeRoleFromMember(user, event.getGuild().getRoleById("1013185863116660838")).queue();
             event.getGuild().addRoleToMember(user, event.getGuild().getRoleById("1007918310190501948")).queue();
+
+            user.openPrivateChannel().queue(channel -> channel.sendMessage("```You have been added as a fulltime member into the static by " + event.getUser().getAsTag() + "! Enjoy your stay.```").queue());
+
             event.getJDA().removeEventListener(this);
         }
     }
