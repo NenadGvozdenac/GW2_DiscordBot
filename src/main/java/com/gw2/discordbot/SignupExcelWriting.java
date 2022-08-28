@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -148,4 +149,102 @@ public class SignupExcelWriting extends ListenerAdapter {
         }
 
     } 
+
+    public static void addStaticMember(User user, String role) {
+        try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+            XSSFSheet sheet = workbook.getSheet("StaticMembers");
+
+            Row firstRow = sheet.getRow(0);
+            Row secondRow = sheet.getRow(1);
+
+            for(int i = 1; i < 11; i++) {
+                if(firstRow.getCell(i).getStringCellValue().equals("EMPTY") && secondRow.getCell(i).getStringCellValue().equals(role)) {
+                    firstRow.getCell(i).setCellValue(user.getId());
+                    break;
+                }
+            }
+
+            FileOutputStream fileOutputStream = new FileOutputStream(new File("static.xlsx"));
+            workbook.write(fileOutputStream);
+
+            fileOutputStream.close();
+            workbook.close();
+        } catch(IOException e) {
+            
+        }
+    }
+
+    public static void removeStaticMember(User user) {
+
+        try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+            XSSFSheet sheet = workbook.getSheet("StaticMembers");
+
+            Row firstRow = sheet.getRow(0);
+
+            for(int i = 1; i < 11; i++) {
+                if(firstRow.getCell(i).getStringCellValue().equals(user.getId())) {
+                    firstRow.getCell(i).setCellValue("EMPTY");
+                    break;
+                }
+            }
+
+            FileOutputStream fileOutputStream = new FileOutputStream(new File("static.xlsx"));
+            workbook.write(fileOutputStream);
+
+            fileOutputStream.close();
+            workbook.close();
+        } catch(IOException e) {
+            
+        }
+
+    }
+
+    public static ArrayList<String> getAllActiveMembersIds() {
+        try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+            XSSFSheet sheet = workbook.getSheet("StaticMembers");
+
+            Row firstRow = sheet.getRow(0);
+
+            ArrayList<String> listToReturn = new ArrayList<>();
+
+            for(int i = 1; i < 11; i++) {
+                if(!firstRow.getCell(i).getStringCellValue().equals("EMPTY")) {
+                    listToReturn.add(firstRow.getCell(i).getStringCellValue());
+                }
+            }
+
+            workbook.close();
+            return listToReturn;
+        } catch(IOException e) {
+            return null;
+        }
+    }
+
+    public static HashMap<String, String> getActiveStaticMembers() {
+
+        try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+            XSSFSheet sheet = workbook.getSheet("StaticMembers");
+
+            Row firstRow = sheet.getRow(0);
+            Row secondRow = sheet.getRow(1);
+
+            HashMap<String, String> listToReturn = new HashMap<>();
+
+            for(int i = 1; i < 11; i++) {
+                if(!firstRow.getCell(i).getStringCellValue().equals("EMPTY")) {
+                    listToReturn.put(firstRow.getCell(i).getStringCellValue(), secondRow.getCell(i).getStringCellValue());
+                }
+            }
+
+            workbook.close();
+            return listToReturn;
+        } catch(IOException e) {
+            
+            return null;
+        }
+    }
 }

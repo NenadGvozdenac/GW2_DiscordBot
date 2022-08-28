@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -33,47 +32,45 @@ public class DailyAchievements {
 
             @Override
             public void run() {
+                Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).getIterableHistory().queue(listOfMessages -> {
+                    Message latestMessage = listOfMessages.get(0);
+                    MessageEmbed messageEmbed = latestMessage.getEmbeds().get(0);
 
-                    try {
-                        Message latestMessage = Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).getIterableHistory().takeAsync(1).get().get(0);
-                        MessageEmbed messageEmbed = latestMessage.getEmbeds().get(0);
+                    Field mainField = null;
+    
+                    for(Field field : messageEmbed.getFields()) {
+                        if(field.getName().equals("DAILY FRACTALS")) {
+                            mainField = field;
+                            break;
+                        }
+                    }
 
-                        Field mainField = null;
+                    List<String> listOfAchievements = Arrays.asList((mainField.getValue().split("\n")));
+                    List<String> trimmedListOFAchievements = new ArrayList<>();
         
-                        for(Field field : messageEmbed.getFields()) {
-                            if(field.getName().equals("DAILY FRACTALS")) {
-                                mainField = field;
-                                break;
-                            }
-                        }
-
-                        List<String> listOfAchievements = Arrays.asList((mainField.getValue().split("\n")));
-                        List<String> trimmedListOFAchievements = new ArrayList<>();
-            
-                        for(String s : listOfAchievements) {
-                            trimmedListOFAchievements.add(s.replace("<:Fractals:1008640406373810237>", ""));
-                        }
-            
-                        HttpResponse<String> newFractals = Gw2Api.GET_REQUEST("v2", "achievements/daily");
-                        JsonElement newAchievements = JsonParser.parseString(newFractals.getBody());
-            
-                        Integer firstFractalId = newAchievements.getAsJsonObject().get("fractals").getAsJsonArray().get(newAchievements.getAsJsonObject().get("fractals").getAsJsonArray().size() - 1).getAsJsonObject().get("id").getAsInt();
-            
-                        HttpResponse<String> newFractalNameResponse = Gw2Api.GET_REQUEST("v2", "achievements/" + firstFractalId);
-                        JsonElement achievementName = JsonParser.parseString((newFractalNameResponse.getBody()));
-            
-                        String nameOfOneFractal = achievementName.getAsJsonObject().get("name").getAsString();
-            
-                        if(trimmedListOFAchievements.contains(nameOfOneFractal)) {
-                            Logging.LOG(this.getClass(), "msgID: " + latestMessage.getId() + ", " + trimmedListOFAchievements + " contains [" + nameOfOneFractal + "].");
-                            return;
-                        } else {
-                            Logging.LOG(this.getClass(), "msgID: " + latestMessage.getId() + ", " + trimmedListOFAchievements + " does NOT contain [" + nameOfOneFractal + "].");
+                    for(String s : listOfAchievements) {
+                        trimmedListOFAchievements.add(s.replace("<:Fractals:1008640406373810237>", ""));
+                    }
+        
+                    HttpResponse<String> newFractals = Gw2Api.GET_REQUEST("v2", "achievements/daily");
+                    JsonElement newAchievements = JsonParser.parseString(newFractals.getBody());
+        
+                    Integer firstFractalId = newAchievements.getAsJsonObject().get("fractals").getAsJsonArray().get(newAchievements.getAsJsonObject().get("fractals").getAsJsonArray().size() - 1).getAsJsonObject().get("id").getAsInt();
+        
+                    HttpResponse<String> newFractalNameResponse = Gw2Api.GET_REQUEST("v2", "achievements/" + firstFractalId);
+                    JsonElement achievementName = JsonParser.parseString((newFractalNameResponse.getBody()));
+        
+                    String nameOfOneFractal = achievementName.getAsJsonObject().get("name").getAsString();
+        
+                    if(trimmedListOFAchievements.contains(nameOfOneFractal)) {
+                        Logging.LOG(this.getClass(), "msgID: " + latestMessage.getId() + ", " + trimmedListOFAchievements + " contains [" + nameOfOneFractal + "].");
+                        return;
+                    } else {
+                        Logging.LOG(this.getClass(), "msgID: " + latestMessage.getId() + ", " + trimmedListOFAchievements + " does NOT contain [" + nameOfOneFractal + "].");
+                        Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).retrieveWebhooks().queue(availableWebhooks -> {
 
                             Boolean needToCreateWebhook = true;
                             Webhook webhook = null;
-
-                            List<Webhook> availableWebhooks = Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).retrieveWebhooks().complete();
 
                             for(Webhook webhookName : availableWebhooks) {
                                 if(webhookName.getName().equals("Guild Wars 2 Daily Achievements")) {
@@ -82,28 +79,26 @@ public class DailyAchievements {
                                     break;
                                 }
                             }
-
+    
                             if(needToCreateWebhook) {
                                 webhook = Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).createWebhook("Guild Wars 2 Daily Achievements").complete();
                             }
-
+    
                             WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhook);
                             WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
-
+    
                             MessageEmbed embedForSending = Gw2Dailies.getDailies();
-
+    
                             WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(embedForSending);
                             messageBuilder.setContent("<@&1010592048753160252>");
                             messageBuilder.addEmbeds(embedBuilder.build());
                             messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
-
+    
                             builder.build().send(messageBuilder.build());
-                            return;
-                        }
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }    
+                        });
+                    }
+                });                       
             }
-        }, 0 * 60 * 1000, 1 * 60 * 1000);
+        }, 0 * 60 * 1000, 60 * 60 * 1000);  // every 60 minutes
     }
 }

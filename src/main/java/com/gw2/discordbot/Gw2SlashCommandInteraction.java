@@ -379,7 +379,13 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
                         HttpResponse<String> requestCharacterTitle = Gw2Api.GET_REQUEST(accountId, "v2", "titles/" + characterJsonInformation.getAsJsonObject().get("title"));
                         JsonElement characterJsonTitle = JsonParser.parseString(requestCharacterTitle.getBody().toString());
         
-                        String characterTitle = characterJsonTitle.getAsJsonObject().get("name").getAsString();
+                        String characterTitle;
+
+                        try {
+                            characterTitle = characterJsonTitle.getAsJsonObject().get("name").getAsString();
+                        } catch (NullPointerException e) {
+                            characterTitle = "No Title";
+                        }
         
                         String characterProfession = characterJsonInformation.getAsJsonObject().get("profession").getAsString();
                         String characterProfessionIcon = Constants.specializationEmojis.get(characterProfession);

@@ -44,6 +44,7 @@ public class Constants {
     public static String logsChannelID = "1011932036711321641";
     public static String staticAnnouncementChannelID = "1007917722413322300";
     public static String staticChatChannelID = "1007917741711294504";
+    public static String staticApplicationsChannelID = "1013186195376832522";
 
     public static String signUpFormMessage = "https://cdn.discordapp.com/attachments/1007924091015143474/1012710056258703380/unknown.png";
     public static String QTP_FIRES = "https://cdn.discordapp.com/attachments/1007924091015143474/1012710546224709692/download_1.png";

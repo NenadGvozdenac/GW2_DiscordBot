@@ -92,6 +92,37 @@
     "Options": []
   },
   {
+    "CommandName": "staticapply",
+    "CommandDescription": "Command that lets you apply to the guild's static.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "staticaddplayer",
+    "CommandDescription": "Command that lets you add this member to the static. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "USER",
+        "OptionName": "user",
+        "OptionDescription": "User you wish to add to the static.",
+        "MandatoryOption": true
+      }
+    ]
+  },
+  {
+    "CommandName": "staticremoveplayer",
+    "CommandDescription": "Command that removes a player from the static. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
+    "CommandName": "staticplayersget",
+    "CommandDescription": "Returns a list of static members and they roles.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
     "CommandName": "announce",
     "CommandDescription": "Announces a message to the discord server. `(ADMIN)`",
     "AdminOnly": true,

@@ -4,6 +4,11 @@
 - It has three main gamemodes: PvE, PvP and WvW. 
 - This bot tries to help the users of my Discord Server by providing useful PvE information.
 
+# Newest update: v3.3.0
+- Added new static commands and linked them to discord members.
+- Now, there is another sheet that just has members and their original roles.
+- Static members are there by default when they join, and if for some reason we remove them, there is a command for that.
+
 # Newest update: v3.2.0
 - Fixed daily achievements sometimes not being sent, by utilising asynchronous functions.
 - Added buttons to `/signup` and `/signupplayer` messages. 

@@ -1,7 +1,9 @@
+C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\StaticApplyEvents.java
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\UserApi.java
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Constants.java
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\DpsReportApi.java
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\SlashCommandData.java
+C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\StaticMemberRemoveEvent.java
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\HttpServerHosting.java
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\HelpButtonEventListener.java
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Logging.java
@@ -21,6 +23,7 @@ C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\An
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\ModalContactDeveloper.java
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\ButtonSignUpPressEvent.java
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\StaticSlashCommandInteraction.java
+C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\StaticMemberAddEvent.java
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Gw2SlashCommandInteraction.java
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Main.java
 C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\JoinEvent.java

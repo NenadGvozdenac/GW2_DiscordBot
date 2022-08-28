@@ -33,6 +33,10 @@ public class Main {
             new SlashCommandData("signupdelete", "Deletes a signup by will.", true),
             new SlashCommandData("signupsheet", "Returns the signup sheet.", true),
             new SlashCommandData("signupcheckmyloadout", "Returns your loadout for this week's static.", false),
+            new SlashCommandData("staticapply", "Command that lets you apply to the guild's static.", false),
+            new SlashCommandData("staticaddplayer", "Command that lets you add this member to the static.", true, new Option(OptionType.USER, "user", "User you wish to add to the static.", true)),
+            new SlashCommandData("staticremoveplayer", "Command that removes a player from the static.", true),
+            new SlashCommandData("staticplayersget", "Returns a list of static members and they roles.", false),
             new SlashCommandData("announce", "Announces a message to the discord server.", true),
             new SlashCommandData("apistatus", "Returns the status(es) of used API(s).", false),
             new SlashCommandData("startstaticraid", "Starts the static raid time.", true, new Option(OptionType.INTEGER, "minutes_to_wait", "How many minutes before I ping everyone for the start?", true)),
@@ -75,7 +79,9 @@ public class Main {
             new SignupDeleteMenu(),
             new StaticSlashCommandInteraction(),
             new Gw2SlashCommandInteraction(),
-            new ButtonSignUpPressEvent()
+            new ButtonSignUpPressEvent(),
+            new StaticApplyEvents(),
+            new StaticMemberRemoveEvent()
         ).enableCache(CacheFlag.CLIENT_STATUS).build();
     
         Thread threadActivity = new Thread(new Runnable() {
