@@ -30,6 +30,13 @@ public class StaticApplyEvents extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
 
+        if(!event.isFromGuild()) {
+            if(!event.isAcknowledged()) {
+                event.deferReply(true).queue(message -> message.sendMessage("Command isn't usable in DMs...").queue());
+                return;
+            } else return;
+        }
+
         switch(event.getName()) {
             case "staticaddtryout":
                 STATIC_ADD_TRYOUT_EVENT(event);
@@ -37,6 +44,10 @@ public class StaticApplyEvents extends ListenerAdapter {
 
             case "staticaddplayer":
                 STATIC_ADD_PLAYER_EVENT(event);
+            break;
+
+            case "staticaddbackup":
+                STATIC_ADD_BACKUP(event);
             break;
 
             case "staticrejecttryout":
@@ -51,6 +62,27 @@ public class StaticApplyEvents extends ListenerAdapter {
                 STATIC_GET_ALL_PLAYERS_EVENT(event);
             break;
         }
+    }
+
+    private void STATIC_ADD_BACKUP(@NotNull SlashCommandInteractionEvent event) {
+        event.deferReply(true).queue();
+
+        User user = event.getOption("user").getAsUser();
+
+        event.getGuild().addRoleToMember(event.getGuild().retrieveMember(user).complete(), event.getGuild().getRoleById(Constants.staticBackupRoleID)).queue(
+            message ->  {
+                event.getHook().sendMessage("`You gave that person a static backup role!`").queue();
+
+                EmbedBuilder eb = new EmbedBuilder();
+                eb.setFooter("Application made possible by " + event.getJDA().getSelfUser().getName() + "!");
+                eb.setTitle(user.getAsTag());
+                eb.setDescription("```" + user.getAsTag() + " got the backup role!```");
+    
+                event.getGuild().getTextChannelById(Constants.staticApplicationsChannelID).sendMessageEmbeds(eb.build()).queue();
+
+                user.openPrivateChannel().queue(channel -> channel.sendMessage("`You have been given a static backup role!`").queue());
+            }
+        );
     }
 
     private void STATIC_REJECT_TRYOUT(@NotNull SlashCommandInteractionEvent event) {
@@ -175,7 +207,7 @@ public class StaticApplyEvents extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
 
         if(!event.getMember().getRoles().contains(staticRole)) {
             event.getHook().sendMessage("You cannot do that command as of this time.").queue();
@@ -183,8 +215,10 @@ public class StaticApplyEvents extends ListenerAdapter {
         }
 
         User user = event.getOption("user").getAsUser();
+        
+        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
 
-        if(event.getGuild().retrieveMember(user).complete().getRoles().contains(staticRole)) {
+        if(event.getGuild().retrieveMember(user).complete().getRoles().contains(staticRole) || event.getGuild().retrieveMember(user).complete().getRoles().contains(staticBackupRole)) {
             event.getHook().sendMessage("That user is already part of the static...").queue();
             return;
         }
@@ -243,10 +277,15 @@ public class StaticApplyEvents extends ListenerAdapter {
 
         User user = event.getOption("user").getAsUser();
 
-        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
-        Role staticApplicantRole = event.getGuild().getRoleById("1013185863116660838");
+        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+        Role staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
 
-        if(!(event.getMember().getRoles().contains(staticRole) && !event.getGuild().retrieveMember(user).complete().getRoles().contains(staticApplicantRole) && !event.getGuild().retrieveMember(user).complete().getRoles().contains(staticRole))) {
+        if(!(event.getMember().getRoles().contains(staticRole) 
+        && !event.getGuild().retrieveMember(user).complete().getRoles().contains(staticApplicantRole) 
+        && !event.getGuild().retrieveMember(user).complete().getRoles().contains(staticRole)   
+        && !event.getGuild().retrieveMember(user).complete().getRoles().contains(staticBackupRole)
+        )) {
             event.getHook().sendMessage("You cannot do that command as of this time. Probably because that user already is either part of the static or applying?").queue();
             return;
         }
@@ -265,7 +304,7 @@ public class StaticApplyEvents extends ListenerAdapter {
 
             HashSet<String> emptyStaticSlots = new HashSet<>();
 
-            for(int i = 1; i < 11; i++) {
+            for(int i = 1; i < 12; i++) {
                 if(firstRow.getCell(i).getStringCellValue().equals("EMPTY")) {
                     emptyStaticSlots.add(secondRow.getCell(i).getStringCellValue());
                 }

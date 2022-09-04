@@ -1,5 +1,6 @@
 package com.gw2.discordbot;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -10,7 +11,11 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import club.minnced.discord.webhook.WebhookClientBuilder;
+import club.minnced.discord.webhook.send.WebhookEmbed;
+import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
+import club.minnced.discord.webhook.send.WebhookEmbed.EmbedTitle;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Webhook;
 
 public class HttpServerHosting {
@@ -50,7 +55,11 @@ public class HttpServerHosting {
                 os.write(response.getBytes());											
                 os.close();																
 
-                String message = exchange.getRequestHeaders().getFirst("bosslog");
+                String bossLogPermaLink = exchange.getRequestHeaders().getFirst("bosslog");
+                String bossLogTime = exchange.getRequestHeaders().getFirst("bosstime");
+                String bossLogSuccess = exchange.getRequestHeaders().getFirst("bosssuccess");
+                String bossLogName = exchange.getRequestHeaders().getFirst("bossname");
+                String bossIsCm = exchange.getRequestHeaders().getFirst("bosscm");
 
                 Boolean needToCreateWebhook = true;
                 Webhook webhook = null;
@@ -70,10 +79,18 @@ public class HttpServerHosting {
                 }
 
                 WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhook);
+                
+                EmbedBuilder eb = new EmbedBuilder();
+                eb.setTitle(bossLogName);
+                eb.setDescription(String.format("%s\n```TIME: %-10s\nSUCCESS: %-10s\nCM: %-10s```", bossLogPermaLink, bossLogTime, bossLogSuccess, bossIsCm));
+                eb.setColor(bossLogSuccess.equals("true") ? Color.GREEN : Color.RED);
+
                 WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
 
+                WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
+                messageBuilder.addEmbeds(embedBuilder.build());
                 messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
-                messageBuilder.setContent(message);
+
                 builder.build().send(messageBuilder.build());
             } else {
                 String response = "DIDN't manage to upload the log!";					

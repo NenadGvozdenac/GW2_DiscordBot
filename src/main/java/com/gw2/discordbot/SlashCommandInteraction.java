@@ -25,6 +25,13 @@ public class SlashCommandInteraction extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
 
+        if(!event.isFromGuild()) {
+            if(!event.isAcknowledged()) {
+                event.deferReply(true).queue(message -> message.sendMessage("Command isn't usable in DMs...").queue());
+                return;
+            } else return;
+        }
+
         switch(event.getName()) {
             case "ping":
                 PING_COMMAND(event);
@@ -130,6 +137,13 @@ public class SlashCommandInteraction extends ListenerAdapter {
 
     private void TEST_COMMAND(@NotNull SlashCommandInteractionEvent event) {
         
+        event.deferReply(true).queue();
+
+        if(HttpServerHosting.activateServer()) {
+            event.getHook().sendMessage("Activated the server port.").queue();
+        } else {
+            event.getHook().sendMessage("Couldn't activate the server port...").queue();
+        }
     }
 
     private void SHUTDOWN_EVENT(@NotNull SlashCommandInteractionEvent event) {

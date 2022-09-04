@@ -46,8 +46,12 @@ public class Constants {
     public static String staticChatChannelID = "1007917741711294504";
     public static String staticApplicationsChannelID = "1013186195376832522";
 
-    public static String signUpFormMessage = "https://cdn.discordapp.com/attachments/1007924091015143474/1012710056258703380/unknown.png";
+    public static String signUpFormMessage = "https://cdn.discordapp.com/attachments/1007924091015143474/1015298916968845375/unknown.png";
     public static String QTP_FIRES = "https://cdn.discordapp.com/attachments/1007924091015143474/1012710546224709692/download_1.png";
+
+    public static String staticRoleID = "1007918310190501948";
+    public static String staticApplicantRoleID = "1013185863116660838";
+    public static String staticBackupRoleID = "1013696001023942656";
 
     public static Map<String, String> specializationEmojis;
 

@@ -30,245 +30,219 @@ public class RssReaderClass {
     private String url;
     private List<Item> rssNewsItems;
     private List<Item> rssForumsItems;
-    private RssReader reader;
 
     public RssReaderClass(String url) {
-        reader = new RssReader();
         this.url = url;
         rssNewsItems = new ArrayList<>();
         rssForumsItems = new ArrayList<>();
     }
 
-    public void ReadNewsFromSite() {
+    public void ReadNewsFromSite() throws InterruptedException {
+
+        Main.jda.awaitReady();
+
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
+                Main.jda.getTextChannelById(Constants.newsChannelID).getIterableHistory().queue(listOfMessages -> {
 
-                try {
-                    Main.jda.awaitReady();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                    Message latestMessage = listOfMessages.get(0);
+                    MessageEmbed messageEmbed = latestMessage.getEmbeds().get(0);
 
-                Boolean isNewsAlreadySent = getIsNewsAlreadySent(Constants.newsChannelID);
-
-                if(!isNewsAlreadySent) {
-                    Item newItem = null;
-
-                    try (Stream<Item> rssFeed = reader.read(url)) {
-                        ArrayList<Item> listOfItems = new ArrayList<>();
-                        rssFeed.forEach(item -> listOfItems.add(item));
-                        newItem = listOfItems.get(0);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    String updateLink = newItem.getLink().get();
-                    String description = "```" + newItem.getDescription().get().split("<")[0] + "```";
-                    String time = newItem.getPubDate().get();
-
-                    EmbedBuilder eb = new EmbedBuilder();
-                    eb.setColor(Color.pink);
-                            
-                    eb.setTitle(newItem.getTitle().get());                        
-                    eb.setDescription("`News & Announcements`: new announcement!");
-                    eb.setThumbnail(Constants.gw2LogoNoBackground);
-
-                    eb.addField("LINK", updateLink, false);
-                    eb.addField("DESCRIPTION", description, false);
-                            
-                    SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
-
-                    Date d = null;
-                    try {
-                        d = sdf.parse(time);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                            
-                    String formattedTime = "<t:" + d.getTime() / 1000 + ":f>";
-
-                    eb.addField("PUBLISHED", formattedTime, false);
-
-                    Boolean needToCreateWebhook = true;
-                    Webhook webhook = null;
-                    List<Webhook> availableWebhooks = Main.jda.getTextChannelById(Constants.newsChannelID).retrieveWebhooks().complete();
-
-                    for(Webhook webhookName : availableWebhooks) {
-                        if(webhookName.getName().equals("Guild Wars 2 News")) {
-                            needToCreateWebhook = false;
-                            webhook = webhookName;
+                    Field mainField = null;
+    
+                    for(Field field : messageEmbed.getFields()) {
+                        if(field.getName().equals("LINK")) {
+                            mainField = field;
                             break;
                         }
                     }
 
-                    if(needToCreateWebhook) {
-                        webhook = Main.jda.getTextChannelById(Constants.newsChannelID).createWebhook("Guild Wars 2 News").complete();
-                    }
-
-                    WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhook);
-                    
-                    WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
-                    messageBuilder.setContent("<@&1010591966502862848>");
-                    messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
-
-                    WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
-                    messageBuilder.addEmbeds(embedBuilder.build());
-
-                    builder.build().send(messageBuilder.build());
-                } 
-            }
-        }, 0 * 60 * 1000, 2 * 60 * 1000); // every 15 minutes check for new update
-    }
-
-    public void ReadNewsFromForums() {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-
-                try {
-                    Main.jda.awaitReady();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                Boolean isForumsAlreadySent = getIsForumsAlreadySent(Constants.patchNotesChannelID);
-
-                if(!isForumsAlreadySent) {
-
-                    Item newItem = null;
-
+                    RssReader reader = new RssReader();
+                    rssNewsItems = new ArrayList<>();
+            
                     try (Stream<Item> rssFeed = reader.read(url)) {
-                        ArrayList<Item> listOfItems = new ArrayList<>();
-                        rssFeed.forEach(item -> listOfItems.add(item));
-                        newItem = listOfItems.get(0);
+                        rssFeed.forEach(item -> rssNewsItems.add(item));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+            
+                    Item newestItem = rssNewsItems.get(0);
 
-                    String updateLink = newItem.getLink().get();
-                    String time = newItem.getPubDate().get();
+                    if(!newestItem.getLink().get().equals(mainField.getValue())) {
+                        // SEND NEW MESSAGE
 
-                    EmbedBuilder eb = new EmbedBuilder();
-                    eb.setColor(Color.pink);
-                    
-                    eb.setTitle(newItem.getTitle().get());
-                    eb.setDescription("`Patch Notes`: new announcement!");
-                    eb.setThumbnail(Constants.gw2LogoNoBackground);
+                        Item newItem = null;
 
-                    eb.addField("LINK", updateLink, false);
-
-                    SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
-
-                    Date d = null;
-                    try {
-                        d = sdf.parse(time);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                        try (Stream<Item> rssFeed = reader.read(url)) {
+                            ArrayList<Item> listOfItems = new ArrayList<>();
+                            rssFeed.forEach(item -> listOfItems.add(item));
+                            newItem = listOfItems.get(0);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+    
+                        String updateLink = newItem.getLink().get();
+                        String description = "```" + newItem.getDescription().get().split("<")[0] + "```";
+                        String time = newItem.getPubDate().get();
+    
+                        EmbedBuilder eb = new EmbedBuilder();
+                        eb.setColor(Color.pink);
+                                
+                        eb.setTitle(newItem.getTitle().get());                        
+                        eb.setDescription("`News & Announcements`: new announcement!");
+                        eb.setThumbnail(Constants.gw2LogoNoBackground);
+    
+                        eb.addField("LINK", updateLink, false);
+                        eb.addField("DESCRIPTION", description, false);
+                                
+                        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
+    
+                        Date d = null;
+                        try {
+                            d = sdf.parse(time);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                                
+                        String formattedTime = "<t:" + d.getTime() / 1000 + ":f>";
+    
+                        eb.addField("PUBLISHED", formattedTime, false);
+    
+                        Boolean needToCreateWebhook = true;
+                        Webhook webhook = null;
+                        List<Webhook> availableWebhooks = Main.jda.getTextChannelById(Constants.newsChannelID).retrieveWebhooks().complete();
+    
+                        for(Webhook webhookName : availableWebhooks) {
+                            if(webhookName.getName().equals("Guild Wars 2 News")) {
+                                needToCreateWebhook = false;
+                                webhook = webhookName;
+                                break;
+                            }
+                        }
+    
+                        if(needToCreateWebhook) {
+                            webhook = Main.jda.getTextChannelById(Constants.newsChannelID).createWebhook("Guild Wars 2 News").complete();
+                        }
+    
+                        WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhook);
+                        
+                        WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
+                        messageBuilder.setContent("<@&1010591966502862848>");
+                        messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
+    
+                        WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
+                        messageBuilder.addEmbeds(embedBuilder.build());
+    
+                        builder.build().send(messageBuilder.build());
+                    } else {
+                        Logging.LOG(this.getClass(), "News are the same. LINK: " + newestItem.getLink().get());
                     }
-                    
-                    String formattedTime = "<t:" + d.getTime() / 1000 + ":f>";
+                });
+            }
+        }, 0 * 60 * 1000, 2 * 60 * 60 * 1000); // every 2 hours
+    }
 
-                    eb.addField("PUBLISHED", formattedTime, false);
+    public void ReadNewsFromForums() throws InterruptedException {
 
-                    Boolean needToCreateWebhook = true;
-                    Webhook webhook = null;
+        Main.jda.awaitReady();
 
-                    List<Webhook> availableWebhooks = Main.jda.getTextChannelById(Constants.patchNotesChannelID).retrieveWebhooks().complete();
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Main.jda.getTextChannelById(Constants.patchNotesChannelID).getIterableHistory().queue(listOfMessages -> {
 
-                    for(Webhook webhookName : availableWebhooks) {
-                        if(webhookName.getName().equals("Guild Wars 2 Patch Notes")) {
-                            needToCreateWebhook = false;
-                            webhook = webhookName;
+                    Message latestMessage = listOfMessages.get(0);
+                    MessageEmbed messageEmbed = latestMessage.getEmbeds().get(0);
+
+                    Field mainField = null;
+    
+                    for(Field field : messageEmbed.getFields()) {
+                        if(field.getName().equals("LINK")) {
+                            mainField = field;
                             break;
                         }
                     }
 
-                    if(needToCreateWebhook) {
-                        webhook = Main.jda.getTextChannelById(Constants.patchNotesChannelID).createWebhook("Guild Wars 2 Patch Notes").complete();
+                    RssReader reader = new RssReader();
+                    rssForumsItems = new ArrayList<>();
+            
+                    try (Stream<Item> rssFeed = reader.read(url)) {
+                        rssFeed.forEach(item -> rssForumsItems.add(item));
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
 
-                    WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhook);
-                    WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
+                    Item newestItem = rssForumsItems.get(0);
 
-                    WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
-                    messageBuilder.addEmbeds(embedBuilder.build());
-                    messageBuilder.setContent("<@&1010592026846314496>");
-                    messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
+                    if(!newestItem.getLink().get().equals(mainField.getValue())) {
 
-                    builder.build().send(messageBuilder.build());
-                } 
+                        Item newItem = null;
+
+                        try (Stream<Item> rssFeed = reader.read(url)) {
+                            ArrayList<Item> listOfItems = new ArrayList<>();
+                            rssFeed.forEach(item -> listOfItems.add(item));
+                            newItem = listOfItems.get(0);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+    
+                        String updateLink = newItem.getLink().get();
+                        String time = newItem.getPubDate().get();
+    
+                        EmbedBuilder eb = new EmbedBuilder();
+                        eb.setColor(Color.pink);
+                        
+                        eb.setTitle(newItem.getTitle().get());
+                        eb.setDescription("`Patch Notes`: new announcement!");
+                        eb.setThumbnail(Constants.gw2LogoNoBackground);
+    
+                        eb.addField("LINK", updateLink, false);
+    
+                        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
+    
+                        Date d = null;
+                        try {
+                            d = sdf.parse(time);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        
+                        String formattedTime = "<t:" + d.getTime() / 1000 + ":f>";
+    
+                        eb.addField("PUBLISHED", formattedTime, false);
+    
+                        Boolean needToCreateWebhook = true;
+                        Webhook webhook = null;
+    
+                        List<Webhook> availableWebhooks = Main.jda.getTextChannelById(Constants.patchNotesChannelID).retrieveWebhooks().complete();
+    
+                        for(Webhook webhookName : availableWebhooks) {
+                            if(webhookName.getName().equals("Guild Wars 2 Patch Notes")) {
+                                needToCreateWebhook = false;
+                                webhook = webhookName;
+                                break;
+                            }
+                        }
+    
+                        if(needToCreateWebhook) {
+                            webhook = Main.jda.getTextChannelById(Constants.patchNotesChannelID).createWebhook("Guild Wars 2 Patch Notes").complete();
+                        }
+    
+                        WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhook);
+                        WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
+    
+                        WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
+                        messageBuilder.addEmbeds(embedBuilder.build());
+                        messageBuilder.setContent("<@&1010592026846314496>");
+                        messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
+    
+                        builder.build().send(messageBuilder.build());
+                    } else {
+                        Logging.LOG(this.getClass(), "Forums are the same. LINK: " + newestItem.getLink().get());
+                    }
+                });
             }
-        }, 0 * 60 * 1000, 2 * 60 * 1000); // every 2 minutes check for new update
-    }
-
-    protected Boolean getIsNewsAlreadySent(String newsChannelID) {
-        RssReader reader = new RssReader();
-        rssNewsItems = new ArrayList<>();
-
-        try (Stream<Item> rssFeed = reader.read(url)) {
-            rssFeed.forEach(item -> rssNewsItems.add(item));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Item newestItem = rssNewsItems.get(0);
-
-        Message latestMessage = Main.jda.getTextChannelById(newsChannelID).getHistory().retrievePast(1).complete().get(0);
-        MessageEmbed messageEmbed = latestMessage.getEmbeds().get(0);
-
-        Field mainField = null;
-
-        if(messageEmbed == null) {
-            return false;
-        }
-
-        for(Field field : messageEmbed.getFields()) {
-            if(field.getName().equals("LINK")) {
-                mainField = field;
-                break;
-            }
-        }
-
-        if(newestItem.getLink().get().equals(mainField.getValue())) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    protected Boolean getIsForumsAlreadySent(String patchNotesChannelID) {
-        RssReader reader = new RssReader();
-        rssForumsItems = new ArrayList<>();
-
-        try (Stream<Item> rssFeed = reader.read(url)) {
-            rssFeed.forEach(item -> rssForumsItems.add(item));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Item newestItem = rssForumsItems.get(0);
-
-        Message latestMessage = Main.jda.getTextChannelById(patchNotesChannelID).getHistory().retrievePast(1).complete().get(0);
-        MessageEmbed messageEmbed = latestMessage.getEmbeds().get(0);
-
-        Field mainField = null;
-
-        if(messageEmbed == null) {
-            return false;
-        }
-
-        for(Field field : messageEmbed.getFields()) {
-            if(field.getName().equals("LINK")) {
-                mainField = field;
-                break;
-            }
-        }
-
-        if(newestItem.getLink().get().equals(mainField.getValue())) {
-            return true;
-        } else {
-            return false;
-        }
+        }, 0 * 60 * 1000, 2 * 60 * 60 * 1000); 
     }
 }

@@ -29,7 +29,6 @@ public class DailyAchievements {
         }
 
         new Timer().schedule(new TimerTask() {
-
             @Override
             public void run() {
                 Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).getIterableHistory().queue(listOfMessages -> {

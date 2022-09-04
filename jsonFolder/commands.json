@@ -131,6 +131,19 @@
     ]
   },
   {
+    "CommandName": "staticaddbackup",
+    "CommandDescription": "Command that lets you add this member as a backup to the static. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "USER",
+        "OptionName": "user",
+        "OptionDescription": "User you wish to add to the static.",
+        "MandatoryOption": true
+      }
+    ]
+  },
+  {
     "CommandName": "staticremoveplayer",
     "CommandDescription": "Command that removes a player from the static. `(ADMIN)`",
     "AdminOnly": true,

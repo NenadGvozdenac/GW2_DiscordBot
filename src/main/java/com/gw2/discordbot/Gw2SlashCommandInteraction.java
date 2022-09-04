@@ -37,9 +37,15 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
     
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        
+
+        if(!event.isFromGuild()) {
+            if(!event.isAcknowledged()) {
+                event.deferReply(true).queue(message -> message.sendMessage("Command isn't usable in DMs...").queue());
+                return;
+            } else return;
+        }
+
         switch(event.getName()) {
-        
             case "add_api":
                 ADD_API_COMMAND(event);
             break;

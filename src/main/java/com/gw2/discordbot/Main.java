@@ -36,6 +36,7 @@ public class Main {
             new SlashCommandData("staticaddtryout", "Command that lets you add a tryout for the static.", true, new Option(OptionType.USER, "user", "User to add as a tryout", true)),
             new SlashCommandData("staticrejecttryout", "Command that lets you reject a tryout for the static", true, new Option(OptionType.USER, "user", "User to reject for this static", true)),
             new SlashCommandData("staticaddplayer", "Command that lets you add this member to the static.", true, new Option(OptionType.USER, "user", "User you wish to add to the static.", true)),
+            new SlashCommandData("staticaddbackup", "Command that lets you add this member as a backup to the static.", true, new Option(OptionType.USER, "user", "User you wish to add to the static.", true)),
             new SlashCommandData("staticremoveplayer", "Command that removes a player from the static.", true),
             new SlashCommandData("staticplayersget", "Returns a list of static members and they roles.", false),
             new SlashCommandData("announce", "Announces a message to the discord server.", true),
@@ -53,7 +54,8 @@ public class Main {
             new SlashCommandData("ping", "Returns the ping of the bot.", false),
             new SlashCommandData("add_api",  "Adds your API key to the bot.", false, new Option(OptionType.STRING, "apikey", "The designated API key you wish to assign to your account.", true)),
             new SlashCommandData("delete_api", "Deletes your APi key from the bot, if you had already added it.", false),
-            new SlashCommandData("get_api", "Lists your API key that you added.", false)
+            new SlashCommandData("get_api", "Lists your API key that you added.", false),
+            new SlashCommandData("test", "Tests a dev command...", true)
         };
     }
   
@@ -94,7 +96,7 @@ public class Main {
                     "Use / for commands",
                     "/help",
                     "by NenadG",
-                    "v3.5.0",
+                    "v3.7.0",
                     "new PAID hosting!"
             };
             

@@ -34,7 +34,14 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
     
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-    
+
+        if(!event.isFromGuild()) {
+            if(!event.isAcknowledged()) {
+                event.deferReply(true).queue(message -> message.sendMessage("Command isn't usable in DMs...").queue());
+                return;
+            } else return;
+        }
+
         switch(event.getName()) {
             case "startstaticraid":
                 START_STATIC_RAID_EVENT(event);
@@ -83,7 +90,6 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
     }
 
     private void SIGNUPCHECKMYLOADOUT(@NotNull SlashCommandInteractionEvent event) {
-
         event.deferReply(true).queue();
 
         if(!event.isFromGuild()) {
@@ -91,10 +97,12 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+        Role staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
 
-        if(!event.getMember().getRoles().contains(staticRole)) {
-            event.getHook().sendMessage("You cannot do that command as of this time.").queue();
+        if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+            event.getHook().sendMessage("You cannot sign for the raid as of this time.").queue();
             return;
         }
 
@@ -129,7 +137,6 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
 
             for(int i = 0; i < 25; i++) {
                 Row currentOpenRow = compositionSheet.getRow(i);
-
                 pairBossRoleList.add(new Pair<String, String>(currentOpenRow.getCell(0).getStringCellValue(), currentOpenRow.getCell(columnNumber).getStringCellValue()));
             }
 
@@ -233,15 +240,21 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
 
         User user = event.getOption("user").getAsUser();
 
-        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
 
         if(!event.getMember().getRoles().contains(staticRole)) {
             event.getHook().sendMessage("You cannot do that command as of this time.").queue();
             return;
         }
 
-        if(!event.getGuild().retrieveMember(user).complete().getRoles().contains(staticRole)) {
-            event.getHook().sendMessage("You cannot do that, because the user is not part of this static!").queue();
+        Role staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
+
+        if(!(       event.getGuild().retrieveMember(user).complete().getRoles().contains(staticRole) 
+                ||  event.getGuild().retrieveMember(user).complete().getRoles().contains(staticApplicantRole) 
+                ||  event.getGuild().retrieveMember(user).complete().getRoles().contains(staticBackupRole))
+            ) {
+            event.getHook().sendMessage("That player cannot be signed up, they aren't a static member.").queue();
             return;
         }
 
@@ -341,13 +354,15 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         if(listOfPeopleSignedUp.isEmpty()) {
             event.getHook().sendMessage("Nobody signed up yet!").queue();
         } else {
-            String stringToPing = "";
+            String stringToPing = "```People signed up: \n";
 
             for(Pair<String, String> pair : listOfPeopleSignedUp) {
-                stringToPing += UserSnowflake.fromId(pair.getFirst()).getAsMention() + " - " + pair.getSecond() + "\n";
+                stringToPing += String.format("%-20s | %s", UserSnowflake.fromId(pair.getFirst()).getAsMention(), pair.getSecond());
             }
+
+            stringToPing += "```";
     
-            event.getHook().sendMessage("People signed up: \n" + stringToPing).queue();
+            event.getHook().sendMessage(stringToPing).queue();
         }
     }
 
@@ -360,10 +375,12 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+        Role staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
 
-        if(!event.getMember().getRoles().contains(staticRole)) {
-            event.getHook().sendMessage("You cannot signup for the raid as of this time.").queue();
+        if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+            event.getHook().sendMessage("You cannot get the form as of this time.").queue();
             return;
         }
 
@@ -379,10 +396,12 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+        Role staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
 
-        if(!event.getMember().getRoles().contains(staticRole)) {
-            event.getHook().sendMessage("You cannot unsignup for the raid as of this time.").queue();
+        if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+            event.getHook().sendMessage("You cannot unsign for the raid as of this time.").queue();
             return;
         }
 
@@ -424,10 +443,12 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+        Role staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
 
-        if(!event.getMember().getRoles().contains(staticRole)) {
-            event.getHook().sendMessage("You cannot unsign for the raid as of this time.").queue();
+        if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+            event.getHook().sendMessage("You cannot sign for the raid as of this time.").queue();
             return;
         }
 
@@ -519,8 +540,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
 
             eb.setDescription(string);
             eb.setColor(Color.CYAN);
-            eb.setFooter("/sqjoin NenadG   OR   /sqjoin NenadG.4682", Constants.gw2LogoNoBackground);
-            eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName() + "!", Constants.gw2LogoNoBackground);
+            eb.setFooter("/sqjoin NenadG.4682", Constants.gw2LogoNoBackground);
 
             event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID)
                 .sendMessage("<@&1007918310190501948>, Static weekly clear is starting in " + minutesToWait + " minutes. Please get ready in time.")
@@ -539,6 +559,8 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
 
             new Timer().schedule(new TimerTask() {
                 public void run() {
+                    event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID).sendMessage("<@&1007918310190501948>, Sign ups now open! Do `/signup` before next raid day. See you soon!").queue(message -> message.delete().queueAfter(48, TimeUnit.HOURS));
+                    SignupExcelWriting.clearSignups();
                     HttpServerHosting.stopServer();
                     this.cancel();
                 }
