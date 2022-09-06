@@ -77,12 +77,13 @@
         <version>1.7.36</version>
     </dependency>
 
+<!-- https://mvnrepository.com/artifact/com.konghq/unirest-java -->
     <dependency>
-      <groupId>com.mashape.unirest</groupId>
+      <groupId>com.konghq</groupId>
       <artifactId>unirest-java</artifactId>
-      <version>1.4.9</version>
+      <version>3.13.11</version>
     </dependency>
-
+    
     <dependency>
       <groupId>club.minnced</groupId>
       <artifactId>discord-webhooks</artifactId>
@@ -105,6 +106,12 @@
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
       <version>5.2.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.knowm.xchart</groupId>
+      <artifactId>xchart</artifactId>
+      <version>3.8.1</version>
     </dependency>
   </dependencies>
 

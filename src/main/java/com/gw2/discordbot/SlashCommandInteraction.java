@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.mashape.unirest.http.HttpResponse;
-
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -144,6 +144,8 @@ public class SlashCommandInteraction extends ListenerAdapter {
         } else {
             event.getHook().sendMessage("Couldn't activate the server port...").queue();
         }
+
+        Unirest.shutDown(true);
     }
 
     private void SHUTDOWN_EVENT(@NotNull SlashCommandInteractionEvent event) {

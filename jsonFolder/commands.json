@@ -271,5 +271,11 @@
     "CommandDescription": "Lists your API key that you added.",
     "AdminOnly": false,
     "Options": []
+  },
+  {
+    "CommandName": "test",
+    "CommandDescription": "Tests a dev command... `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
   }
 ]

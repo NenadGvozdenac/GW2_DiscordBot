@@ -8,11 +8,11 @@ import java.util.TimerTask;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.mashape.unirest.http.HttpResponse;
 
 import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
+import kong.unirest.HttpResponse;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;

@@ -2,9 +2,9 @@ package com.gw2.discordbot;
 
 import java.io.File;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
 
 public class DpsReportApi {
 
@@ -23,6 +23,7 @@ public class DpsReportApi {
             return Unirest.post("https://dps.report/uploadContent?json=1&generator=ei")
                 .field("file", fileTest)
                 .asString();
+
         } catch (UnirestException e) {
             return null;
         }
@@ -40,8 +41,9 @@ public class DpsReportApi {
     public static HttpResponse<String> GET_ELITE_INSIGHTS_RESPONSE(String logPermaLink) {
         try {
             return Unirest.get("https://dps.report/getJson")
-                .queryString("permalink", logPermaLink)
-                .asString();
+            .queryString("permalink", logPermaLink)
+            .asString();
+
         } catch(UnirestException e) {
             return null;
         }

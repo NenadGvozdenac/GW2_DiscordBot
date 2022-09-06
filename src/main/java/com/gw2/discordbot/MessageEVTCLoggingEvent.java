@@ -8,21 +8,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mashape.unirest.http.HttpResponse;
+import kong.unirest.HttpResponse;
 
-import club.minnced.discord.webhook.WebhookClientBuilder;
-import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
-import club.minnced.discord.webhook.send.WebhookMessageBuilder;
+import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -50,6 +46,7 @@ public class MessageEVTCLoggingEvent extends ListenerAdapter {
 
         event.getMessage().getAttachments().forEach(attachment -> {
             if(attachment.getFileExtension().equals("zevtc")) {
+
                 try (InputStream file = attachment.getProxy().download().get()) {
                     File fileTest = new File(attachment.getFileName());
 
@@ -63,36 +60,37 @@ public class MessageEVTCLoggingEvent extends ListenerAdapter {
 
                     fileTest.delete();
 
-                    JsonElement jsonResponseElement = JsonParser.parseString(response.getBody().toString());
+                    JsonObject jsonResponseElement = JsonParser.parseString(response.getBody().toString()).getAsJsonObject();
 
-                    String logPermaLink = jsonResponseElement.getAsJsonObject().get("permalink").getAsString();
-                    String logBossName = jsonResponseElement.getAsJsonObject().get("encounter").getAsJsonObject().get("boss").getAsString();
-                    Boolean logBossIsCm = jsonResponseElement.getAsJsonObject().get("encounter").getAsJsonObject().get("isCm").getAsBoolean();
-                    Boolean logIsSuccess = jsonResponseElement.getAsJsonObject().get("encounter").getAsJsonObject().get("success").getAsBoolean();
-                    Integer logCollectedDps = jsonResponseElement.getAsJsonObject().get("encounter").getAsJsonObject().get("compDps").getAsInt();
+                    String logPermaLink = jsonResponseElement.get("permalink").getAsString();
+                    String logBossName = jsonResponseElement.get("encounter").getAsJsonObject().get("boss").getAsString();
+                    boolean logBossIsCm = jsonResponseElement.get("encounter").getAsJsonObject().get("isCm").getAsBoolean();
+                    boolean logIsSuccess = jsonResponseElement.get("encounter").getAsJsonObject().get("success").getAsBoolean();
+                    Integer logCollectedDps = jsonResponseElement.get("encounter").getAsJsonObject().get("compDps").getAsInt();
 
                     HttpResponse<String> eliteInsightsResponse = DpsReportApi.GET_ELITE_INSIGHTS_RESPONSE(logPermaLink);
-                    JsonElement jsonEliteInsightsResponse = JsonParser.parseString(eliteInsightsResponse.getBody().toString());
+                    JsonObject jsonEliteInsightsResponse = JsonParser.parseString(eliteInsightsResponse.getBody().toString()).getAsJsonObject();
                     
-                    String logTimeStart = jsonEliteInsightsResponse.getAsJsonObject().get("timeStart").getAsString();
-                    String logTimeEnd = jsonEliteInsightsResponse.getAsJsonObject().get("timeEnd").getAsString();
-                    String arcDpsVersion = jsonEliteInsightsResponse.getAsJsonObject().get("arcVersion").getAsString();
-                    String gw2Version = jsonEliteInsightsResponse.getAsJsonObject().get("gW2Build").getAsString();
-                    String recordedBy = jsonEliteInsightsResponse.getAsJsonObject().get("recordedBy").getAsString();
-                    String logTimeTaken = jsonEliteInsightsResponse.getAsJsonObject().get("duration").getAsString();
-                    String iconUrl = jsonEliteInsightsResponse.getAsJsonObject().get("fightIcon").getAsString();
+                    String logTimeStart = jsonEliteInsightsResponse.get("timeStart").getAsString();
+                    String logTimeEnd = jsonEliteInsightsResponse.get("timeEnd").getAsString();
+                    String arcDpsVersion = jsonEliteInsightsResponse.get("arcVersion").getAsString();
+                    String gw2Version = jsonEliteInsightsResponse.get("gW2Build").getAsString();
+                    String recordedBy = jsonEliteInsightsResponse.get("recordedBy").getAsString();
+                    String logTimeTaken = jsonEliteInsightsResponse.get("duration").getAsString();
+                    String iconUrl = jsonEliteInsightsResponse.get("fightIcon").getAsString();
 
-                    JsonArray logPlayers = jsonEliteInsightsResponse.getAsJsonObject().get("players").getAsJsonArray();
+                    JsonArray logPlayers = jsonEliteInsightsResponse.get("players").getAsJsonArray();
 
                     ArrayList<String> playerProfession = new ArrayList<>();
                     ArrayList<String> playerCharacterNames = new ArrayList<>();
                     ArrayList<Integer> playerDps = new ArrayList<>();
 
                     logPlayers.forEach(player -> {
-                        playerProfession.add(player.getAsJsonObject().get("profession").getAsString().toLowerCase());
-                        playerCharacterNames.add(player.getAsJsonObject().get("name").getAsString());
+                        JsonObject object = player.getAsJsonObject();
+                        playerProfession.add(object.get("profession").getAsString().toLowerCase());
+                        playerCharacterNames.add(object.get("name").getAsString());
 
-                        Integer i = player.getAsJsonObject().get("dpsAll").getAsJsonArray().get(0).getAsJsonObject().get("dps").getAsInt();
+                        Integer i = object.get("dpsAll").getAsJsonArray().get(0).getAsJsonObject().get("dps").getAsInt();
                         playerDps.add(i);
                     });
 
@@ -112,75 +110,22 @@ public class MessageEVTCLoggingEvent extends ListenerAdapter {
                     eb.addField("END TIME", logTimeEnd.split(" ")[0] + "\n" + logTimeEnd.split(" ")[1], true);
                     eb.addField("ARCDPS VERSION", arcDpsVersion, true);
 
-                    String stringToSend = "```";
+                    ArrayList<Pair<String, Integer>> listOfPairs = new ArrayList<>();
 
                     for(int i = 0; i < playerCharacterNames.size(); i++) {
-                        String currentString = String.format("%-20s | %-10s | %-5s DPS\n", playerCharacterNames.get(i), playerProfession.get(i).toUpperCase(), String.valueOf(playerDps.get(i)));
-                        stringToSend += currentString;
+                        listOfPairs.add(new Pair<String, Integer>(playerCharacterNames.get(i), playerDps.get(i)));
                     }
 
-                    stringToSend += "```";
+                    file.close();
+                    File fileChart = ChartGenerator.generateChart("DPS STATS", listOfPairs);
 
-                    eb.addField("", stringToSend, false);
-
-                    WebhookEmbedBuilder embedForSending;
-                    embedForSending = WebhookEmbedBuilder.fromJDA(eb.build());
-
-                    WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
-                    messageBuilder.addEmbeds(embedForSending.build());
-                    messageBuilder.setAvatarUrl(event.getJDA().getSelfUser().getAvatarUrl());
-
-                    WebhookClientBuilder clientBuilder = null;
-
-                    if(event.getChannel().getId().equals(Constants.staticChatChannelID)) {
-                        Boolean needToCreateWebhook = true;
-                        Webhook webhook = null;
-    
-                        List<Webhook> availableWebhooks = Main.jda.getTextChannelById(Constants.staticChatChannelID).retrieveWebhooks().complete();
-    
-                        for(Webhook webhookName : availableWebhooks) {
-                            if(webhookName.getName().equals("Guild Wars 2 Logs")) {
-                                needToCreateWebhook = false;
-                                webhook = webhookName;
-                                break;
-                            }
-                        }
-
-                        if(needToCreateWebhook) {
-                            webhook = Main.jda.getTextChannelById(Constants.staticChatChannelID).createWebhook("Guild Wars 2 Logs").complete();
-                        }
-
-                        messageBuilder.setContent("New log! " + event.getAuthor().getAsMention());
-                        clientBuilder = WebhookClientBuilder.fromJDA(webhook);
-                    } else {
-                        Boolean needToCreateWebhook = true;
-                        Webhook webhook = null;
-    
-                        List<Webhook> availableWebhooks = Main.jda.getTextChannelById(Constants.generalLogUploadsChannelID).retrieveWebhooks().complete();
-    
-                        for(Webhook webhookName : availableWebhooks) {
-                            if(webhookName.getName().equals("Guild Wars 2 Logs")) {
-                                needToCreateWebhook = false;
-                                webhook = webhookName;
-                                break;
-                            }
-                        }
-    
-                        if(needToCreateWebhook) {
-                            webhook = Main.jda.getTextChannelById(Constants.generalLogUploadsChannelID).createWebhook("Guild Wars 2 Logs").complete();
-                        }
-    
-                        messageBuilder.setContent("New log! " + event.getMember().getAsMention());
-                        clientBuilder = WebhookClientBuilder.fromJDA(webhook);
-                    }
-                        
-                    clientBuilder.build().send(messageBuilder.build());
+                    event.getMessage().replyEmbeds(eb.setImage("attachment://bitmapsave.png").build()).addFile(ChartGenerator.generateChart("DPS STATS", listOfPairs)).queue();
+                    fileChart.delete();
                 } catch(InterruptedException | IOException | ExecutionException e) {
-
+                    System.out.println("Couldn't do that!");
                 }
             }
         });
-    
     }
 
 }

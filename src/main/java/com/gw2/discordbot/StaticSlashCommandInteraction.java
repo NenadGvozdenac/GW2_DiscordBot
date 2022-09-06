@@ -21,7 +21,6 @@ import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -357,7 +356,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             String stringToPing = "```People signed up: \n";
 
             for(Pair<String, String> pair : listOfPeopleSignedUp) {
-                stringToPing += String.format("%-20s | %s", UserSnowflake.fromId(pair.getFirst()).getAsMention(), pair.getSecond());
+                stringToPing += String.format("%-20s | %s\n", event.getJDA().retrieveUserById(pair.getFirst()).complete().getAsTag(), pair.getSecond());
             }
 
             stringToPing += "```";
@@ -532,7 +531,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             String string = "```";
 
             for(Pair<String, String> pair : listOfPeopleSignedUp) {
-                String currentString = String.format("%-20s %s\n", event.getJDA().retrieveUserById(pair.getFirst()).complete().getName(), pair.getSecond());
+                String currentString = String.format("%-20s %s\n", event.getJDA().retrieveUserById(pair.getFirst()).complete().getName().length() > 18 ? event.getJDA().retrieveUserById(pair.getFirst()).complete().getName().substring(0, 18) + "." : event.getJDA().retrieveUserById(pair.getFirst()).complete().getName(), pair.getSecond());
                 string += currentString;
             }
 
@@ -543,7 +542,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             eb.setFooter("/sqjoin NenadG.4682", Constants.gw2LogoNoBackground);
 
             event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID)
-                .sendMessage("<@&1007918310190501948>, Static weekly clear is starting in " + minutesToWait + " minutes. Please get ready in time.")
+                .sendMessage("<@&1007918310190501948>, <@&1013185863116660838>, **STATIC** weekly clear is starting in " + minutesToWait + " minutes. Please get ready in time.")
                 .setEmbeds(eb.build()).queue(message -> message.delete().queueAfter(3, TimeUnit.HOURS));
                 
             event.getHook().sendMessage("Activated the server port for receiving dps reports, pinged raid static in <#" + Constants.staticAnnouncementChannelID + ">, and opened the sheet for editing.\nIn 4 hours, if the port is not closed manually, it will be closed.").queue();
@@ -551,7 +550,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             new Timer().schedule(new TimerTask() {
                 public void run() {
                     event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID)
-                        .sendMessage("<@&1007918310190501948>, Static weekly clear is starting **now**!").queue(message -> message.delete().queueAfter(180 - minutesToWait, TimeUnit.MINUTES));
+                        .sendMessage("<@&1007918310190501948>, <@&1013185863116660838>, **STATIC** weekly clear is starting **now**!").queue(message -> message.delete().queueAfter(180 - minutesToWait, TimeUnit.MINUTES));
 
                     this.cancel();
                 }

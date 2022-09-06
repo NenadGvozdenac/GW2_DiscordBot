@@ -31,6 +31,36 @@ public class RssReaderClass {
     private List<Item> rssNewsItems;
     private List<Item> rssForumsItems;
 
+    private Message latestMessage;
+    private MessageEmbed messageEmbed;
+    private Field mainField;
+
+    private RssReader reader;
+    private Item newestItem;
+    private Item newItem;
+
+    private ArrayList<Item> listOfItems;
+
+    private String updateLink;
+    private String description;
+    private String time;
+
+    private EmbedBuilder eb;
+
+    private SimpleDateFormat sdf;
+    private Date d;
+
+    private String formattedTime;
+
+    private Boolean needToCreateWebhook;
+    private Webhook webhook;
+    private List<Webhook> availableWebhooks;
+
+    private WebhookClientBuilder builder;
+                        
+    private WebhookMessageBuilder messageBuilder;
+    private WebhookEmbedBuilder embedBuilder;
+
     public RssReaderClass(String url) {
         this.url = url;
         rssNewsItems = new ArrayList<>();
@@ -38,18 +68,15 @@ public class RssReaderClass {
     }
 
     public void ReadNewsFromSite() throws InterruptedException {
-
         Main.jda.awaitReady();
-
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 Main.jda.getTextChannelById(Constants.newsChannelID).getIterableHistory().queue(listOfMessages -> {
+                    latestMessage = listOfMessages.get(0);
+                    messageEmbed = latestMessage.getEmbeds().get(0);
 
-                    Message latestMessage = listOfMessages.get(0);
-                    MessageEmbed messageEmbed = latestMessage.getEmbeds().get(0);
-
-                    Field mainField = null;
+                    mainField = null;
     
                     for(Field field : messageEmbed.getFields()) {
                         if(field.getName().equals("LINK")) {
@@ -58,7 +85,7 @@ public class RssReaderClass {
                         }
                     }
 
-                    RssReader reader = new RssReader();
+                    reader = new RssReader();
                     rssNewsItems = new ArrayList<>();
             
                     try (Stream<Item> rssFeed = reader.read(url)) {
@@ -67,26 +94,26 @@ public class RssReaderClass {
                         e.printStackTrace();
                     }
             
-                    Item newestItem = rssNewsItems.get(0);
+                    newestItem = rssNewsItems.get(0);
 
                     if(!newestItem.getLink().get().equals(mainField.getValue())) {
                         // SEND NEW MESSAGE
 
-                        Item newItem = null;
+                        newItem = null;
 
                         try (Stream<Item> rssFeed = reader.read(url)) {
-                            ArrayList<Item> listOfItems = new ArrayList<>();
+                            listOfItems = new ArrayList<>();
                             rssFeed.forEach(item -> listOfItems.add(item));
                             newItem = listOfItems.get(0);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
     
-                        String updateLink = newItem.getLink().get();
-                        String description = "```" + newItem.getDescription().get().split("<")[0] + "```";
-                        String time = newItem.getPubDate().get();
+                        updateLink = newItem.getLink().get();
+                        description = "```" + newItem.getDescription().get().split("<")[0] + "```";
+                        time = newItem.getPubDate().get();
     
-                        EmbedBuilder eb = new EmbedBuilder();
+                        eb = new EmbedBuilder();
                         eb.setColor(Color.pink);
                                 
                         eb.setTitle(newItem.getTitle().get());                        
@@ -96,22 +123,22 @@ public class RssReaderClass {
                         eb.addField("LINK", updateLink, false);
                         eb.addField("DESCRIPTION", description, false);
                                 
-                        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
+                        sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
     
-                        Date d = null;
+                        d = null;
                         try {
                             d = sdf.parse(time);
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                                 
-                        String formattedTime = "<t:" + d.getTime() / 1000 + ":f>";
+                        formattedTime = "<t:" + d.getTime() / 1000 + ":f>";
     
                         eb.addField("PUBLISHED", formattedTime, false);
     
-                        Boolean needToCreateWebhook = true;
-                        Webhook webhook = null;
-                        List<Webhook> availableWebhooks = Main.jda.getTextChannelById(Constants.newsChannelID).retrieveWebhooks().complete();
+                        needToCreateWebhook = true;
+                        webhook = null;
+                        availableWebhooks = Main.jda.getTextChannelById(Constants.newsChannelID).retrieveWebhooks().complete();
     
                         for(Webhook webhookName : availableWebhooks) {
                             if(webhookName.getName().equals("Guild Wars 2 News")) {
@@ -125,13 +152,13 @@ public class RssReaderClass {
                             webhook = Main.jda.getTextChannelById(Constants.newsChannelID).createWebhook("Guild Wars 2 News").complete();
                         }
     
-                        WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhook);
+                        builder = WebhookClientBuilder.fromJDA(webhook);
                         
-                        WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
+                        messageBuilder = new WebhookMessageBuilder();
                         messageBuilder.setContent("<@&1010591966502862848>");
                         messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
     
-                        WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
+                        embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
                         messageBuilder.addEmbeds(embedBuilder.build());
     
                         builder.build().send(messageBuilder.build());
@@ -152,10 +179,10 @@ public class RssReaderClass {
             public void run() {
                 Main.jda.getTextChannelById(Constants.patchNotesChannelID).getIterableHistory().queue(listOfMessages -> {
 
-                    Message latestMessage = listOfMessages.get(0);
-                    MessageEmbed messageEmbed = latestMessage.getEmbeds().get(0);
+                    latestMessage = listOfMessages.get(0);
+                    messageEmbed = latestMessage.getEmbeds().get(0);
 
-                    Field mainField = null;
+                    mainField = null;
     
                     for(Field field : messageEmbed.getFields()) {
                         if(field.getName().equals("LINK")) {
@@ -164,7 +191,7 @@ public class RssReaderClass {
                         }
                     }
 
-                    RssReader reader = new RssReader();
+                    reader = new RssReader();
                     rssForumsItems = new ArrayList<>();
             
                     try (Stream<Item> rssFeed = reader.read(url)) {
@@ -173,24 +200,24 @@ public class RssReaderClass {
                         e.printStackTrace();
                     }
 
-                    Item newestItem = rssForumsItems.get(0);
+                    newestItem = rssForumsItems.get(0);
 
                     if(!newestItem.getLink().get().equals(mainField.getValue())) {
 
-                        Item newItem = null;
+                        newItem = null;
 
                         try (Stream<Item> rssFeed = reader.read(url)) {
-                            ArrayList<Item> listOfItems = new ArrayList<>();
+                            listOfItems = new ArrayList<>();
                             rssFeed.forEach(item -> listOfItems.add(item));
                             newItem = listOfItems.get(0);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
     
-                        String updateLink = newItem.getLink().get();
-                        String time = newItem.getPubDate().get();
+                        updateLink = newItem.getLink().get();
+                        time = newItem.getPubDate().get();
     
-                        EmbedBuilder eb = new EmbedBuilder();
+                        eb = new EmbedBuilder();
                         eb.setColor(Color.pink);
                         
                         eb.setTitle(newItem.getTitle().get());
@@ -199,23 +226,23 @@ public class RssReaderClass {
     
                         eb.addField("LINK", updateLink, false);
     
-                        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
+                        sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
     
-                        Date d = null;
+                        d = null;
                         try {
                             d = sdf.parse(time);
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                         
-                        String formattedTime = "<t:" + d.getTime() / 1000 + ":f>";
+                        formattedTime = "<t:" + d.getTime() / 1000 + ":f>";
     
                         eb.addField("PUBLISHED", formattedTime, false);
     
-                        Boolean needToCreateWebhook = true;
-                        Webhook webhook = null;
+                        needToCreateWebhook = true;
+                        webhook = null;
     
-                        List<Webhook> availableWebhooks = Main.jda.getTextChannelById(Constants.patchNotesChannelID).retrieveWebhooks().complete();
+                        availableWebhooks = Main.jda.getTextChannelById(Constants.patchNotesChannelID).retrieveWebhooks().complete();
     
                         for(Webhook webhookName : availableWebhooks) {
                             if(webhookName.getName().equals("Guild Wars 2 Patch Notes")) {
@@ -229,10 +256,10 @@ public class RssReaderClass {
                             webhook = Main.jda.getTextChannelById(Constants.patchNotesChannelID).createWebhook("Guild Wars 2 Patch Notes").complete();
                         }
     
-                        WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhook);
-                        WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
+                        builder = WebhookClientBuilder.fromJDA(webhook);
+                        messageBuilder = new WebhookMessageBuilder();
     
-                        WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
+                        embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
                         messageBuilder.addEmbeds(embedBuilder.build());
                         messageBuilder.setContent("<@&1010592026846314496>");
                         messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
