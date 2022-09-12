@@ -247,4 +247,29 @@ public class SignupExcelWriting extends ListenerAdapter {
             return null;
         }
     }
+
+    public static void writeStaticMembers() {
+        try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
+
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+            XSSFSheet signupsSheet = workbook.getSheet("Signups");
+            XSSFSheet staticMembersSheet = workbook.getSheet("StaticMembers");
+
+            Row signupsRow = signupsSheet.getRow(0);
+            Row staticMembersRow = staticMembersSheet.getRow(0);
+
+            for(int i = 1; i < 11; i++) {
+                signupsRow.getCell(i).setCellValue(staticMembersRow.getCell(i).getStringCellValue());
+            }
+
+            FileOutputStream fileOutputStream = new FileOutputStream(new File("static.xlsx"));
+            workbook.write(fileOutputStream);
+
+            fileOutputStream.close();
+            workbook.close();
+
+        } catch(IOException e) {
+
+        }
+    }
 }

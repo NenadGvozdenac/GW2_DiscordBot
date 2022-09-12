@@ -27,7 +27,7 @@ public class Main {
             new SlashCommandData("signup", "Signs you up for the static raid.", false),
             new SlashCommandData("unsignup", "Unsigns you from the static raid.", false),
             new SlashCommandData("signupform", "Sends the signup form.", false),
-            new SlashCommandData("signupcheck", "Check who has signed up so far.", true),
+            new SlashCommandData("signupcheck", "Check signups!", false),
             new SlashCommandData("signupclear", "Clears the current week's signups.", true),
             new SlashCommandData("signupplayer", "Signs up a player to the current week's signups.", true, new Option(OptionType.USER, "user", "Which user do you wish to sign up?", true)),
             new SlashCommandData("signupdelete", "Deletes a signup by will.", true),
@@ -115,11 +115,9 @@ public class Main {
         
         threadActivity.start();
 
-        RssReaderClass newsReader = new RssReaderClass("https://www.guildwars2.com/en-gb/feed/");
-        newsReader.ReadNewsFromSite();
-
-        RssReaderClass forumsReader = new RssReaderClass("https://en-forum.guildwars2.com/forum/6-game-update-notes.xml/");
-        forumsReader.ReadNewsFromForums();
+        RssReaderClass readAnnouncements = new RssReaderClass();
+        readAnnouncements.ReadNewsFromSite();
+        readAnnouncements.ReadNewsFromForums();
         
         DailyAchievements achievementsReader = new DailyAchievements();
         

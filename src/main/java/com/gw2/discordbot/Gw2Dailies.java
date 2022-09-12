@@ -40,7 +40,7 @@ public class Gw2Dailies {
             eb.setThumbnail(Constants.gw2LogoNoBackground);
             eb.setDescription("<t:" + System.currentTimeMillis() / 1000 + ":d>");
 
-            eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName() + "!", Constants.gw2LogoNoBackground);
+            eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
 
             ExecutorService es = Executors.newCachedThreadPool();
                 

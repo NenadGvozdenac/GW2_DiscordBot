@@ -25,7 +25,7 @@ public class StaticAddTryout extends ListenerAdapter {
             event.getGuild().addRoleToMember(event.getGuild().retrieveMember(user).complete(), staticApplicantRole).queue();
 
             EmbedBuilder eb = new EmbedBuilder();
-            eb.setFooter("Application made possible by " + event.getJDA().getSelfUser().getName() + "!");
+            eb.setFooter(RandomFunnyQuote.getFunnyQuote());
             eb.setTitle(user.getAsTag());
             eb.setDescription("```" + user.getAsTag() + " applied for the static.\nRole: " + event.getSelectedOptions().get(0).getValue() + ".```");
 

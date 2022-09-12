@@ -128,7 +128,7 @@ public class Gw2Api {
         eb.setTitle(character);
         eb.setColor(Color.pink);
         eb.setDescription("GW2 Character Information.");
-        eb.setFooter("Usable in DMS also!", Constants.gw2LogoNoBackground);
+        eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
 
         HttpResponse<String> requestCharacters = Gw2Api.GET_REQUEST(accountId, "v2", "characters/" + character);
         JsonElement jsonElementCharacters = JsonParser.parseString(requestCharacters.getBody().toString());

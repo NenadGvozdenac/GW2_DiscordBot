@@ -46,7 +46,6 @@ public class Constants {
     public static String staticChatChannelID = "1007917741711294504";
     public static String staticApplicationsChannelID = "1013186195376832522";
 
-    public static String signUpFormMessage = "https://cdn.discordapp.com/attachments/1007924091015143474/1015298916968845375/unknown.png";
     public static String QTP_FIRES = "https://cdn.discordapp.com/attachments/1007924091015143474/1012710546224709692/download_1.png";
 
     public static String staticRoleID = "1007918310190501948";
@@ -154,7 +153,7 @@ public class Constants {
         eb.setTitle("`LOADING INFO...`");
         eb.setDescription("`THANK YOU FOR WAITING...`");
         eb.setThumbnail(Constants.loadingIconImage);
-        eb.setFooter("Usable in DMs also!", Constants.gw2LogoNoBackground);
+        eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
         loadingEmbedBuilder = eb.build();
     }
 }

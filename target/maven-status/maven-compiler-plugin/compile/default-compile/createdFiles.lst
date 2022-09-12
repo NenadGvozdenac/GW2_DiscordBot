@@ -4,6 +4,7 @@ com\gw2\discordbot\Gw2SlashCommandInteraction.class
 com\gw2\discordbot\NewUserReactEmoteEvent.class
 com\gw2\discordbot\ModalAnnouncement.class
 com\gw2\discordbot\DailyAchievements$1.class
+com\gw2\discordbot\Token$2.class
 com\gw2\discordbot\Gw2SlashCommandInteraction$3.class
 com\gw2\discordbot\UserApi$1.class
 com\gw2\discordbot\DailyAchievements.class
@@ -23,6 +24,7 @@ com\gw2\discordbot\Main$1.class
 com\gw2\discordbot\Gw2Dailies$6.class
 com\gw2\discordbot\HelpButtonEventListener$1.class
 com\gw2\discordbot\ButtonSignUpPressEvent.class
+com\gw2\discordbot\RandomFunnyQuote.class
 com\gw2\discordbot\ChartGenerator.class
 com\gw2\discordbot\StaticAddTryout.class
 com\gw2\discordbot\RssReaderClass$2.class
@@ -42,6 +44,7 @@ com\gw2\discordbot\StaticSlashCommandInteraction.class
 com\gw2\discordbot\StaticApplyEvents.class
 com\gw2\discordbot\Main$1$1.class
 com\gw2\discordbot\Gw2SlashCommandInteraction$5.class
+com\gw2\discordbot\RandomFunnyQuote$1.class
 com\gw2\discordbot\HttpServerHosting$FileHandler.class
 com\gw2\discordbot\Token$1.class
 com\gw2\discordbot\Gw2SlashCommandInteraction$4.class

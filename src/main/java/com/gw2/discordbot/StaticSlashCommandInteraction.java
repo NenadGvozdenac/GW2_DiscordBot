@@ -153,7 +153,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle(event.getUser().getAsTag());
             eb.setDescription(stringToDisplay);
-            eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName() + "!", Constants.gw2LogoNoBackground);
+            eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
 
             event.getHook().sendMessageEmbeds(eb.build()).queue();
 
@@ -341,17 +341,19 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
+        Role staticTryoutRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
 
-        if(!event.getMember().getRoles().contains(staticRole)) {
+        if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticBackupRole) || event.getMember().getRoles().contains(staticTryoutRole))) {
             event.getHook().sendMessage("You cannot do that command as of this time.").queue();
             return;
         }
-
+        
         List<Pair<String, String>> listOfPeopleSignedUp = SignupExcelWriting.getCurrentSignups();
 
         if(listOfPeopleSignedUp.isEmpty()) {
-            event.getHook().sendMessage("Nobody signed up yet!").queue();
+            event.getHook().sendMessage("```Nobody signed up yet!```").queue();
         } else {
             String stringToPing = "```People signed up: \n";
 
@@ -383,7 +385,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        event.getHook().sendMessage(Constants.signUpFormMessage).queue();
+        event.getHook().sendMessage(Token.getSignupForm()).queue();
     }
 
     private void UNSIGNUP_EVENT(@NotNull SlashCommandInteractionEvent event) {
@@ -559,7 +561,10 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             new Timer().schedule(new TimerTask() {
                 public void run() {
                     event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID).sendMessage("<@&1007918310190501948>, Sign ups now open! Do `/signup` before next raid day. See you soon!").queue(message -> message.delete().queueAfter(48, TimeUnit.HOURS));
+                    
                     SignupExcelWriting.clearSignups();
+                    SignupExcelWriting.writeStaticMembers();
+
                     HttpServerHosting.stopServer();
                     this.cancel();
                 }

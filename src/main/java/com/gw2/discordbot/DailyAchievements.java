@@ -31,7 +31,7 @@ public class DailyAchievements {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).getIterableHistory().queue(listOfMessages -> {
+                Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).getIterableHistory().takeAsync(1).thenAccept(listOfMessages -> {
                     Message latestMessage = listOfMessages.get(0);
                     MessageEmbed messageEmbed = latestMessage.getEmbeds().get(0);
 
@@ -96,6 +96,9 @@ public class DailyAchievements {
                             builder.build().send(messageBuilder.build());
                         });
                     }
+                }).exceptionally(throwable -> {
+                    System.out.print("ERROR: " + throwable.getMessage());
+                    return null;
                 });                       
             }
         }, 0 * 60 * 1000, 60 * 60 * 1000);  // every 60 minutes

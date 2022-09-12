@@ -26,53 +26,24 @@ import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 
 public class RssReaderClass {
-    
-    private String url;
-    private List<Item> rssNewsItems;
-    private List<Item> rssForumsItems;
-
-    private Message latestMessage;
-    private MessageEmbed messageEmbed;
-    private Field mainField;
-
-    private RssReader reader;
-    private Item newestItem;
-    private Item newItem;
-
-    private ArrayList<Item> listOfItems;
-
-    private String updateLink;
-    private String description;
-    private String time;
-
-    private EmbedBuilder eb;
-
-    private SimpleDateFormat sdf;
-    private Date d;
-
-    private String formattedTime;
-
-    private Boolean needToCreateWebhook;
-    private Webhook webhook;
-    private List<Webhook> availableWebhooks;
-
-    private WebhookClientBuilder builder;
-                        
-    private WebhookMessageBuilder messageBuilder;
-    private WebhookEmbedBuilder embedBuilder;
-
-    public RssReaderClass(String url) {
-        this.url = url;
-        rssNewsItems = new ArrayList<>();
-        rssForumsItems = new ArrayList<>();
-    }
 
     public void ReadNewsFromSite() throws InterruptedException {
         Main.jda.awaitReady();
         new Timer().schedule(new TimerTask() {
+            Message latestMessage;
+            MessageEmbed messageEmbed;
+            Field mainField;
+        
+            RssReader reader;
+            Item newestItem;
+        
+            SimpleDateFormat sdf;
+
+            String url = "https://www.guildwars2.com/en-gb/feed/";
+        
             @Override
             public void run() {
-                Main.jda.getTextChannelById(Constants.newsChannelID).getIterableHistory().queue(listOfMessages -> {
+                Main.jda.getTextChannelById(Constants.newsChannelID).getIterableHistory().takeAsync(1).thenAccept(listOfMessages -> {
                     latestMessage = listOfMessages.get(0);
                     messageEmbed = latestMessage.getEmbeds().get(0);
 
@@ -86,7 +57,7 @@ public class RssReaderClass {
                     }
 
                     reader = new RssReader();
-                    rssNewsItems = new ArrayList<>();
+                    ArrayList<Item> rssNewsItems = new ArrayList<>();
             
                     try (Stream<Item> rssFeed = reader.read(url)) {
                         rssFeed.forEach(item -> rssNewsItems.add(item));
@@ -97,71 +68,82 @@ public class RssReaderClass {
                     newestItem = rssNewsItems.get(0);
 
                     if(!newestItem.getLink().get().equals(mainField.getValue())) {
-                        // SEND NEW MESSAGE
 
-                        newItem = null;
+                        List<Item> listOfNewItems = new ArrayList<>();
 
-                        try (Stream<Item> rssFeed = reader.read(url)) {
-                            listOfItems = new ArrayList<>();
-                            rssFeed.forEach(item -> listOfItems.add(item));
-                            newItem = listOfItems.get(0);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-    
-                        updateLink = newItem.getLink().get();
-                        description = "```" + newItem.getDescription().get().split("<")[0] + "```";
-                        time = newItem.getPubDate().get();
-    
-                        eb = new EmbedBuilder();
-                        eb.setColor(Color.pink);
-                                
-                        eb.setTitle(newItem.getTitle().get());                        
-                        eb.setDescription("`News & Announcements`: new announcement!");
-                        eb.setThumbnail(Constants.gw2LogoNoBackground);
-    
-                        eb.addField("LINK", updateLink, false);
-                        eb.addField("DESCRIPTION", description, false);
-                                
-                        sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
-    
-                        d = null;
-                        try {
-                            d = sdf.parse(time);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                                
-                        formattedTime = "<t:" + d.getTime() / 1000 + ":f>";
-    
-                        eb.addField("PUBLISHED", formattedTime, false);
-    
-                        needToCreateWebhook = true;
-                        webhook = null;
-                        availableWebhooks = Main.jda.getTextChannelById(Constants.newsChannelID).retrieveWebhooks().complete();
-    
-                        for(Webhook webhookName : availableWebhooks) {
-                            if(webhookName.getName().equals("Guild Wars 2 News")) {
-                                needToCreateWebhook = false;
-                                webhook = webhookName;
+                        for(Item t : rssNewsItems) {
+
+                            System.out.println("ADDED " + t.getLink().get() + "\n");
+
+                            if(!t.getLink().get().equals(mainField.getValue())) {
+                                listOfNewItems.add(t);
                                 break;
                             }
                         }
+
+                        for(Item newItem : listOfNewItems) {
+                            String updateLink = newItem.getLink().get();
+                            String description = "```" + newItem.getDescription().get().split("<")[0] + "```";
+                            String time = newItem.getPubDate().get();
+        
+                            EmbedBuilder eb = new EmbedBuilder();
+                            eb.setColor(Color.pink);
+                                    
+                            eb.setTitle(newItem.getTitle().get());                        
+                            eb.setDescription("`News & Announcements`: new announcement!");
+                            eb.setThumbnail(Constants.gw2LogoNoBackground);
+        
+                            eb.addField("LINK", updateLink, false);
+                            eb.addField("DESCRIPTION", description, false);
+                                    
+                            sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
+        
+                            Date d = null;
+                            try {
+                                d = sdf.parse(time);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                                    
+                            String formattedTime = "<t:" + d.getTime() / 1000 + ":f>";
+        
+                            eb.addField("PUBLISHED", formattedTime, false);
+        
+                            Main.jda.getTextChannelById(Constants.newsChannelID).retrieveWebhooks().queue(availableWebhooks -> {
+                                Boolean needToCreateWebhook = true;
     
-                        if(needToCreateWebhook) {
-                            webhook = Main.jda.getTextChannelById(Constants.newsChannelID).createWebhook("Guild Wars 2 News").complete();
+                                for(Webhook webhookName : availableWebhooks) {
+                                    if(webhookName.getName().equals("Guild Wars 2 News")) {
+                                        WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhookName);
+                                
+                                        WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
+                                        messageBuilder.setContent("<@&1010591966502862848>");
+                                        messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
+                    
+                                        WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
+                                        messageBuilder.addEmbeds(embedBuilder.build());
+                    
+                                        builder.build().send(messageBuilder.build());
+                                        return;
+                                    }
+                                }
+            
+                                if(needToCreateWebhook) {
+                                    Main.jda.getTextChannelById(Constants.newsChannelID).createWebhook("Guild Wars 2 News").queue(newWebhook -> {
+                                        WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(newWebhook);
+                                
+                                        WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
+                                        messageBuilder.setContent("<@&1010591966502862848>");
+                                        messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
+                    
+                                        WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
+                                        messageBuilder.addEmbeds(embedBuilder.build());
+                    
+                                        builder.build().send(messageBuilder.build());
+                                    });
+                                }
+                            });
                         }
-    
-                        builder = WebhookClientBuilder.fromJDA(webhook);
-                        
-                        messageBuilder = new WebhookMessageBuilder();
-                        messageBuilder.setContent("<@&1010591966502862848>");
-                        messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
-    
-                        embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
-                        messageBuilder.addEmbeds(embedBuilder.build());
-    
-                        builder.build().send(messageBuilder.build());
                     } else {
                         Logging.LOG(this.getClass(), "News are the same. LINK: " + newestItem.getLink().get());
                     }
@@ -175,9 +157,21 @@ public class RssReaderClass {
         Main.jda.awaitReady();
 
         new Timer().schedule(new TimerTask() {
+
+            Message latestMessage;
+            MessageEmbed messageEmbed;
+            Field mainField;
+        
+            RssReader reader;
+            Item newestItem;
+        
+            SimpleDateFormat sdf;
+        
+            String url = "https://en-forum.guildwars2.com/forum/6-game-update-notes.xml/";
+
             @Override
             public void run() {
-                Main.jda.getTextChannelById(Constants.patchNotesChannelID).getIterableHistory().queue(listOfMessages -> {
+                Main.jda.getTextChannelById(Constants.patchNotesChannelID).getIterableHistory().takeAsync(1).thenAccept(listOfMessages -> {
 
                     latestMessage = listOfMessages.get(0);
                     messageEmbed = latestMessage.getEmbeds().get(0);
@@ -192,7 +186,7 @@ public class RssReaderClass {
                     }
 
                     reader = new RssReader();
-                    rssForumsItems = new ArrayList<>();
+                    ArrayList<Item> rssForumsItems = new ArrayList<>();
             
                     try (Stream<Item> rssFeed = reader.read(url)) {
                         rssFeed.forEach(item -> rssForumsItems.add(item));
@@ -204,67 +198,78 @@ public class RssReaderClass {
 
                     if(!newestItem.getLink().get().equals(mainField.getValue())) {
 
-                        newItem = null;
+                        List<Item> listOfNewItems = new ArrayList<>();
 
-                        try (Stream<Item> rssFeed = reader.read(url)) {
-                            listOfItems = new ArrayList<>();
-                            rssFeed.forEach(item -> listOfItems.add(item));
-                            newItem = listOfItems.get(0);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-    
-                        updateLink = newItem.getLink().get();
-                        time = newItem.getPubDate().get();
-    
-                        eb = new EmbedBuilder();
-                        eb.setColor(Color.pink);
-                        
-                        eb.setTitle(newItem.getTitle().get());
-                        eb.setDescription("`Patch Notes`: new announcement!");
-                        eb.setThumbnail(Constants.gw2LogoNoBackground);
-    
-                        eb.addField("LINK", updateLink, false);
-    
-                        sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
-    
-                        d = null;
-                        try {
-                            d = sdf.parse(time);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        
-                        formattedTime = "<t:" + d.getTime() / 1000 + ":f>";
-    
-                        eb.addField("PUBLISHED", formattedTime, false);
-    
-                        needToCreateWebhook = true;
-                        webhook = null;
-    
-                        availableWebhooks = Main.jda.getTextChannelById(Constants.patchNotesChannelID).retrieveWebhooks().complete();
-    
-                        for(Webhook webhookName : availableWebhooks) {
-                            if(webhookName.getName().equals("Guild Wars 2 Patch Notes")) {
-                                needToCreateWebhook = false;
-                                webhook = webhookName;
+                        for(Item t : rssForumsItems) {
+                            if(!t.getLink().get().equals(mainField.getValue())) {
+                                listOfNewItems.add(t);
                                 break;
                             }
                         }
+
+                        for(Item newItem : listOfNewItems) {
+
+                            String updateLink = newItem.getLink().get();
+                            String time = newItem.getPubDate().get();
+        
+                            EmbedBuilder eb = new EmbedBuilder();
+                            eb.setColor(Color.pink);
+                            
+                            eb.setTitle(newItem.getTitle().get());
+                            eb.setDescription("`Patch Notes`: new announcement!");
+                            eb.setThumbnail(Constants.gw2LogoNoBackground);
+        
+                            eb.addField("LINK", updateLink, false);
+        
+                            sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
+        
+                            Date d = null;
+                            try {
+                                d = sdf.parse(time);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            
+                            String formattedTime = "<t:" + d.getTime() / 1000 + ":f>";
+        
+                            eb.addField("PUBLISHED", formattedTime, false);
     
-                        if(needToCreateWebhook) {
-                            webhook = Main.jda.getTextChannelById(Constants.patchNotesChannelID).createWebhook("Guild Wars 2 Patch Notes").complete();
+                            Main.jda.getTextChannelById(Constants.patchNotesChannelID).retrieveWebhooks().queue(availableWebhooks -> {
+
+                                Boolean needToCreateWebhook = true;
+
+                                for(Webhook webhookName : availableWebhooks) {
+                                    if(webhookName.getName().equals("Guild Wars 2 Patch Notes")) {
+                                        WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhookName);
+                                
+                                        WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
+                                        messageBuilder.setContent("<@&1010591966502862848>");
+                                        messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
+                    
+                                        WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
+                                        messageBuilder.addEmbeds(embedBuilder.build());
+                    
+                                        builder.build().send(messageBuilder.build());
+                                        return;
+                                    }
+                                }
+            
+                                if(needToCreateWebhook) {
+                                    Main.jda.getTextChannelById(Constants.patchNotesChannelID).createWebhook("Guild Wars 2 Patch Notes").queue(newWebhook -> {
+                                        WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(newWebhook);
+                                        WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
+                    
+                                        WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
+                                        messageBuilder.addEmbeds(embedBuilder.build());
+                                        messageBuilder.setContent("<@&1010592026846314496>");
+                                        messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
+                    
+                                        builder.build().send(messageBuilder.build());
+                                    });
+                                }
+                            }
+                        );
                         }
-    
-                        builder = WebhookClientBuilder.fromJDA(webhook);
-                        messageBuilder = new WebhookMessageBuilder();
-    
-                        embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());
-                        messageBuilder.addEmbeds(embedBuilder.build());
-                        messageBuilder.setContent("<@&1010592026846314496>");
-                        messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
-    
-                        builder.build().send(messageBuilder.build());
                     } else {
                         Logging.LOG(this.getClass(), "Forums are the same. LINK: " + newestItem.getLink().get());
                     }

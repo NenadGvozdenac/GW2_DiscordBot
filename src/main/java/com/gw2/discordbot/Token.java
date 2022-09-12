@@ -64,4 +64,34 @@ public class Token {
 		 }
 		return null;	
     }
+
+	public static String getSignupForm() {
+		try (Reader reader = new FileReader(new File(new File("jsonFolder"), "token.json"))) {
+
+			Gson gson = new GsonBuilder()
+						 .disableHtmlEscaping()
+						 .setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+						 .setPrettyPrinting()
+						 .serializeNulls()
+						 .create();
+	
+			Type founderTypeSet = new TypeToken<Token[]>(){}.getType();
+			Token[] tokens = gson.fromJson(reader, founderTypeSet);
+	
+			for(Token token : tokens) {
+				if(token.getTokenName().equals("staticSignupForm")) {
+					return token.getTokenValue();
+				}
+			}
+	
+		 } catch (IOException e) {
+			 Map<String, String> map = System.getenv();
+	
+			 if(map.containsKey("token")) {
+				Logging.LOG(Token.class, "Token gotten from OS env. variable: " + map.get("token"));
+				return map.get("token");
+			 }
+		 }
+		return null;	
+	}
 }

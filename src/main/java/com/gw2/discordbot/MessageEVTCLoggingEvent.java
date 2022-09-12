@@ -99,7 +99,7 @@ public class MessageEVTCLoggingEvent extends ListenerAdapter {
                     eb.setDescription(logPermaLink);
                     eb.setTitle(recordedBy);
                     eb.setThumbnail(iconUrl);
-                    eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName() + "!", Constants.gw2LogoNoBackground);
+                    eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
                     eb.addField("BOSS NAME", logBossName, true);
                     eb.addField("IS CM?", logBossIsCm == true ? "\u2705" : "\u274C", true);
                     eb.addField("SUCCESS?", logIsSuccess == true ? "\u2705" : "\u274C", true);

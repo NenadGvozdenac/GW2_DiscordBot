@@ -74,7 +74,7 @@ public class StaticApplyEvents extends ListenerAdapter {
                 event.getHook().sendMessage("`You gave that person a static backup role!`").queue();
 
                 EmbedBuilder eb = new EmbedBuilder();
-                eb.setFooter("Application made possible by " + event.getJDA().getSelfUser().getName() + "!");
+                eb.setFooter(RandomFunnyQuote.getFunnyQuote());
                 eb.setTitle(user.getAsTag());
                 eb.setDescription("```" + user.getAsTag() + " got the backup role!```");
     

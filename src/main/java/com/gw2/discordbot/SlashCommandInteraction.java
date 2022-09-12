@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -145,15 +144,23 @@ public class SlashCommandInteraction extends ListenerAdapter {
             event.getHook().sendMessage("Couldn't activate the server port...").queue();
         }
 
-        Unirest.shutDown(true);
+        SignupExcelWriting.clearSignups();
+        SignupExcelWriting.writeStaticMembers();
     }
 
     private void SHUTDOWN_EVENT(@NotNull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
-        event.getHook().sendMessage("Shutting down...").queue(message -> {
+        event.getHook().sendMessage("`Shutting down in 5 seconds...`").queueAfter(5, TimeUnit.SECONDS, message -> {
             event.getJDA().shutdown();
+            
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            System.exit(0);
         });
-        
     }
 
     private void API_STATUS(@NotNull SlashCommandInteractionEvent event) {
@@ -163,7 +170,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         eb.setTitle("API STATUS");
         eb.setDescription("Returns the current API availability.");
         eb.setThumbnail(Constants.gw2LogoNoBackground);
-        eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName() + "!", Constants.gw2LogoNoBackground);
+        eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
 
         event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue(message -> {
             Boolean everythingOK = true;
@@ -250,7 +257,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         eb.setColor(Color.pink);
         eb.setTitle(event.getUser().getAsTag());
         eb.setThumbnail(event.getUser().getEffectiveAvatarUrl());
-        eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName() + "!", Constants.gw2LogoNoBackground);
+        eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
 
         eb.addField("USER", event.getUser().getAsTag(), true);
         eb.addField("DAY JOINED", 

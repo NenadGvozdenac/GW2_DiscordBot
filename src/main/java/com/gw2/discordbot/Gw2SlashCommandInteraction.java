@@ -171,7 +171,7 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
 
             eb.setTitle(accountName);
             eb.setThumbnail(event.getUser().getAvatarUrl());
-            eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName(), Constants.gw2LogoNoBackground);
+            eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
             eb.setColor(Color.pink);
            
             accountFinishedBosses.forEach(boss -> listOfFinishedBosses.add(boss.getAsString()));
@@ -353,7 +353,7 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setColor(Color.pink);
             eb.setDescription("Basic GW2 Account Information.");
-            eb.setFooter("Thank you for using " + Main.jda.getSelfUser().getName(), Constants.gw2LogoNoBackground);
+            eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
             eb.setThumbnail(event.getUser().getAvatarUrl());
             eb.setTitle(accountName);
             eb.addField("Time Played", accountAge + " hours", true);
