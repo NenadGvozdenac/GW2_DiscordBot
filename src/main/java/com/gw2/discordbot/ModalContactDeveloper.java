@@ -33,6 +33,6 @@ public class ModalContactDeveloper extends ListenerAdapter {
         eb.setThumbnail(Constants.gw2LogoNoBackground);
         eb.setFooter(user.getName() + " used /contact-developer", Constants.gw2LogoNoBackground);
 
-        Main.jda.getGuildById("1007915730928418856").getTextChannelById("1010617354293616712").sendMessageEmbeds(eb.build()).queue();
+        DiscordBot.jda.getGuildById("1007915730928418856").getTextChannelById("1010617354293616712").sendMessageEmbeds(eb.build()).queue();
     }
 }

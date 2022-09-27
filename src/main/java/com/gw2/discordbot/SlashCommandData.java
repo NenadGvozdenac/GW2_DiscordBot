@@ -97,7 +97,7 @@ public class SlashCommandData {
     }
 
     public void addGlobally(JDA jda) {
-        RestAction<List<Command>> listOfCommandsRestAction = Main.jda.retrieveCommands();
+        RestAction<List<Command>> listOfCommandsRestAction = DiscordBot.jda.retrieveCommands();
 
         listOfCommandsRestAction.queue((List<Command> listOfCommands) -> {
             for(Command c : listOfCommands) {
@@ -113,9 +113,9 @@ public class SlashCommandData {
                     data.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR));
                 }
         
-                System.out.println("Command added globally: '" + Main.jda.getSelfUser().getName() + "': " + this.toString());
+                System.out.println("Command added globally: '" + DiscordBot.jda.getSelfUser().getName() + "': " + this.toString());
     
-                Main.jda.upsertCommand((CommandData) data).queue();
+                DiscordBot.jda.upsertCommand((CommandData) data).queue();
             } else {
                 net.dv8tion.jda.api.interactions.commands.build.SlashCommandData data = Commands.slash(this.commandName, this.commandDescription);
                             
@@ -127,9 +127,9 @@ public class SlashCommandData {
                     data.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR));
                 }
                             
-                System.out.println("Command added globally: '" + Main.jda.getSelfUser().getName() + "': " + this.toString());
+                System.out.println("Command added globally: '" + DiscordBot.jda.getSelfUser().getName() + "': " + this.toString());
     
-                Main.jda.upsertCommand((CommandData) data).queue();
+                DiscordBot.jda.upsertCommand((CommandData) data).queue();
             }
 
         });
@@ -155,7 +155,7 @@ public class SlashCommandData {
    
         } catch(IOException e) {
             System.err.println("Unforunately, the JSON file couldn't be opened, and therefore commands couldn't be inserted.");
-            Main.jda.shutdown();
+            DiscordBot.jda.shutdown();
         }
     }
 }

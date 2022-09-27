@@ -3,9 +3,8 @@ package com.gw2.discordbot;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -16,40 +15,29 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
 public class Gw2Dailies {
-    
-    static String wvwAchievementsString = "";
-    static String pvpAchievementsString = "";
-    static String pveAchievementsString = "";    
-    static String tierFourFractalsString = "";
-    static String recommendedFractalsString = ""; 
-    static String strikesAchievementsString = "";
-    static String eodAchievementsString = "";
 
-    public static MessageEmbed getDailies() {
+    public CompletableFuture<MessageEmbed> getDailies() {
+            CompletableFuture<MessageEmbed> future = CompletableFuture.supplyAsync(new Supplier<MessageEmbed>() {
+                @Override
+                public MessageEmbed get() {
+
+                    HttpResponse<String> responseInfo = Gw2Api.GET_REQUEST("v2", "achievements/daily");
+                    JsonElement jsonInfo = JsonParser.parseString(responseInfo.getBody().toString());
+            
+                    JsonArray arrayOfDailyPVEAchievements = jsonInfo.getAsJsonObject().get("pve").getAsJsonArray();
+                    JsonArray arrayOfDailyPVPAchievements = jsonInfo.getAsJsonObject().get("pvp").getAsJsonArray();
+                    JsonArray arrayOfDailyWVWAchievements = jsonInfo.getAsJsonObject().get("wvw").getAsJsonArray();
         
-            HttpResponse<String> responseInfo = Gw2Api.GET_REQUEST("v2", "achievements/daily");
-            JsonElement jsonInfo = JsonParser.parseString(responseInfo.getBody().toString());
-    
-            JsonArray arrayOfDailyPVEAchievements = jsonInfo.getAsJsonObject().get("pve").getAsJsonArray();
-            JsonArray arrayOfDailyPVPAchievements = jsonInfo.getAsJsonObject().get("pvp").getAsJsonArray();
-            JsonArray arrayOfDailyWVWAchievements = jsonInfo.getAsJsonObject().get("wvw").getAsJsonArray();
+                    EmbedBuilder eb = new EmbedBuilder();
+                    eb.setColor(Color.cyan);
+                    eb.setTitle("DAILY ACHIEVEMENTS");
+                    eb.setThumbnail(Constants.gw2LogoNoBackground);
+                    eb.setDescription("<t:" + System.currentTimeMillis() / 1000 + ":d>");
+        
+                    eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
 
-            EmbedBuilder eb = new EmbedBuilder();
-            eb.setColor(Color.cyan);
-            eb.setTitle("DAILY ACHIEVEMENTS");
-            eb.setThumbnail(Constants.gw2LogoNoBackground);
-            eb.setDescription("<t:" + System.currentTimeMillis() / 1000 + ":d>");
-
-            eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
-
-            ExecutorService es = Executors.newCachedThreadPool();
-                
-            // FRACTALS
-            es.execute(new Runnable() {
-                public void run() {
-
-                    Gw2Dailies.tierFourFractalsString = "";
-                    Gw2Dailies.recommendedFractalsString = "";
+                    String tierFourFractalsString = "";
+                    String recommendedFractalsString = "";
 
                     JsonArray arrayOfDailyFractalAchievements = jsonInfo.getAsJsonObject().get("fractals").getAsJsonArray();
                     List<JsonElement> tierFourFractals = new ArrayList<>();
@@ -94,14 +82,11 @@ public class Gw2Dailies {
                     for(String fractalName : recommendedFractalsNames) {
                         recommendedFractalsString += Constants.fractalIconEmoji + fractalName + "\n";
                     }    
-                }
-            });
 
-            // PVE
-            es.execute(new Runnable() {
-                public void run() {
+                    eb.addField("DAILY FRACTALS", tierFourFractalsString, false);
+                    eb.addField("RECOMMENDED FRACTALS", recommendedFractalsString, false);    
 
-                    Gw2Dailies.pveAchievementsString = "";
+                    String pveAchievementsString = "";
 
                     List<JsonElement> pveAchievements = new ArrayList<>();
             
@@ -128,15 +113,11 @@ public class Gw2Dailies {
                     for(String achievementName : pveAchievementsNames) {
                         pveAchievementsString += Constants.fractalIconEmoji + achievementName + "\n";
                     }
-                }
-            });
 
-            // PVP
-            es.execute(new Runnable() {
-                public void run() {
+                    eb.addField("DAILY PVE ACHIEVEMENTS", pveAchievementsString, false);
 
-                    Gw2Dailies.pvpAchievementsString = "";
-                    
+                    String pvpAchievementsString = "";
+                            
                     List<JsonElement> pvpAchievements = new ArrayList<>();
             
                     for(int i = 0; i < arrayOfDailyPVPAchievements.size(); i++) {
@@ -163,14 +144,11 @@ public class Gw2Dailies {
                     for(String achievementName : pvpAchievementsNames) {
                         pvpAchievementsString += Constants.fractalIconEmoji + achievementName + "\n";
                     }    
-                }
-            });
 
-            // WVW
-            es.execute(new Runnable() {
-                public void run() {
+                    eb.addField("DAILY PVP ACHIEVEMENTS", pvpAchievementsString, false);
 
-                    Gw2Dailies.wvwAchievementsString = "";
+                    // WVW
+                    String wvwAchievementsString = "";
 
                     List<JsonElement> wvwAchievements = new ArrayList<>();
 
@@ -197,16 +175,10 @@ public class Gw2Dailies {
                     for(String achievementName : wvwAchievementsNames) {
                         wvwAchievementsString += Constants.fractalIconEmoji + achievementName + "\n";
                     }
-                }
-            });
 
-            // Strikes
-            es.execute(new Runnable() {
+                    eb.addField("DAILY WVW ACHIEVEMENTS", wvwAchievementsString, false);
 
-                @Override
-                public void run() {
-
-                    Gw2Dailies.strikesAchievementsString = "";
+                    String strikesAchievementsString = "";
 
                     HttpResponse<String> responseStrikeInfo = Gw2Api.GET_REQUEST("v2", "achievements/categories/250");
                     JsonElement dailyStrikes = JsonParser.parseString(responseStrikeInfo.getBody());
@@ -230,26 +202,20 @@ public class Gw2Dailies {
                     for(String string : primaryStrikeNames) {
                         strikesAchievementsString += Constants.fractalIconEmoji + string + "\n";
                     }
-                }
-            });
 
-            // EOD
-            es.execute(new Runnable() {
-               
-                @Override
-                public void run() {
+                    eb.addField("DAILY STRIKES", strikesAchievementsString, false);
 
-                    Gw2Dailies.eodAchievementsString = "";
+                    String eodAchievementsString = "";
 
                     HttpResponse<String> responseEODeInfo = Gw2Api.GET_REQUEST("v2", "achievements/categories/321");
                     JsonElement dailyEOD = JsonParser.parseString(responseEODeInfo.getBody());
 
-                    JsonArray listOfAchievements = dailyEOD.getAsJsonObject().get("achievements").getAsJsonArray();
+                    JsonArray listOfAchievements1 = dailyEOD.getAsJsonObject().get("achievements").getAsJsonArray();
 
                     List<Integer> dailyEodIds = new ArrayList<>();
                     List<String> dailyEodNames = new ArrayList<>();
 
-                    listOfAchievements.forEach(achievement -> dailyEodIds.add(achievement.getAsInt()));
+                    listOfAchievements1.forEach(achievement -> dailyEodIds.add(achievement.getAsInt()));
 
                     for(Integer integer : dailyEodIds) {
                         HttpResponse<String> responseEodInfo = Gw2Api.GET_REQUEST("v2", "achievements/" + integer);
@@ -263,25 +229,14 @@ public class Gw2Dailies {
                     for(String string : dailyEodNames) {
                         eodAchievementsString += Constants.fractalIconEmoji + string + "\n";
                     }
+
+                    eb.addField("DAILY END OF DRAGONS", eodAchievementsString, false);
+                    
+                    return eb.build();
                 }
-
-            });
-            es.shutdown();
-
-            try {
-                while(!es.awaitTermination(1, TimeUnit.MINUTES));
-                eb.addField("DAILY PVE ACHIEVEMENTS", pveAchievementsString, false);
-                eb.addField("DAILY PVP ACHIEVEMENTS", pvpAchievementsString, false);
-                eb.addField("DAILY WVW ACHIEVEMENTS", wvwAchievementsString, false);
-                eb.addField("DAILY END OF DRAGONS", eodAchievementsString, false);
-                eb.addField("DAILY STRIKES", strikesAchievementsString, false);
-                eb.addField("DAILY FRACTALS", tierFourFractalsString, false);
-                eb.addField("RECOMMENDED FRACTALS", recommendedFractalsString, false);    
-
-                return eb.build();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                return null;
             }
+        );
+
+        return future;
     }
 }

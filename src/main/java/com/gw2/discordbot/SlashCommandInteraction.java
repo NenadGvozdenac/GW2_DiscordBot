@@ -230,18 +230,18 @@ public class SlashCommandInteraction extends ListenerAdapter {
 
     private void RESET_SLASH_COMMANDS(@NotNull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
-        Main.jda.updateCommands().queue();
+        DiscordBot.jda.updateCommands().queue();
 
-        for(SlashCommandData data : Main.commandData) {
+        for(SlashCommandData data : DiscordBot.commandData) {
             // data.addToGuild(event.getJDA().getGuildById("1007915730928418856"));
-            data.addGlobally(Main.jda);
+            data.addGlobally(DiscordBot.jda);
 
             event.getUser().openPrivateChannel().queue(channel -> {
                 channel.sendMessage("Added command `" + data.getCommandName() + "`.").queue();
             });
         }
 
-        SlashCommandData.insertIntoJson(Main.commandData);
+        SlashCommandData.insertIntoJson(DiscordBot.commandData);
         event.getHook().sendMessage("I have reset the slash commands of this server, per your request.").queue();
     }
 
@@ -325,7 +325,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setColor(Color.pink);     
 
-            Main.jda.getRestPing().queue(ping -> {
+            DiscordBot.jda.getRestPing().queue(ping -> {
                 eb.addField("\uD83E\uDD16 BOT PING \uD83E\uDD16", ping + " ms.", true);
                 eb.addField("\uD83E\uDD16 WEBSOCKET PING \uD83E\uDD16", event.getJDA().getGatewayPing() + " ms.", true);
                 message.editMessage("`BEEP BOOP, PING CALCULATED...`").setEmbeds(eb.build()).queueAfter(2, TimeUnit.SECONDS);

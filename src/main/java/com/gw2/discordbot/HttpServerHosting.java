@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -27,6 +31,13 @@ public class HttpServerHosting {
 
             server.setExecutor(null); 
             server.start();	
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");  
+            LocalDateTime now = LocalDateTime.now();  
+
+            String currentTime = dtf.format(now);
+
+            DiscordBot.jda.getTextChannelById("1007917782601572352").sendMessage("DAY: `" + currentTime + "`!").queue();
 
             System.out.println("Started the server!");
             return true;
@@ -62,7 +73,7 @@ public class HttpServerHosting {
                 Boolean needToCreateWebhook = true;
                 Webhook webhook = null;
 
-                List<Webhook> availableWebhooks = Main.jda.getTextChannelById(Constants.staticLogUploadsChannelID).retrieveWebhooks().complete();
+                List<Webhook> availableWebhooks = DiscordBot.jda.getTextChannelById(Constants.staticLogUploadsChannelID).retrieveWebhooks().complete();
 
                 for(Webhook webhookName : availableWebhooks) {
                     if(webhookName.getName().equals("Guild Wars 2 Autouploader")) {
@@ -73,14 +84,17 @@ public class HttpServerHosting {
                 }
 
                 if(needToCreateWebhook) {
-                    webhook = Main.jda.getTextChannelById(Constants.staticLogUploadsChannelID).createWebhook("Guild Wars 2 Autouploader").complete();
+                    webhook = DiscordBot.jda.getTextChannelById(Constants.staticLogUploadsChannelID).createWebhook("Guild Wars 2 Autouploader").complete();
                 }
 
                 WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhook);
                 
                 EmbedBuilder eb = new EmbedBuilder();
                 eb.setTitle(bossLogName);
-                eb.setDescription(String.format("%s\n```TIME: %-10s\nSUCCESS: %-10s\nCM: %-10s```", bossLogPermaLink, bossLogTime, bossLogSuccess, bossIsCm));
+
+                String bossDayOfKill = LocalDateTime.now().atZone(ZoneId.of("America/New_York")).format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").withZone(ZoneOffset.ofHours(-2)));
+
+                eb.setDescription(String.format("%s\n```%-9s %s\n%-9s %s\n%-9s %s\n%-9s %s (CEST)```", bossLogPermaLink, "DURATION:", bossLogTime, "SUCCESS:", bossLogSuccess, "CM:", bossIsCm, "TIME:", bossDayOfKill));
                 eb.setColor(bossLogSuccess.equals("true") ? Color.GREEN : Color.RED);
 
                 WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();

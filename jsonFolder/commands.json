@@ -50,8 +50,8 @@
   },
   {
     "CommandName": "signupcheck",
-    "CommandDescription": "Check who has signed up so far. `(ADMIN)`",
-    "AdminOnly": true,
+    "CommandDescription": "Check signups!",
+    "AdminOnly": false,
     "Options": []
   },
   {

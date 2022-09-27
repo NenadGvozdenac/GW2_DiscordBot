@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -23,7 +25,7 @@ public class DailyAchievements {
     public void ReadFractalsFromApi() {
 
         try {
-            Main.jda.awaitReady();
+            DiscordBot.jda.awaitReady();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -31,7 +33,7 @@ public class DailyAchievements {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).getIterableHistory().takeAsync(1).thenAccept(listOfMessages -> {
+                DiscordBot.jda.getTextChannelById(Constants.dailyAchievementsChannelID).getIterableHistory().takeAsync(1).thenAccept(listOfMessages -> {
                     Message latestMessage = listOfMessages.get(0);
                     MessageEmbed messageEmbed = latestMessage.getEmbeds().get(0);
 
@@ -66,7 +68,7 @@ public class DailyAchievements {
                         return;
                     } else {
                         Logging.LOG(this.getClass(), "msgID: " + latestMessage.getId() + ", " + trimmedListOFAchievements + " does NOT contain [" + nameOfOneFractal + "].");
-                        Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).retrieveWebhooks().queue(availableWebhooks -> {
+                        DiscordBot.jda.getTextChannelById(Constants.dailyAchievementsChannelID).retrieveWebhooks().queue(availableWebhooks -> {
 
                             Boolean needToCreateWebhook = true;
                             Webhook webhook = null;
@@ -80,20 +82,28 @@ public class DailyAchievements {
                             }
     
                             if(needToCreateWebhook) {
-                                webhook = Main.jda.getTextChannelById(Constants.dailyAchievementsChannelID).createWebhook("Guild Wars 2 Daily Achievements").complete();
+                                webhook = DiscordBot.jda.getTextChannelById(Constants.dailyAchievementsChannelID).createWebhook("Guild Wars 2 Daily Achievements").complete();
                             }
     
                             WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhook);
                             WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
+
+                            Gw2Dailies dailies = new Gw2Dailies();
+                            CompletableFuture<MessageEmbed> embedForSending = dailies.getDailies();
+                            dailies = null;
     
-                            MessageEmbed embedForSending = Gw2Dailies.getDailies();
-    
-                            WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(embedForSending);
-                            messageBuilder.setContent("<@&1010592048753160252>");
-                            messageBuilder.addEmbeds(embedBuilder.build());
-                            messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
-    
-                            builder.build().send(messageBuilder.build());
+                            WebhookEmbedBuilder embedBuilder;
+                            try {
+                                embedBuilder = WebhookEmbedBuilder.fromJDA(embedForSending.get());
+
+                                messageBuilder.setContent("<@&1010592048753160252>");
+                                messageBuilder.addEmbeds(embedBuilder.build());
+                                messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
+        
+                                builder.build().send(messageBuilder.build());
+                            } catch (InterruptedException | ExecutionException e) {
+                                e.printStackTrace();
+                            }
                         });
                     }
                 }).exceptionally(throwable -> {

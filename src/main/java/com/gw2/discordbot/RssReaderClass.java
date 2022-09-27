@@ -28,7 +28,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 public class RssReaderClass {
 
     public void ReadNewsFromSite() throws InterruptedException {
-        Main.jda.awaitReady();
+        DiscordBot.jda.awaitReady();
         new Timer().schedule(new TimerTask() {
             Message latestMessage;
             MessageEmbed messageEmbed;
@@ -43,7 +43,7 @@ public class RssReaderClass {
         
             @Override
             public void run() {
-                Main.jda.getTextChannelById(Constants.newsChannelID).getIterableHistory().takeAsync(1).thenAccept(listOfMessages -> {
+                DiscordBot.jda.getTextChannelById(Constants.newsChannelID).getIterableHistory().takeAsync(1).thenAccept(listOfMessages -> {
                     latestMessage = listOfMessages.get(0);
                     messageEmbed = latestMessage.getEmbeds().get(0);
 
@@ -109,7 +109,7 @@ public class RssReaderClass {
         
                             eb.addField("PUBLISHED", formattedTime, false);
         
-                            Main.jda.getTextChannelById(Constants.newsChannelID).retrieveWebhooks().queue(availableWebhooks -> {
+                            DiscordBot.jda.getTextChannelById(Constants.newsChannelID).retrieveWebhooks().queue(availableWebhooks -> {
                                 Boolean needToCreateWebhook = true;
     
                                 for(Webhook webhookName : availableWebhooks) {
@@ -129,7 +129,7 @@ public class RssReaderClass {
                                 }
             
                                 if(needToCreateWebhook) {
-                                    Main.jda.getTextChannelById(Constants.newsChannelID).createWebhook("Guild Wars 2 News").queue(newWebhook -> {
+                                    DiscordBot.jda.getTextChannelById(Constants.newsChannelID).createWebhook("Guild Wars 2 News").queue(newWebhook -> {
                                         WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(newWebhook);
                                 
                                         WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
@@ -154,7 +154,7 @@ public class RssReaderClass {
 
     public void ReadNewsFromForums() throws InterruptedException {
 
-        Main.jda.awaitReady();
+        DiscordBot.jda.awaitReady();
 
         new Timer().schedule(new TimerTask() {
 
@@ -171,7 +171,7 @@ public class RssReaderClass {
 
             @Override
             public void run() {
-                Main.jda.getTextChannelById(Constants.patchNotesChannelID).getIterableHistory().takeAsync(1).thenAccept(listOfMessages -> {
+                DiscordBot.jda.getTextChannelById(Constants.patchNotesChannelID).getIterableHistory().takeAsync(1).thenAccept(listOfMessages -> {
 
                     latestMessage = listOfMessages.get(0);
                     messageEmbed = latestMessage.getEmbeds().get(0);
@@ -234,7 +234,7 @@ public class RssReaderClass {
         
                             eb.addField("PUBLISHED", formattedTime, false);
     
-                            Main.jda.getTextChannelById(Constants.patchNotesChannelID).retrieveWebhooks().queue(availableWebhooks -> {
+                            DiscordBot.jda.getTextChannelById(Constants.patchNotesChannelID).retrieveWebhooks().queue(availableWebhooks -> {
 
                                 Boolean needToCreateWebhook = true;
 
@@ -255,7 +255,7 @@ public class RssReaderClass {
                                 }
             
                                 if(needToCreateWebhook) {
-                                    Main.jda.getTextChannelById(Constants.patchNotesChannelID).createWebhook("Guild Wars 2 Patch Notes").queue(newWebhook -> {
+                                    DiscordBot.jda.getTextChannelById(Constants.patchNotesChannelID).createWebhook("Guild Wars 2 Patch Notes").queue(newWebhook -> {
                                         WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(newWebhook);
                                         WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
                     

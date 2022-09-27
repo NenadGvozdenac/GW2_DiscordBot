@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -138,7 +139,13 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
         event.deferReply(true).queue();
 
         event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue(message -> 
-            message.editMessageEmbeds(Gw2Dailies.getDailies()).queue()
+            {
+                try {
+                    message.editMessageEmbeds(new Gw2Dailies().getDailies().get()).queue();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
         );
     }
 

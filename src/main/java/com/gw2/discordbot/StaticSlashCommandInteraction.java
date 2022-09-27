@@ -21,6 +21,7 @@ import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -355,10 +356,13 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         if(listOfPeopleSignedUp.isEmpty()) {
             event.getHook().sendMessage("```Nobody signed up yet!```").queue();
         } else {
-            String stringToPing = "```People signed up: \n";
+            String stringToPing = "```" + listOfPeopleSignedUp.size() + "/10 people signed up.\n\n";
+
+            stringToPing += "+--------------------+--------------------------------------+\n";
 
             for(Pair<String, String> pair : listOfPeopleSignedUp) {
-                stringToPing += String.format("%-20s | %s\n", event.getJDA().retrieveUserById(pair.getFirst()).complete().getAsTag(), pair.getSecond());
+                stringToPing += String.format("|%s|%s|\n", CenterString(20, event.getJDA().retrieveUserById(pair.getFirst()).complete().getName()), CenterString(38, pair.getSecond()));
+                stringToPing += "+--------------------+--------------------------------------+\n";
             }
 
             stringToPing += "```";
@@ -516,85 +520,108 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
 
         Integer minutesToWait = event.getOption("minutes_to_wait").getAsInt();
 
-        if(minutesToWait > 15 || minutesToWait < 5) {
-            event.getHook().sendMessage("That is invalid time. `5 min < time < 15 min`").queue();
+        if(minutesToWait > 60 || minutesToWait < 5) {
+            event.getHook().sendMessage("That is invalid time. `5 min < time < 60 min`").queue();
             return;
         }
 
-        if(HttpServerHosting.activateServer()) {
-            EmbedBuilder eb = new EmbedBuilder();
-            List<Pair<String, String>> listOfPeopleSignedUp = SignupExcelWriting.getCurrentSignups();
-
-            if(listOfPeopleSignedUp.isEmpty()) {
-                event.getHook().sendMessage("Nobody signed up, but I opened the port to receive raid logs.").queue();
-                return;
-            }
-
-            String string = "```";
-
-            for(Pair<String, String> pair : listOfPeopleSignedUp) {
-                String currentString = String.format("%-20s %s\n", event.getJDA().retrieveUserById(pair.getFirst()).complete().getName().length() > 18 ? event.getJDA().retrieveUserById(pair.getFirst()).complete().getName().substring(0, 18) + "." : event.getJDA().retrieveUserById(pair.getFirst()).complete().getName(), pair.getSecond());
-                string += currentString;
-            }
-
-            string += "```";
-
-            eb.setDescription(string);
-            eb.setColor(Color.CYAN);
-            eb.setFooter("/sqjoin NenadG.4682", Constants.gw2LogoNoBackground);
-
-            event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID)
-                .sendMessage("<@&1007918310190501948>, <@&1013185863116660838>, **STATIC** weekly clear is starting in " + minutesToWait + " minutes. Please get ready in time.")
-                .setEmbeds(eb.build()).queue(message -> message.delete().queueAfter(3, TimeUnit.HOURS));
-                
-            event.getHook().sendMessage("Activated the server port for receiving dps reports, pinged raid static in <#" + Constants.staticAnnouncementChannelID + ">, and opened the sheet for editing.\nIn 4 hours, if the port is not closed manually, it will be closed.").queue();
-        
-            new Timer().schedule(new TimerTask() {
-                public void run() {
-                    event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID)
-                        .sendMessage("<@&1007918310190501948>, <@&1013185863116660838>, **STATIC** weekly clear is starting **now**!").queue(message -> message.delete().queueAfter(180 - minutesToWait, TimeUnit.MINUTES));
-
-                    this.cancel();
-                }
-            }, minutesToWait * 60 * 1000, 1);
-
-            new Timer().schedule(new TimerTask() {
-                public void run() {
-                    event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID).sendMessage("<@&1007918310190501948>, Sign ups now open! Do `/signup` before next raid day. See you soon!").queue(message -> message.delete().queueAfter(48, TimeUnit.HOURS));
-                    
-                    SignupExcelWriting.clearSignups();
-                    SignupExcelWriting.writeStaticMembers();
-
-                    HttpServerHosting.stopServer();
-                    this.cancel();
-                }
-            }, 4 * 60 * 60 * 1000, 1);
-
-        } else {
-            event.getHook().sendMessage("Server is already activated there, but I pinged raid static in <#" + Constants.staticAnnouncementChannelID + ">, and opened the sheet for editing.").queue();
-        
-            EmbedBuilder eb = new EmbedBuilder();
-            
-            List<Pair<String, String>> listOfPeopleSignedUp = SignupExcelWriting.getCurrentSignups();
-
-            for(Pair<String, String> pair : listOfPeopleSignedUp) {
-                eb.addField(event.getJDA().retrieveUserById(pair.getFirst()).complete().getAsTag(), pair.getSecond(), true);
-            }
-
-            eb.setColor(Color.CYAN);
-
-            event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID)
-                .sendMessage("<@&1007918310190501948>, Static weekly clear is starting in " + minutesToWait + " minutes. Please get ready in time.")
-                .setEmbeds(eb.build()).queue();
-
-            new Timer().schedule(new TimerTask() {
-                public void run() {
-                    event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID)
-                        .sendMessage("<@&1007918310190501948>, Static weekly clear is starting **now**!").queue();
-
-                    this.cancel();
-                }
-            }, minutesToWait * 60 * 1000, 1);
+        if(minutesToWait > 15) {
+            event.getHook().sendMessage("I will be pinging everyone in " + minutesToWait + " minutes.").queue();
         }
+
+        if(minutesToWait < 15) {
+            event.getHook().sendMessage("Considering the time is lower than 15 minutes, I pinged everyone immediatelly.").queue();
+        }
+
+        new Timer().schedule(new TimerTask() {
+            public void run() {
+                if(HttpServerHosting.activateServer()) {
+                    EmbedBuilder eb = new EmbedBuilder();
+                    List<Pair<String, String>> listOfPeopleSignedUp = SignupExcelWriting.getCurrentSignups();
+        
+                    if(listOfPeopleSignedUp.isEmpty()) {
+                        event.getHook().sendMessage("Nobody signed up, but I opened the port to receive raid logs.").queue();
+                        return;
+                    }
+        
+                    String string = "```";
+        
+                    for(Pair<String, String> pair : listOfPeopleSignedUp) {
+                        String currentString = String.format("%-20s %s\n", event.getJDA().retrieveUserById(pair.getFirst()).complete().getName().length() > 18 ? event.getJDA().retrieveUserById(pair.getFirst()).complete().getName().substring(0, 18) + "." : event.getJDA().retrieveUserById(pair.getFirst()).complete().getName(), pair.getSecond());
+                        string += currentString;
+                    }
+        
+                    string += "```";
+        
+                    eb.setDescription(string);
+                    eb.setColor(Color.CYAN);
+                    eb.setAuthor("/sqjoin NenadG.4682", null, event.getMember().getAvatarUrl());
+        
+                    event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID)
+                        .sendMessage("<@&1007918310190501948>, <@&1013185863116660838>, **STATIC** weekly clear is starting in 15 minutes. We have " + listOfPeopleSignedUp.size() + "/10 people signed up!")
+                        .setEmbeds(eb.build()).queue(message -> message.delete().queueAfter(3, TimeUnit.HOURS));
+
+                    new Timer().schedule(new TimerTask() {
+                        public void run() {
+                            event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID)
+                                .sendMessage("<@&1007918310190501948>, <@&1013185863116660838>, **STATIC** weekly clear is starting **now**!").queue(message -> message.delete().queueAfter(180 - minutesToWait, TimeUnit.MINUTES));
+        
+                            event.getUser().openPrivateChannel().queue(channel -> channel.sendMessage("Make sure to enable the autouploading tool for the static run!").queue());
+
+                            this.cancel();
+                        }
+                    }, minutesToWait > 15 ? 15 * 60 * 1000 : minutesToWait * 60 * 1000);
+        
+                    new Timer().schedule(new TimerTask() {
+                        public void run() {
+                            SignupExcelWriting.getCurrentSignups().forEach(pair -> {
+                                event.getGuild().retrieveMember(UserSnowflake.fromId(pair.getFirst())).queue(member -> {
+                                    if(!(member.getRoles().contains(event.getGuild().getRoleById(Constants.staticRoleID)) || member.getRoles().contains(event.getGuild().getRoleById(Constants.staticApplicantRoleID)))) {
+                                        member.getUser().openPrivateChannel().queue(channel -> channel.sendMessage("Your signup has been removed for next week's static. If you are called again, feel free to sign up again!").queue());
+                                        
+                                        try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
+                                            XSSFWorkbook workbook = new XSSFWorkbook(file);
+                                            XSSFSheet sheet = workbook.getSheetAt(0);
+                                
+                                            Row firstOpenRow = sheet.getRow(0);
+                                
+                                            for(Integer i = 1; i < 11; i++) {
+                                                if(firstOpenRow.getCell(i).getStringCellValue().equals(pair.getFirst())) {
+                                                    firstOpenRow.getCell(i).setCellValue("EMPTY");
+                                                }
+                                            }
+                                
+                                            FileOutputStream fileOutputStream = new FileOutputStream(new File("static.xlsx"));
+                                            workbook.write(fileOutputStream);
+                                
+                                            fileOutputStream.close();
+                                            workbook.close();
+        
+                                        } catch(IOException e) {
+                                
+                                        }
+                                    }
+                                });
+                            });
+        
+                            HttpServerHosting.stopServer();
+        
+                            event.getMember().getUser().openPrivateChannel().queue(channel -> channel.sendMessage("The server's port was closed automatically after 4 hours. I unsigned any backups (if there were any).").queue());
+        
+                            this.cancel();
+                        }
+                    }, 4 * 60 * 60 * 1000 + (minutesToWait > 15 ? 15 * 60 * 1000 : minutesToWait * 60 * 1000));
+        
+                } else {
+                    event.getHook().sendMessage("Server is already activated there. Use `/stopstaticraid` first.").queue();
+                }
+
+                this.cancel();
+            }
+        }, minutesToWait > 15 ? (minutesToWait - 15) * 60 * 1000 : 0);
+    }
+
+    public String CenterString(int width, String s) {
+        return String.format("%-" + width  + "s", String.format("%" + (s.length() + (width - s.length()) / 2) + "s", s));
     }
 }
