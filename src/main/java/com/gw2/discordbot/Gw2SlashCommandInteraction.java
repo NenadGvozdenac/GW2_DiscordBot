@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -29,15 +29,15 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu.Builder;
 
+@SuppressWarnings("null")
 public class Gw2SlashCommandInteraction extends ListenerAdapter {
     
     @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+    public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event) {
 
         if(!event.isFromGuild()) {
             if(!event.isAcknowledged()) {
@@ -81,14 +81,14 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void QTP_FIRES_EVENT(@NotNull SlashCommandInteractionEvent event) {
+    private void QTP_FIRES_EVENT(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(false).queue();
 
         String qtpFires = Constants.QTP_FIRES;
         event.getHook().sendMessage(qtpFires).queue();
     }
 
-    private void GET_API_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+    private void GET_API_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
         Gson gson;
         String userId = event.getUser().getId();
         event.deferReply(true).queue();
@@ -135,7 +135,7 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void GW2_DAILIES_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+    private void GW2_DAILIES_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue(message -> 
@@ -149,7 +149,7 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
         );
     }
 
-    private void GW2_ACCOUNT_RAID_INFO_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+    private void GW2_ACCOUNT_RAID_INFO_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         UserApi accountInfo = UserApi.GET_API_INFO(event.getUser().getId());
@@ -241,7 +241,7 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
         });
     }
 
-    private void GW2_CHARACTER_INFO_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+    private void GW2_CHARACTER_INFO_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         UserApi accountInfo = UserApi.GET_API_INFO(event.getUser().getId());
         
@@ -311,15 +311,14 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
                 while(!es.awaitTermination(1, TimeUnit.MINUTES));
                 characterMenu.addOptions(characterOptions);
 
-                ActionRow actionRow = ActionRow.of(characterMenu.build());
-                k.editMessageEmbeds(embedForSending).setActionRows(actionRow).queue();
+                k.editMessageEmbeds(embedForSending).setActionRow(characterMenu.build()).queue();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
     }
 
-    private void GW2_ACCOUNT_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+    private void GW2_ACCOUNT_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
 
         event.deferReply(true).queue();
         UserApi accountInfo = UserApi.GET_API_INFO(event.getUser().getId());
@@ -430,7 +429,7 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
         });
     }
 
-    private void DELETE_API_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+    private void DELETE_API_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         Gson gson;
         String userId = event.getUser().getId();
@@ -477,7 +476,7 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void ADD_API_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+    private void ADD_API_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         UserApi api;
         Gson gson;

@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.RestAction;
 
+@SuppressWarnings("null")
 public class SlashCommandData {
     
     private String commandName;
@@ -30,7 +31,7 @@ public class SlashCommandData {
 
     private List<Option> options;
 
-    SlashCommandData(String commandName, String commandDescription, Boolean adminOnly, Option... options) {
+    public SlashCommandData(String commandName, String commandDescription, Boolean adminOnly, Option... options) {
         this.commandName = commandName;
         this.commandDescription = commandDescription + (adminOnly ? " `(ADMIN)`" : "");
         this.adminOnly = adminOnly;

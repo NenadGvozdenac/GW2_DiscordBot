@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 
 public class DailyAchievements {
 
+    @SuppressWarnings("null")
     public void ReadFractalsFromApi() {
 
         try {

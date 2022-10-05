@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 
+@SuppressWarnings("null")
 public class RssReaderClass {
 
     public void ReadNewsFromSite() throws InterruptedException {
@@ -243,7 +244,7 @@ public class RssReaderClass {
                                         WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhookName);
                                 
                                         WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
-                                        messageBuilder.setContent("<@&1010591966502862848>");
+                                        messageBuilder.setContent("<@&1010592026846314496>");
                                         messageBuilder.setAvatarUrl(Constants.gw2LogoNoBackground);
                     
                                         WebhookEmbedBuilder embedBuilder = WebhookEmbedBuilder.fromJDA(eb.build());

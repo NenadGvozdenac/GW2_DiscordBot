@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
+@SuppressWarnings("null")
 public class DiscordBot {
     
     public static JDA jda;
@@ -55,7 +56,9 @@ public class DiscordBot {
             new SlashCommandData("add_api",  "Adds your API key to the bot.", false, new Option(OptionType.STRING, "apikey", "The designated API key you wish to assign to your account.", true)),
             new SlashCommandData("delete_api", "Deletes your APi key from the bot, if you had already added it.", false),
             new SlashCommandData("get_api", "Lists your API key that you added.", false),
-            new SlashCommandData("test", "Tests a dev command...", true)
+            new SlashCommandData("get_raid_json", "Gets json raid thing.", true),
+            new SlashCommandData("test", "Tests a dev command...", true),
+            new SlashCommandData("startserver", "Starts the server for receiving dps.reports.", true)
         };
     }
 

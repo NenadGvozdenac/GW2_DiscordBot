@@ -2,10 +2,12 @@ package com.gw2.discordbot;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.Scanner;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -55,12 +57,30 @@ public class Token {
 			}
 	
 		 } catch (IOException e) {
-			 Map<String, String> map = System.getenv();
-	
-			 if(map.containsKey("token")) {
-				Logging.LOG(Token.class, "Token gotten from OS env. variable: " + map.get("token"));
-				return map.get("token");
-			 }
+			try(FileWriter writer = new FileWriter(new File(new File("jsonFolder"), "token.json"))) {
+				
+				System.out.println("Enter your token: ");
+				Scanner scanner = new Scanner(System.in);
+				
+				String token = scanner.next();
+
+				Gson gson = new GsonBuilder()
+						 .disableHtmlEscaping()
+						 .setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+						 .setPrettyPrinting()
+						 .serializeNulls()
+						 .create();
+
+				Token loginToken = new Token("loginToken", token);
+
+				writer.write(gson.toJson(loginToken));
+
+				writer.close();
+				scanner.close();
+
+			} catch(IOException e1) {
+				System.out.println("Error...");
+			}
 		 }
 		return null;	
     }

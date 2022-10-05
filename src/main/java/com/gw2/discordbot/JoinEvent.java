@@ -2,19 +2,20 @@ package com.gw2.discordbot;
 
 import java.awt.Color;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+@SuppressWarnings("null")
 public class JoinEvent extends ListenerAdapter {
 
     static String channelWelcomeId = "1007916158478987364";
     static String channelGoodbyeId = "1007916643923537970";
 
     @Override
-    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+    public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
 
         EmbedBuilder eb = new EmbedBuilder();
         

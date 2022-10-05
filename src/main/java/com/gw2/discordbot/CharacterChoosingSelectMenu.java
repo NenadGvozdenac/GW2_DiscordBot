@@ -1,6 +1,6 @@
 package com.gw2.discordbot;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
@@ -10,7 +10,8 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 public class CharacterChoosingSelectMenu extends ListenerAdapter {
 
     @Override
-    public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
+    @SuppressWarnings("null")
+    public void onSelectMenuInteraction(@Nonnull SelectMenuInteractionEvent event) {
 
         if(event.getSelectMenu().getId().equals("character_choosing")) {
 

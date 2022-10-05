@@ -1,16 +1,18 @@
 package com.gw2.discordbot;
 
 import java.awt.Color;
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+
 import kong.unirest.HttpResponse;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -18,11 +20,13 @@ import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.utils.FileUpload;
 
+@SuppressWarnings("null")
 public class SlashCommandInteraction extends ListenerAdapter {
 
     @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+    public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event) {
 
         if(!event.isFromGuild()) {
             if(!event.isAcknowledged()) {
@@ -38,6 +42,10 @@ public class SlashCommandInteraction extends ListenerAdapter {
 
             case "help":
                 HELP_COMMAND(event);
+            break;
+
+            case "get_raid_json":
+                GET_RAID_JSON_COMMAND(event);
             break;
 
             case "profile":
@@ -75,10 +83,52 @@ public class SlashCommandInteraction extends ListenerAdapter {
             case "announce":
                 ANNOUNCE_EVENT(event);
             break;
+
+            case "startserver":
+                START_SERVER_EVENT(event);
+            break;
+
+            case "stopserver":
+                STOP_SERVER_EVENT(event);
+            break;
         }
     }
 
-    private void ANNOUNCE_EVENT(@NotNull SlashCommandInteractionEvent event) {
+    private void STOP_SERVER_EVENT(SlashCommandInteractionEvent event) {
+
+        event.deferReply(true).queue();
+        event.getHook().sendMessage("Stopped the server.").queue();
+
+        HttpServerHosting.stopServer();
+
+    }
+
+    private void START_SERVER_EVENT(SlashCommandInteractionEvent event) {
+
+        event.deferReply(true).queue();
+        
+        if(HttpServerHosting.activateServer()) {
+            event.getHook().sendMessage("Activated the server port.").queue();
+        } else {
+            event.getHook().sendMessage("Couldn't activate the server port...").queue();
+        }
+
+    }
+
+    private void GET_RAID_JSON_COMMAND(SlashCommandInteractionEvent event) {
+
+        File file = new File("weeklyStaticLogging.json");
+
+        if(!file.exists()) {
+            event.reply("The file is non existant...").queue();
+            return;
+        }
+
+        event.replyFiles(FileUpload.fromData(file)).queue();
+
+    }
+
+    private void ANNOUNCE_EVENT(@Nonnull SlashCommandInteractionEvent event) {
         Modal modal = Modal.create("announcementmodal", "#" + event.getGuild().getTextChannelById(Constants.announcementChannelID).getName())
             .addActionRows(
                 ActionRow.of(
@@ -98,7 +148,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         event.replyModal(modal).queue();
     }
 
-    private void INVITE_EVENT(@NotNull SlashCommandInteractionEvent event) {
+    private void INVITE_EVENT(@Nonnull SlashCommandInteractionEvent event) {
 
         if(event.getOptions().isEmpty()) {
             event.reply("Invite to this guild: " + event.getGuild().retrieveInvites().complete().get(0).getUrl()).queue();
@@ -117,7 +167,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void CONTACT_DEVELOPER(@NotNull SlashCommandInteractionEvent event) {
+    private void CONTACT_DEVELOPER(@Nonnull SlashCommandInteractionEvent event) {
         TextInput subject = TextInput.create("subject", "Subject", TextInputStyle.SHORT)
             .setPlaceholder("Enter the subject")
             .setRequired(true)
@@ -134,21 +184,17 @@ public class SlashCommandInteraction extends ListenerAdapter {
         event.replyModal(modal).queue();
     }
 
-    private void TEST_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+
+
+
+    private void TEST_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
         
         event.deferReply(true).queue();
-
-        if(HttpServerHosting.activateServer()) {
-            event.getHook().sendMessage("Activated the server port.").queue();
-        } else {
-            event.getHook().sendMessage("Couldn't activate the server port...").queue();
-        }
-
         SignupExcelWriting.clearSignups();
         SignupExcelWriting.writeStaticMembers();
     }
 
-    private void SHUTDOWN_EVENT(@NotNull SlashCommandInteractionEvent event) {
+    private void SHUTDOWN_EVENT(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         event.getHook().sendMessage("`Shutting down in 5 seconds...`").queueAfter(5, TimeUnit.SECONDS, message -> {
             event.getJDA().shutdown();
@@ -163,7 +209,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         });
     }
 
-    private void API_STATUS(@NotNull SlashCommandInteractionEvent event) {
+    private void API_STATUS(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         EmbedBuilder eb = new EmbedBuilder();
@@ -203,7 +249,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         });
     }
 
-    private void PURGE_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+    private void PURGE_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 		
 		Integer numberOfMessages = event.getOption("number").getAsInt();
@@ -228,7 +274,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         event.getHook().sendMessage("Successfully purged " + numberOfMessages + " messages!").queue();
     }
 
-    private void RESET_SLASH_COMMANDS(@NotNull SlashCommandInteractionEvent event) {
+    private void RESET_SLASH_COMMANDS(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         DiscordBot.jda.updateCommands().queue();
 
@@ -245,7 +291,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         event.getHook().sendMessage("I have reset the slash commands of this server, per your request.").queue();
     }
 
-    private void PROFILE_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+    private void PROFILE_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         if(!event.isFromGuild()) {
@@ -286,7 +332,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         event.getHook().sendMessageEmbeds(eb.build()).queue();
     }
 
-    private void HELP_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+    private void HELP_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         if(HelpButtonEventListener.embedBuilders.size() != 1) {
@@ -299,11 +345,9 @@ public class SlashCommandInteraction extends ListenerAdapter {
 
             event.getJDA().addEventListener(new HelpButtonEventListener());
 
-            event.getHook().sendMessageEmbeds(HelpButtonEventListener.embedBuilders.get(0).build()).addActionRows(
-                ActionRow.of(
-                    Button.primary("left", "\u2B05\uFE0F \u2B05\uFE0F").asDisabled(),
-                    Button.primary("right", "\u27A1\uFE0F \u27A1\uFE0F")
-                )
+            event.getHook().sendMessageEmbeds(HelpButtonEventListener.embedBuilders.get(0).build()).addActionRow(
+                Button.primary("left", "\u2B05\uFE0F \u2B05\uFE0F").asDisabled(),
+                Button.primary("right", "\u27A1\uFE0F \u27A1\uFE0F")
             ).queue();
         } else {
 
@@ -318,7 +362,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void PING_COMMAND(@NotNull SlashCommandInteractionEvent event) {
+    private void PING_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         event.getHook().sendMessage("`BEEP BOOP, CALCULATING PING...`").queue(message -> {
         

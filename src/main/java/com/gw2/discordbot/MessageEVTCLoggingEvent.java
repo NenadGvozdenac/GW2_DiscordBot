@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -22,11 +22,13 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.FileUpload;
 
+@SuppressWarnings("null")
 public class MessageEVTCLoggingEvent extends ListenerAdapter {
 
     @Override
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+    public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
 
         if(event.getMessage().getAttachments().isEmpty())
             return;
@@ -135,7 +137,7 @@ public class MessageEVTCLoggingEvent extends ListenerAdapter {
                             }
                             File fileChart = ChartGenerator.generateChart("DPS STATS", listOfPairs);
         
-                            event.getMessage().replyEmbeds(eb.setImage("attachment://bitmapsave.png").build()).addFile(ChartGenerator.generateChart("DPS STATS", listOfPairs)).queue();
+                            event.getMessage().replyEmbeds(eb.setImage("attachment://bitmapsave.png").build()).addFiles(FileUpload.fromData(ChartGenerator.generateChart("DPS STATS", listOfPairs))).queue();
                             fileChart.delete();
                         });
                     }).thenAccept(finalStage -> fileTest.delete());

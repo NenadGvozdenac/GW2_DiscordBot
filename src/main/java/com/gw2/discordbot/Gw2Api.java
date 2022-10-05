@@ -12,6 +12,7 @@ import kong.unirest.UnirestException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
+@SuppressWarnings("null")
 public class Gw2Api {
 
     public static HttpResponse<String> GET_REQUEST(String accountId, String version, String type) {

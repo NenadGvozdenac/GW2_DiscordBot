@@ -273,6 +273,12 @@
     "Options": []
   },
   {
+    "CommandName": "get_raid_json",
+    "CommandDescription": "Gets json raid thing. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
     "CommandName": "test",
     "CommandDescription": "Tests a dev command... `(ADMIN)`",
     "AdminOnly": true,

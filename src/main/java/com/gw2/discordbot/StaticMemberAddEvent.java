@@ -1,11 +1,12 @@
 package com.gw2.discordbot;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+@SuppressWarnings("null")
 public class StaticMemberAddEvent extends ListenerAdapter {
 
     private User user;
@@ -15,13 +16,13 @@ public class StaticMemberAddEvent extends ListenerAdapter {
     }
 
     @Override
-    public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
+    public void onSelectMenuInteraction(@Nonnull SelectMenuInteractionEvent event) {
         if(event.getComponentId().equals("staticaddplayermenu")) {
             String value = event.getSelectedOptions().get(0).getValue();
 
             SignupExcelWriting.addStaticMember(user, value);
 
-            event.deferEdit().setContent("`Added user " + user.getAsMention() + " as " + value + "!`").setActionRows().queue();
+            event.deferEdit().setContent("`Added user " + user.getAsMention() + " as " + value + "!`").setActionRow().queue();
 
             event.getGuild().removeRoleFromMember(user, event.getGuild().getRoleById("1013185863116660838")).queue();
             event.getGuild().addRoleToMember(user, event.getGuild().getRoleById("1007918310190501948")).queue();

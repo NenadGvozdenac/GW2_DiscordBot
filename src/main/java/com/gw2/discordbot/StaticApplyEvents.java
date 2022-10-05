@@ -11,7 +11,7 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
@@ -20,15 +20,15 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 
+@SuppressWarnings("null")
 public class StaticApplyEvents extends ListenerAdapter {
     
     @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+    public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event) {
 
         if(!event.isFromGuild()) {
             if(!event.isAcknowledged()) {
@@ -64,7 +64,7 @@ public class StaticApplyEvents extends ListenerAdapter {
         }
     }
 
-    private void STATIC_ADD_BACKUP(@NotNull SlashCommandInteractionEvent event) {
+    private void STATIC_ADD_BACKUP(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         User user = event.getOption("user").getAsUser();
@@ -85,7 +85,7 @@ public class StaticApplyEvents extends ListenerAdapter {
         );
     }
 
-    private void STATIC_REJECT_TRYOUT(@NotNull SlashCommandInteractionEvent event) {
+    private void STATIC_REJECT_TRYOUT(@Nonnull SlashCommandInteractionEvent event) {
 
         event.deferReply(true).queue();
 
@@ -106,7 +106,7 @@ public class StaticApplyEvents extends ListenerAdapter {
 
     }
 
-    private void STATIC_GET_ALL_PLAYERS_EVENT(@NotNull SlashCommandInteractionEvent event) {
+    private void STATIC_GET_ALL_PLAYERS_EVENT(@Nonnull SlashCommandInteractionEvent event) {
 
         event.deferReply(true).queue();
 
@@ -143,7 +143,7 @@ public class StaticApplyEvents extends ListenerAdapter {
 
     }
 
-    private void STATIC_REMOVE_PLAYER_EVENT(@NotNull SlashCommandInteractionEvent event) {
+    private void STATIC_REMOVE_PLAYER_EVENT(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         ArrayList<String> listOfMembersWithRolesIds = SignupExcelWriting.getAllActiveMembersIds();
@@ -160,40 +160,40 @@ public class StaticApplyEvents extends ListenerAdapter {
         Button buttonHelp = Button.primary("helpstaticremove", "HELP")
             .withEmoji(Emoji.fromFormatted("\u2753"));
 
-        event.getHook().sendMessage("`Select a player you wish to remove from the static:`").addActionRows(ActionRow.of(menu), ActionRow.of(buttonCancel, buttonHelp)).queue();
+        event.getHook().sendMessage("`Select a player you wish to remove from the static:`").addActionRow(menu).addActionRow(buttonCancel, buttonHelp).queue();
     }
 
     @Override
-    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+    public void onButtonInteraction(@Nonnull ButtonInteractionEvent event) {
         switch(event.getButton().getId()) {
             case "cancelstaticaddtryout":
-                event.deferEdit().setContent("`You cancelled the action.`").setActionRows().queue();
+                event.deferEdit().setContent("`You cancelled the action.`").setActionRow().queue();
             break;
 
             case "cancelstaticadd":
-                event.deferEdit().setContent("`You cancelled the action.`").setActionRows().queue();
+                event.deferEdit().setContent("`You cancelled the action.`").setActionRow().queue();
             break;
 
             case "cancelstaticremove":
-                event.deferEdit().setContent("`You cancelled the action.`").setActionRows().queue();
+                event.deferEdit().setContent("`You cancelled the action.`").setActionRow().queue();
             break;
 
             case "helpstaticadd":
-                event.deferEdit().setContent("```This is a command that lets you add players to the static. \nYou will be prompted with a menu to add the player.\nIf you wish to continue, run this command again.```").setActionRows().queue();
+                event.deferEdit().setContent("```This is a command that lets you add players to the static. \nYou will be prompted with a menu to add the player.\nIf you wish to continue, run this command again.```").setActionRow().queue();
             break;
 
             case "helpstaticaddtryout":
-                event.deferEdit().setContent("```This is a command that lets you add a tryout for the static. \nYou will be prompted with a menu to select which position you wish for the tryout to be.\nIf you wish to continue, run this command again.```").setActionRows().queue();
+                event.deferEdit().setContent("```This is a command that lets you add a tryout for the static. \nYou will be prompted with a menu to select which position you wish for the tryout to be.\nIf you wish to continue, run this command again.```").setActionRow().queue();
             break;
 
             case "helpstaticremove":
-                event.deferEdit().setContent("```This is a command that lets you remove a static member.\nYou will be prompted with a menu to select which player you wish to remove.```").setActionRows().queue();
+                event.deferEdit().setContent("```This is a command that lets you remove a static member.\nYou will be prompted with a menu to select which player you wish to remove.```").setActionRow().queue();
             break;
         }
 
     }
 
-    private void STATIC_ADD_PLAYER_EVENT(@NotNull SlashCommandInteractionEvent event) {
+    private void STATIC_ADD_PLAYER_EVENT(@Nonnull SlashCommandInteractionEvent event) {
 
         event.deferReply(true).queue();
 
@@ -256,7 +256,7 @@ public class StaticApplyEvents extends ListenerAdapter {
             Button buttonHelp = Button.primary("helpstaticadd", "HELP")
                 .withEmoji(Emoji.fromFormatted("\u2753"));
 
-            event.getHook().sendMessage("`Select from available classes that are still free:`").addActionRows(ActionRow.of(menu), ActionRow.of(buttonCancel, buttonHelp)).queue();
+            event.getHook().sendMessage("`Select from available classes that are still free:`").addActionRow(menu).addActionRow(buttonCancel, buttonHelp).queue();
         
             workbook.close();
 
@@ -267,7 +267,7 @@ public class StaticApplyEvents extends ListenerAdapter {
 
     }
 
-    private void STATIC_ADD_TRYOUT_EVENT(@NotNull SlashCommandInteractionEvent event) {
+    private void STATIC_ADD_TRYOUT_EVENT(@Nonnull SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         if(!event.isFromGuild()) {
@@ -323,7 +323,7 @@ public class StaticApplyEvents extends ListenerAdapter {
             Button buttonHelp = Button.primary("helpstaticaddtryout", "HELP")
                 .withEmoji(Emoji.fromFormatted("\u2753"));
 
-            event.getHook().sendMessage("`Select from available classes that are still free:`").addActionRows(ActionRow.of(menu), ActionRow.of(buttonCancel, buttonHelp)).queue();
+            event.getHook().sendMessage("`Select from available classes that are still free:`").addActionRow(menu).addActionRow(buttonCancel, buttonHelp).queue();
         
             event.getJDA().addEventListener(new StaticAddTryout(user));
 

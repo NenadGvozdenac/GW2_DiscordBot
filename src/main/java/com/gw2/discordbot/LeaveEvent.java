@@ -2,19 +2,20 @@ package com.gw2.discordbot;
 
 import java.awt.Color;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+@SuppressWarnings("null")
 public class LeaveEvent extends ListenerAdapter {
 
     static String channelWelcomeId = "1007916158478987364";
     static String channelGoodbyeId = "1007916643923537970";
 
     @Override
-    public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+    public void onGuildMemberRemove(@Nonnull GuildMemberRemoveEvent event) {
 
         EmbedBuilder eb = new EmbedBuilder();
 

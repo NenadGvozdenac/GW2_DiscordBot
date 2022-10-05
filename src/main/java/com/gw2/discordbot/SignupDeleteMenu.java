@@ -8,15 +8,16 @@ import java.io.IOException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+@SuppressWarnings("null")
 public class SignupDeleteMenu extends ListenerAdapter {
     
     @Override
-    public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
+    public void onSelectMenuInteraction(@Nonnull SelectMenuInteractionEvent event) {
 
         if(event.getSelectMenu().getId().equals("signupdeletemenu")) {
             try(FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
@@ -37,7 +38,7 @@ public class SignupDeleteMenu extends ListenerAdapter {
                 workbook.write(fileOutputStream);
 
                 fileOutputStream.close();
-                event.deferEdit().queue(edit -> edit.editMessageById(event.getMessageId(), "Successfully deleted user with ID `" + key + "`!").setActionRows().queue());
+                event.deferEdit().queue(edit -> edit.editMessageById(event.getMessageId(), "Successfully deleted user with ID `" + key + "`!").setActionRow().queue());
 
                 if(!event.getUser().equals(event.getJDA().getSelfUser())) {
                     event.getJDA().retrieveUserById(key).complete().openPrivateChannel().queue(channel -> 

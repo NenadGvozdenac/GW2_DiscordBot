@@ -12,13 +12,14 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import kotlin.Pair;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+@SuppressWarnings("null")
 public class SignupExcelWriting extends ListenerAdapter {
     
     public User user;
@@ -32,7 +33,7 @@ public class SignupExcelWriting extends ListenerAdapter {
     }
 
     @Override
-    public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
+    public void onSelectMenuInteraction(@Nonnull SelectMenuInteractionEvent event) {
         if(event.getSelectMenu().getId().equals("signupmenu")) {
             String selectedItem = event.getSelectedOptions().get(0).getValue();
 
@@ -57,7 +58,7 @@ public class SignupExcelWriting extends ListenerAdapter {
                 event.deferEdit().queue(edit -> 
                     edit.editMessageById(
                         event.getMessageId(), "`You chose " + selectedItem + ((this.user == null) ? "!`" : " for " + this.user.getAsTag() + "!`")
-                    ).setActionRows().queue()
+                    ).setActionRow().queue()
                 );
 
                 event.getJDA().removeEventListener(this);
