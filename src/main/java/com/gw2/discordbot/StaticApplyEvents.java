@@ -167,27 +167,27 @@ public class StaticApplyEvents extends ListenerAdapter {
     public void onButtonInteraction(@Nonnull ButtonInteractionEvent event) {
         switch(event.getButton().getId()) {
             case "cancelstaticaddtryout":
-                event.deferEdit().setContent("`You cancelled the action.`").setActionRow().queue();
+                event.deferEdit().setContent("`You cancelled the action.`").setComponents().queue();
             break;
 
             case "cancelstaticadd":
-                event.deferEdit().setContent("`You cancelled the action.`").setActionRow().queue();
+                event.deferEdit().setContent("`You cancelled the action.`").setComponents().queue();
             break;
 
             case "cancelstaticremove":
-                event.deferEdit().setContent("`You cancelled the action.`").setActionRow().queue();
+                event.deferEdit().setContent("`You cancelled the action.`").setComponents().queue();
             break;
 
             case "helpstaticadd":
-                event.deferEdit().setContent("```This is a command that lets you add players to the static. \nYou will be prompted with a menu to add the player.\nIf you wish to continue, run this command again.```").setActionRow().queue();
+                event.deferEdit().setContent("```This is a command that lets you add players to the static. \nYou will be prompted with a menu to add the player.\nIf you wish to continue, run this command again.```").setComponents().queue();
             break;
 
             case "helpstaticaddtryout":
-                event.deferEdit().setContent("```This is a command that lets you add a tryout for the static. \nYou will be prompted with a menu to select which position you wish for the tryout to be.\nIf you wish to continue, run this command again.```").setActionRow().queue();
+                event.deferEdit().setContent("```This is a command that lets you add a tryout for the static. \nYou will be prompted with a menu to select which position you wish for the tryout to be.\nIf you wish to continue, run this command again.```").setComponents().queue();
             break;
 
             case "helpstaticremove":
-                event.deferEdit().setContent("```This is a command that lets you remove a static member.\nYou will be prompted with a menu to select which player you wish to remove.```").setActionRow().queue();
+                event.deferEdit().setContent("```This is a command that lets you remove a static member.\nYou will be prompted with a menu to select which player you wish to remove.```").setComponents().queue();
             break;
         }
 

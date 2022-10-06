@@ -3,6 +3,7 @@ com\gw2\discordbot\Boss$1$7.class
 com\gw2\discordbot\HttpServerHosting$StopFileUpload$1.class
 com\gw2\discordbot\StaticSlashCommandInteraction$1$2.class
 com\gw2\discordbot\Main.class
+com\gw2\discordbot\Boss$1$12.class
 com\gw2\discordbot\Gw2SlashCommandInteraction.class
 com\gw2\discordbot\NewUserReactEmoteEvent.class
 com\gw2\discordbot\ModalAnnouncement.class
@@ -38,10 +39,13 @@ com\gw2\discordbot\ChartGenerator.class
 com\gw2\discordbot\StaticAddTryout.class
 com\gw2\discordbot\DiscordBot.class
 com\gw2\discordbot\RssReaderClass$2.class
+com\gw2\discordbot\Boss$1$13.class
 com\gw2\discordbot\Token.class
+com\gw2\discordbot\Boss$1$10.class
 com\gw2\discordbot\DiscordBot$1$1.class
 com\gw2\discordbot\Logging.class
 com\gw2\discordbot\Constants.class
+com\gw2\discordbot\Boss$1$9.class
 com\gw2\discordbot\Constants$1.class
 com\gw2\discordbot\SlashCommandData.class
 com\gw2\discordbot\CharacterChoosingSelectMenu.class
@@ -54,12 +58,15 @@ com\gw2\discordbot\StaticSlashCommandInteraction.class
 com\gw2\discordbot\StaticApplyEvents.class
 com\gw2\discordbot\Gw2SlashCommandInteraction$5.class
 com\gw2\discordbot\Boss$1$6.class
+com\gw2\discordbot\Boss$1$11.class
 com\gw2\discordbot\RandomFunnyQuote$1.class
+com\gw2\discordbot\HttpServerHosting$StopFileUpload$2.class
 com\gw2\discordbot\Token$1.class
 com\gw2\discordbot\Gw2SlashCommandInteraction$4.class
 com\gw2\discordbot\Gw2Dailies$1.class
 com\gw2\discordbot\HttpServerHosting$PersonalFileHandler.class
 com\gw2\discordbot\RssReaderClass.class
+com\gw2\discordbot\Boss$1$8.class
 com\gw2\discordbot\JoinEvent.class
 com\gw2\discordbot\StaticMemberAddEvent.class
 com\gw2\discordbot\Announcement.class

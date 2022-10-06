@@ -8,11 +8,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
@@ -26,12 +30,11 @@ import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
 
 @SuppressWarnings("null")
 public class HttpServerHosting {
-
-    static long currentMilis;
     
     public static HttpServer server;
 
@@ -40,19 +43,10 @@ public class HttpServerHosting {
             server = HttpServer.create(new InetSocketAddress(25639), 0);
             // server.createContext("/staticFileUpload", new StaticFileHandler());
             server.createContext("/personalFileUpload", new PersonalFileHandler(new RaidDay()));
-            server.createContext("/stopFileUpload", new StopFileUpload("1027132780825559090"));
+            server.createContext("/stopFileUpload", new StopFileUpload());
 
             server.setExecutor(null); 
             server.start();	
-
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");  
-            LocalDateTime now = LocalDateTime.now();  
-
-            String currentTime = dtf.format(now);
-
-            currentMilis = System.currentTimeMillis();
-
-            // DiscordBot.jda.getTextChannelById("1007917782601572352").sendMessage("DAY: `" + currentTime + "`!").queue();
 
             System.out.println("Started the server!");
 
@@ -70,12 +64,6 @@ public class HttpServerHosting {
 
     static class StopFileUpload implements HttpHandler {
 
-        String id;
-
-        StopFileUpload(String id) {
-            this.id = id;
-        }
-
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             
@@ -86,6 +74,10 @@ public class HttpServerHosting {
             OutputStream os = exchange.getResponseBody();								
             os.write(response.getBytes());											
             os.close();		
+
+            String channelForSending = exchange.getRequestHeaders().getFirst("channelid");
+
+            System.out.println(channelForSending + " is the id of the channel.");
 
             try(FileReader reader = new FileReader(new File("./weeklyStaticLogging.json"))) {
                 Gson gson = new GsonBuilder()
@@ -103,22 +95,80 @@ public class HttpServerHosting {
     
                 List<Boss> listOfBosses = raidDay.bosses;
     
-                for(Boss boss : listOfBosses) {
-                    if(boss.bossName.equals("Twisted Castle"))  continue;
+                List<List<Boss>> Wings = new ArrayList<>() {
+                    {
+                        add(new ArrayList<>());
+                    }
+                };
 
-                    eb.addField(boss.bossName, ":wrench: [Report](" + boss.dpsReportLink + ")\n" + ":clock1: " + (boss.killTime.contains("00m") ? boss.killTime.substring(4) : boss.killTime), false);
+                for(int i = 0, j = 0; i < listOfBosses.size(); i++) {
+                    if(i == listOfBosses.size() - 1) {
+                        Wings.get(j).add(listOfBosses.get(i));
+                    } else if(listOfBosses.get(i).wingName.equals(listOfBosses.get(i+1).wingName)) {
+                        Wings.get(j).add(listOfBosses.get(i));
+                    } else {
+                        Wings.get(j).add(listOfBosses.get(i));
+                        Wings.add(new ArrayList<>());
+                        j++;
+                    }
+                }
+
+                List<Boss> failedBosses = new ArrayList<>();
+
+                listOfBosses.forEach(boss -> {
+                    if(boss.isFailed) {
+                        failedBosses.add(boss);
+                    }
+                });
+
+                for(List<Boss> wing : Wings) {
+
+                    String string = "";
+
+                    String title = wing.get(0).wingName;
+
+                    for(Boss boss : wing) {
+                        if(boss.isFailed) continue;
+                        string += "[" + boss.bossName + "](" + boss.dpsReportLink + ") " + (boss.killTime.contains("00m ") ? boss.killTime.substring(4) : boss.killTime) + "\n";
+                    }
+
+                    eb.addField(title, string, false);
                 }
     
-                eb.setFooter("Cleared in: " + TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - currentMilis) + " minute(s).");
-                
-                currentMilis = 0;
+                Boss firstBoss = listOfBosses.get(0);
+                Boss lastBoss = listOfBosses.get(listOfBosses.size() - 1);
 
-                DiscordBot.jda.getTextChannelById(id).sendMessageEmbeds(eb.build()).queue();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss X", Locale.getDefault());
+
+                long startMilis = sdf.parse(firstBoss.startTime).getTime();
+                long endMilis = sdf.parse(lastBoss.endTime).getTime();
+
+                eb.setFooter("Cleared in: " + TimeUnit.MILLISECONDS.toMinutes(endMilis - startMilis) + " minute(s).");
+
+                DiscordBot.jda.getTextChannelById(channelForSending).sendMessageEmbeds(eb.build()).queue();
+
+                EmbedBuilder eb1 = new EmbedBuilder();
+
+                eb1.setColor(Color.CYAN);
+                eb1.setTitle("Failed Bosses");
+                eb1.setDescription(failedBosses.size() + " failed attempts.");
+
+                String failure = "";
+
+                for(Boss boss : failedBosses) {
+                    failure += "[" + boss.bossName + "](" + boss.dpsReportLink + ") " + (boss.killTime.contains("00m ") ? boss.killTime.substring(4) : boss.killTime) + "\n";
+                }
+
+                eb1.appendDescription("\n\n" + failure);
+
+                DiscordBot.jda.getTextChannelById(channelForSending).sendMessageEmbeds(eb1.build()).queue();
 
                 stopServer();
 
             } catch(IOException e) {
-    
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -166,9 +216,10 @@ public class HttpServerHosting {
                 Boolean bossLogSuccess = exchange.getRequestHeaders().getFirst("bosssuccess").equals("true") ? false : true;
                 String bossLogName = exchange.getRequestHeaders().getFirst("bossname");
                 String bossIsCm = exchange.getRequestHeaders().getFirst("bosscm");
-                String bossIcon = exchange.getRequestHeaders().getFirst("bossicon");
+                String bossStartTime = exchange.getRequestHeaders().getFirst("bossstart");
+                String bossEndTime = exchange.getRequestHeaders().getFirst("bossend");
 
-                Boss currentBoss = new Boss(bossLogPermaLink, bossLogName, bossIcon, bossIsCm, bossLogSuccess, bossLogTime);
+                Boss currentBoss = new Boss(bossLogPermaLink, bossLogName, bossIsCm, bossLogSuccess, bossLogTime, bossStartTime, bossEndTime);
 
                 try(FileReader reader = new FileReader(new File("./weeklyStaticLogging.json"))) {
                     Gson gson = new GsonBuilder()

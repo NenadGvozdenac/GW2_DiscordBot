@@ -3,6 +3,8 @@ package com.gw2.discordbot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class Boss {
     
@@ -10,17 +12,18 @@ public class Boss {
     String bossName;
     String killTime;
     String dpsReportLink;
-    String bossIcon;
     Boolean isFailed;
+    String startTime;
+    String endTime;
 
-    public Boss(String bossLogPermaLink, String bossLogName, String bossIcon2, String bossIsCm, Boolean bossLogSuccess,
-            String bossLogTime) {
+    public Boss(String bossLogPermaLink, String bossLogName, String bossIsCm, Boolean bossLogSuccess,
+            String bossLogTime, String startTime, String endTime) {
 
             this.wingName = "null";
 
             HashMap<String, List<String>> listOfBossesAndWings = new HashMap<>(){
                 {
-                    put("Wing One", new ArrayList<String>() {
+                    put("Spirit Vale", new ArrayList<String>() {
                         {
                             add("Vale Guardian");
                             add("Gorseval the Multifarious");
@@ -28,7 +31,7 @@ public class Boss {
                         }
                     });
 
-                    put("Wing Two", new ArrayList<String>() {
+                    put("Salvation Pass", new ArrayList<String>() {
                         {
                             add("Slothasor");
                             add("Bandit Trio");
@@ -36,15 +39,16 @@ public class Boss {
                         }
                     });
 
-                    put("Wing Three", new ArrayList<String>() {
+                    put("Stronghold of the Faithful", new ArrayList<String>() {
                         {
                             add("Siege the Stronghold");
                             add("Keep Construct");
+                            add("Twisted Castle");
                             add("Xera");
                         }
                     });
 
-                    put("Wing Four", new ArrayList<String>() {
+                    put("Bastion of the Penitent", new ArrayList<String>() {
                         {
                             add("Cairn");
                             add("Mursaat Overseer");
@@ -53,7 +57,7 @@ public class Boss {
                         }
                     });
 
-                    put("Wing Five", new ArrayList<String>() {
+                    put("Hall of Chains", new ArrayList<String>() {
                         {
                             add("Soulless Horror");
                             add("River of Souls");
@@ -63,8 +67,16 @@ public class Boss {
                             add("Dhuum");
                         }
                     });
+                                        
+                    put("The Key of Ahdashim", new ArrayList<String>() {
+                        {
+                            add("Cardinal Adina");
+                            add("Cardinal Sabir");
+                            add("Qadim the Peerless");
+                        }
+                    });
 
-                    put("Wing Six", new ArrayList<String>() {
+                    put("Mythwright Gambit", new ArrayList<String>() {
                         {
                             add("Conjured Amalgamate");
                             add("Twin Largos");
@@ -72,28 +84,79 @@ public class Boss {
                         }
                     });
 
-                    put("Wing Seven", new ArrayList<String>() {
+
+                    put("Sunqua Peak", new ArrayList<String>() {
                         {
-                            add("Cardinal Adina");
-                            add("Cardinal Sabir");
-                            add("Qadim the Peerless");
+                            add("Elemental Ai, Keeper of the Peak");
+                            add("Dark Ai, Keeper of the Peak");
+                        }
+                    });
+
+                    put("Shattered Observatory", new ArrayList<String>() {
+                        {
+                            add("Skorvald");
+                            add("Artsariiv");
+                            add("Arkk");
+                        }
+                    });
+
+                    put("Nightmare", new ArrayList<String>() {
+                        {
+                            add("MAMA");
+                            add("Nightmare Oratuss");
+                            add("Ensolyss of the Endless Torment");
+                        }
+                    });
+
+                    put("Practice Room", new ArrayList<String>() {
+                        {
+                            add("Standard Kitty Golem");
+                            add("Medium Kitty Golem");
+                            add("Large Kitty Golem");
+                        }
+                    });
+
+                    put("Icebrood Saga", new ArrayList<String>() {
+                        {
+                            add("Shiverpeaks Pass");
+                            add("Voice of the Fallen and Claw of the Fallen");
+                            add("Fraenir of Jormag");
+                            add("Boneskinner");
+                            add("Whisper of Jormag");
+                            add("Cold War");
+                        }
+                    });
+
+                    put("End of Dragons", new ArrayList<String>() {
+                        {
+                            add("Aetherblade Hideout");
+                            add("Xunlai Jade Junkyard");
+                            add("Kaineng Overlook");
+                            add("Harvest Temple");
                         }
                     });
                 }
             };
 
-            listOfBossesAndWings.forEach((wingName, wingBosses) -> {
-                wingBosses.forEach(boss -> {
-                    if(boss.contains(bossLogName)) {
-                        this.wingName = wingName;
-                    }
-                });
-            });
-
             this.bossName = bossLogName;
-            this.bossIcon = bossIcon2;
             this.killTime = bossLogTime;
             this.isFailed = bossLogSuccess;
             this.dpsReportLink = bossLogPermaLink;
+            this.startTime = startTime;
+            this.endTime = endTime;
+
+            for(Map.Entry<String, List<String>> entry : listOfBossesAndWings.entrySet()) {
+                for(String boss : entry.getValue()) {
+                    if(bossLogName.contains(boss)) {
+                        this.wingName = entry.getKey();
+                        return;
+                    }
+                }
+            }
+    }
+
+    @Override
+    public String toString() {
+        return this.bossName + "::" +this.dpsReportLink;
     }
 }

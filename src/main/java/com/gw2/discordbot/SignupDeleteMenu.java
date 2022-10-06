@@ -38,7 +38,7 @@ public class SignupDeleteMenu extends ListenerAdapter {
                 workbook.write(fileOutputStream);
 
                 fileOutputStream.close();
-                event.deferEdit().queue(edit -> edit.editMessageById(event.getMessageId(), "Successfully deleted user with ID `" + key + "`!").setActionRow().queue());
+                event.deferEdit().queue(edit -> edit.editMessageById(event.getMessageId(), "Successfully deleted user with ID `" + key + "`!").setComponents().queue());
 
                 if(!event.getUser().equals(event.getJDA().getSelfUser())) {
                     event.getJDA().retrieveUserById(key).complete().openPrivateChannel().queue(channel -> 

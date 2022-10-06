@@ -22,7 +22,7 @@ public class StaticMemberAddEvent extends ListenerAdapter {
 
             SignupExcelWriting.addStaticMember(user, value);
 
-            event.deferEdit().setContent("`Added user " + user.getAsMention() + " as " + value + "!`").setActionRow().queue();
+            event.deferEdit().setContent("`Added user " + user.getAsMention() + " as " + value + "!`").setComponents().queue();
 
             event.getGuild().removeRoleFromMember(user, event.getGuild().getRoleById("1013185863116660838")).queue();
             event.getGuild().addRoleToMember(user, event.getGuild().getRoleById("1007918310190501948")).queue();

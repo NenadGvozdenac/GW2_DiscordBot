@@ -58,7 +58,7 @@ public class SignupExcelWriting extends ListenerAdapter {
                 event.deferEdit().queue(edit -> 
                     edit.editMessageById(
                         event.getMessageId(), "`You chose " + selectedItem + ((this.user == null) ? "!`" : " for " + this.user.getAsTag() + "!`")
-                    ).setActionRow().queue()
+                    ).setComponents().queue()
                 );
 
                 event.getJDA().removeEventListener(this);
