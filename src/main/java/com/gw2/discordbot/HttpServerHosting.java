@@ -11,6 +11,7 @@ import java.net.InetSocketAddress;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -30,7 +31,6 @@ import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
 
 @SuppressWarnings("null")
@@ -91,7 +91,6 @@ public class HttpServerHosting {
     
                 EmbedBuilder eb = new EmbedBuilder();
                 eb.setColor(Color.CYAN);
-                eb.setTitle(raidDay.date);
     
                 List<Boss> listOfBosses = raidDay.bosses;
     
@@ -125,14 +124,18 @@ public class HttpServerHosting {
 
                     String string = "";
 
+                    boolean toAddField = false;
+
                     String title = wing.get(0).wingName;
 
                     for(Boss boss : wing) {
                         if(boss.isFailed) continue;
-                        string += "[" + boss.bossName + "](" + boss.dpsReportLink + ") " + (boss.killTime.contains("00m ") ? boss.killTime.substring(4) : boss.killTime) + "\n";
+                        toAddField = true;
+                        string += (boss.emoji.equals("null") ? "" : boss.emoji + " ") + "[" + boss.bossName + "](" + boss.dpsReportLink + ") " + (boss.killTime.contains("00m ") ? boss.killTime.substring(4, 7) : boss.killTime.substring(0, 7)) + "\n";
                     }
 
-                    eb.addField(title, string, false);
+                    if(toAddField)
+                        eb.addField(title, string, false);
                 }
     
                 Boss firstBoss = listOfBosses.get(0);
@@ -143,25 +146,44 @@ public class HttpServerHosting {
                 long startMilis = sdf.parse(firstBoss.startTime).getTime();
                 long endMilis = sdf.parse(lastBoss.endTime).getTime();
 
-                eb.setFooter("Cleared in: " + TimeUnit.MILLISECONDS.toMinutes(endMilis - startMilis) + " minute(s).");
+                long minutes = TimeUnit.MILLISECONDS.toMinutes(endMilis - startMilis);
+
+                eb.setTitle(raidDay.date + ", " + "cleared in: " + (minutes > 60 ? (minutes / 60) + " hours, " + (minutes % 60) + " minutes." : minutes + " minutes."));
 
                 DiscordBot.jda.getTextChannelById(channelForSending).sendMessageEmbeds(eb.build()).queue();
 
-                EmbedBuilder eb1 = new EmbedBuilder();
+                if(failedBosses.size() != 0) {
+                    EmbedBuilder eb1 = new EmbedBuilder();
 
-                eb1.setColor(Color.CYAN);
-                eb1.setTitle("Failed Bosses");
-                eb1.setDescription(failedBosses.size() + " failed attempts.");
+                    eb1.setColor(Color.CYAN);
+    
+                    String failure = "";
+    
+                    long timeWiping = 0;
+                    
+                    DateTimeFormatter f = DateTimeFormatter.ofPattern("HH'h' mm'm' ss's' SSS'ms'");
 
-                String failure = "";
+                    for(Boss boss : failedBosses) {
+                        failure += (boss.emoji.equals("null") ? "" : boss.emoji + " ") + "[" + boss.bossName + "](" + boss.dpsReportLink + ") " + (boss.killTime.contains("00m ") ? boss.killTime.substring(4, 7) : boss.killTime.substring(0, 7)) + "\n";
+                    
+                        String time = "00h " + boss.killTime;
+                        long bossWipeTime = LocalTime.parse(time, f).toSecondOfDay();
 
-                for(Boss boss : failedBosses) {
-                    failure += "[" + boss.bossName + "](" + boss.dpsReportLink + ") " + (boss.killTime.contains("00m ") ? boss.killTime.substring(4) : boss.killTime) + "\n";
+                        timeWiping += bossWipeTime;
+                    }
+
+                    long minutes1 = timeWiping / 60;
+
+                    timeWiping %= 60;
+
+                    long seconds1 = timeWiping;
+
+                    eb1.setTitle(failedBosses.size() + " fails. Time taken: " + minutes1 + " minutes, " + seconds1 + " seconds.");
+    
+                    eb1.setDescription(failure);
+    
+                    DiscordBot.jda.getTextChannelById(channelForSending).sendMessageEmbeds(eb1.build()).queue();
                 }
-
-                eb1.appendDescription("\n\n" + failure);
-
-                DiscordBot.jda.getTextChannelById(channelForSending).sendMessageEmbeds(eb1.build()).queue();
 
                 stopServer();
 

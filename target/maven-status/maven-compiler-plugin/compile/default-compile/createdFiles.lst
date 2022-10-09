@@ -33,6 +33,7 @@ com\gw2\discordbot\StaticMemberRemoveEvent.class
 com\gw2\discordbot\RaidDay.class
 com\gw2\discordbot\HelpButtonEventListener$1.class
 com\gw2\discordbot\ButtonSignUpPressEvent.class
+com\gw2\discordbot\Boss$2.class
 com\gw2\discordbot\DiscordBot$1.class
 com\gw2\discordbot\RandomFunnyQuote.class
 com\gw2\discordbot\ChartGenerator.class
