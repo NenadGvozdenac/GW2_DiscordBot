@@ -148,7 +148,7 @@ public class HttpServerHosting {
 
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(endMilis - startMilis);
 
-                eb.setTitle(raidDay.date + ", " + "cleared in: " + (minutes > 60 ? (minutes / 60) + " hours, " + (minutes % 60) + " minutes." : minutes + " minutes."));
+                eb.setTitle((minutes > 60 ? (minutes / 60) + " hours, " + (minutes % 60) + " minutes clear." : minutes + " minutes clear."));
 
                 DiscordBot.jda.getTextChannelById(channelForSending).sendMessageEmbeds(eb.build()).queue();
 
