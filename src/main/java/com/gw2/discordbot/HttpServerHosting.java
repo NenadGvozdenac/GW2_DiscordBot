@@ -135,7 +135,7 @@ public class HttpServerHosting {
                     }
 
                     if(toAddField)
-                        eb.addField(title, string, false);
+                        eb.addField(title.equals("null") ? "Unidentified" : title, string, false);
                 }
     
                 Boss firstBoss = listOfBosses.get(0);
@@ -148,7 +148,7 @@ public class HttpServerHosting {
 
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(endMilis - startMilis);
 
-                eb.setTitle((minutes > 60 ? (minutes / 60) + " hours, " + (minutes % 60) + " minutes clear." : minutes + " minutes clear."));
+                eb.setTitle((minutes > 60 ? (minutes / 60) + " hours, " + (minutes % 60) + " minutes clear" : minutes + " minutes clear"));
 
                 DiscordBot.jda.getTextChannelById(channelForSending).sendMessageEmbeds(eb.build()).queue();
 
