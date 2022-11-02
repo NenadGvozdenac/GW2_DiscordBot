@@ -58,6 +58,7 @@ public class DiscordBot {
             new SlashCommandData("get_api", "Lists your API key that you added.", false),
             new SlashCommandData("get_raid_json", "Gets json raid thing.", true),
             new SlashCommandData("test", "Tests a dev command...", true),
+            new SlashCommandData("calculate_time", "Calculate time which you want.", false, new Option(OptionType.INTEGER, "day", "The day happening.", true), new Option(OptionType.INTEGER, "month", "The month happening.", true), new Option(OptionType.INTEGER, "year", "The year happening.", true), new Option(OptionType.INTEGER, "hour", "The hour happening.", true), new Option(OptionType.INTEGER, "minute", "The minute happening", true), new Option(OptionType.STRING, "timezone", "Your timezone.", true, true)),
             new SlashCommandData("startserver", "Starts the server for receiving dps.reports.", true)
         };
     }
@@ -86,7 +87,8 @@ public class DiscordBot {
             new Gw2SlashCommandInteraction(),
             new ButtonSignUpPressEvent(),
             new StaticApplyEvents(),
-            new StaticMemberRemoveEvent()
+            new StaticMemberRemoveEvent(),
+            new AutocompleteTimezone()
         ).enableCache(CacheFlag.CLIENT_STATUS).build();
     
         Thread threadActivity = new Thread(new Runnable() {

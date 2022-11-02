@@ -1,37 +1,38 @@
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\StaticApplyEvents.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\UserApi.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Constants.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\DpsReportApi.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\SlashCommandData.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\DiscordBot.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\StaticAddTryout.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\StaticMemberRemoveEvent.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\HttpServerHosting.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\HelpButtonEventListener.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Logging.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\SlashCommandInteraction.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\ChartGenerator.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\NewUserReactEmoteEvent.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\RaidDay.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Boss.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Option.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\LeaveEvent.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\RssReaderClass.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\SignupExcelWriting.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\MessageEVTCLoggingEvent.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Gw2Api.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\ModalAnnouncement.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\CharacterChoosingSelectMenu.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\RandomFunnyQuote.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\DailyAchievements.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Gw2Dailies.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Announcement.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\ModalContactDeveloper.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\ButtonSignUpPressEvent.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\StaticSlashCommandInteraction.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\StaticMemberAddEvent.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Gw2SlashCommandInteraction.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Main.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\JoinEvent.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\SignupDeleteMenu.java
-C:\Visual Java\Gw2 Discord Bot\gw2discordbot\src\main\java\com\gw2\discordbot\Token.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\DiscordBot.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\Gw2Dailies.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\Boss.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\UserApi.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\Constants.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\ChartGenerator.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\Gw2SlashCommandInteraction.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\SignupDeleteMenu.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\StaticAddTryout.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\MessageEVTCLoggingEvent.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\Logging.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\DpsReportApi.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\HttpServerHosting.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\Main.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\StaticSlashCommandInteraction.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\NewUserReactEmoteEvent.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\RandomFunnyQuote.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\CharacterChoosingSelectMenu.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\RaidDay.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\Option.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\DailyAchievements.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\LeaveEvent.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\Gw2Api.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\AutocompleteTimezone.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\Token.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\Announcement.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\ButtonSignUpPressEvent.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\HelpButtonEventListener.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\RssReaderClass.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\SignupExcelWriting.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\StaticApplyEvents.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\SlashCommandInteraction.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\StaticMemberRemoveEvent.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\JoinEvent.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\StaticMemberAddEvent.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\ModalContactDeveloper.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\SlashCommandData.java
+C:\Users\matri\Desktop\Java\DiscordBot\src\main\java\com\gw2\discordbot\ModalAnnouncement.java

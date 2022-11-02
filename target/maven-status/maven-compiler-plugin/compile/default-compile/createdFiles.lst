@@ -57,6 +57,7 @@ com\gw2\discordbot\RssReaderClass$1.class
 com\gw2\discordbot\Option.class
 com\gw2\discordbot\StaticSlashCommandInteraction.class
 com\gw2\discordbot\StaticApplyEvents.class
+com\gw2\discordbot\AutocompleteTimezone.class
 com\gw2\discordbot\Gw2SlashCommandInteraction$5.class
 com\gw2\discordbot\Boss$1$6.class
 com\gw2\discordbot\Boss$1$11.class
