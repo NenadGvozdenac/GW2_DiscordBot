@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-@SuppressWarnings("null")
 public class NewUserReactEmoteEvent extends ListenerAdapter {
 
     @Override

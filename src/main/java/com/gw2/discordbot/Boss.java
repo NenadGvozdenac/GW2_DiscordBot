@@ -189,7 +189,27 @@ public class Boss {
             };
 
             this.bossName = bossLogName;
-            this.killTime = bossLogTime;
+
+            String time = "00h " + bossLogTime;
+            time = time.substring(0, (time.indexOf("s")) + 1);
+
+            String[] parts = time.split(" "); 
+
+            for(int i = 0; i < parts.length; i++) {
+                if(parts[i].length() != 3) {
+                    parts[i] = "0" + parts[i];
+                }
+            }
+
+            time = "";
+
+            for(String part : parts) {
+                time += part + " ";
+            }
+
+            time = time.substring(0, time.length() - 1);
+            
+            this.killTime = time;
             this.isFailed = bossLogSuccess;
             this.dpsReportLink = bossLogPermaLink;
             this.startTime = startTime;

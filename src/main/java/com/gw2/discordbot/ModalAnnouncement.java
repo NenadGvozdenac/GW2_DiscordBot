@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-@SuppressWarnings("null")
 public class ModalAnnouncement extends ListenerAdapter {
     
     @Override

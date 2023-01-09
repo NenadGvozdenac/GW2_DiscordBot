@@ -33,7 +33,6 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu.Builder;
 
-@SuppressWarnings("null")
 public class Gw2SlashCommandInteraction extends ListenerAdapter {
     
     @Override

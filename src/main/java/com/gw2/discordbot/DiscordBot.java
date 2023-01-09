@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
-@SuppressWarnings("null")
 public class DiscordBot {
     
     public static JDA jda;

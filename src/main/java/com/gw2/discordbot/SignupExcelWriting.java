@@ -19,7 +19,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-@SuppressWarnings("null")
 public class SignupExcelWriting extends ListenerAdapter {
     
     public User user;

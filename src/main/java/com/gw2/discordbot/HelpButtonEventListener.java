@@ -20,7 +20,6 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 
-@SuppressWarnings("null")
 public class HelpButtonEventListener extends ListenerAdapter {
 
     static List<EmbedBuilder> embedBuilders;

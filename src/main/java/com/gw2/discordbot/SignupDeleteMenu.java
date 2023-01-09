@@ -13,7 +13,6 @@ import javax.annotation.Nonnull;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-@SuppressWarnings("null")
 public class SignupDeleteMenu extends ListenerAdapter {
     
     @Override

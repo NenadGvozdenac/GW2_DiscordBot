@@ -22,7 +22,6 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.RestAction;
 
-@SuppressWarnings("null")
 public class SlashCommandData {
     
     private String commandName;

@@ -25,7 +25,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 
-@SuppressWarnings("null")
 public class RssReaderClass {
 
     public void ReadNewsFromSite() throws InterruptedException {

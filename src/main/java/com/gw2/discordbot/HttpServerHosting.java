@@ -33,7 +33,6 @@ import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Webhook;
 
-@SuppressWarnings("null")
 public class HttpServerHosting {
     
     public static HttpServer server;
@@ -131,7 +130,8 @@ public class HttpServerHosting {
                     for(Boss boss : wing) {
                         if(boss.isFailed) continue;
                         toAddField = true;
-                        string += (boss.emoji.equals("null") ? "" : boss.emoji + " ") + "[" + boss.bossName + "](" + boss.dpsReportLink + ") " + (boss.killTime.contains("00m ") ? boss.killTime.substring(4, 7) : boss.killTime.substring(0, 7)) + "\n";
+                        String bossTime = boss.killTime.substring(4, boss.killTime.length());
+                        string += (boss.emoji.equals("null") ? "" : boss.emoji + " ") + "[" + boss.bossName + "](" + boss.dpsReportLink + ") " + (bossTime.contains("00m ") ? bossTime.substring(bossTime.indexOf(" ") + 1, bossTime.indexOf("s") + 1) : bossTime.substring(0, bossTime.indexOf("s") + 1)) + "\n";
                     }
 
                     if(toAddField)
@@ -152,7 +152,7 @@ public class HttpServerHosting {
 
                 DiscordBot.jda.getTextChannelById(channelForSending).sendMessageEmbeds(eb.build()).queue();
 
-                if(failedBosses.size() != 0) {
+                if(!failedBosses.isEmpty()) {
                     EmbedBuilder eb1 = new EmbedBuilder();
 
                     eb1.setColor(Color.CYAN);
@@ -161,18 +161,18 @@ public class HttpServerHosting {
     
                     long timeWiping = 0;
                     
-                    DateTimeFormatter f = DateTimeFormatter.ofPattern("HH'h' mm'm' ss's' SSS'ms'");
+                    DateTimeFormatter f = DateTimeFormatter.ofPattern("HH'h' mm'm' ss's'");
 
                     for(Boss boss : failedBosses) {
-                        failure += (boss.emoji.equals("null") ? "" : boss.emoji + " ") + "[" + boss.bossName + "](" + boss.dpsReportLink + ") " + (boss.killTime.contains("00m ") ? boss.killTime.substring(4, 7) : boss.killTime.substring(0, 7)) + "\n";
-                    
-                        String time = "00h " + boss.killTime;
-                        long bossWipeTime = LocalTime.parse(time, f).toSecondOfDay();
-
+                        String bossTime = boss.killTime.substring(4, boss.killTime.length());
+                        failure += (boss.emoji.equals("null") ? "" : boss.emoji + " ") + "[" + boss.bossName + "](" + boss.dpsReportLink + ") " + (bossTime.contains("00m ") ? bossTime.substring(bossTime.indexOf(" ") + 1, bossTime.indexOf("s") + 1) : bossTime.substring(0, bossTime.indexOf("s") + 1)) + "\n";
+                        long bossWipeTime = LocalTime.parse(boss.killTime, f).toSecondOfDay();
                         timeWiping += bossWipeTime;
                     }
 
                     long minutes1 = timeWiping / 60;
+
+                    System.out.println("FAILURE : '" + failure + "'");
 
                     timeWiping %= 60;
 

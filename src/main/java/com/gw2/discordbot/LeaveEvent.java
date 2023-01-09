@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-@SuppressWarnings("null")
 public class LeaveEvent extends ListenerAdapter {
 
     static String channelWelcomeId = "1007916158478987364";

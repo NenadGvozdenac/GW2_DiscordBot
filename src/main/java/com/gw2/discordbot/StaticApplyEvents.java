@@ -24,7 +24,6 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 
-@SuppressWarnings("null")
 public class StaticApplyEvents extends ListenerAdapter {
     
     @Override

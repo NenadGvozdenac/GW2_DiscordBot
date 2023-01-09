@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class Announcement extends ListenerAdapter {
     
     @Override
-    @SuppressWarnings("null")
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
 
         if(!event.getGuild().retrieveMember(event.getMember()).complete().isOwner())

@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 public class CharacterChoosingSelectMenu extends ListenerAdapter {
 
     @Override
-    @SuppressWarnings("null")
     public void onSelectMenuInteraction(@Nonnull SelectMenuInteractionEvent event) {
 
         if(event.getSelectMenu().getId().equals("character_choosing")) {

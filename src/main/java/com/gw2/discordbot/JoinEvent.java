@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-@SuppressWarnings("null")
 public class JoinEvent extends ListenerAdapter {
 
     static String channelWelcomeId = "1007916158478987364";
