@@ -42,6 +42,7 @@ public class Boss {
 
                     put("Stronghold of the Faithful", new ArrayList<String>() {
                         {
+                            add("McLeod the Silent");
                             add("Keep Construct");
                             add("Twisted Castle");
                             add("Xera");
@@ -147,6 +148,7 @@ public class Boss {
                     put("Slothasor", "<:slothasor:1027914668053897266>");
                     put("Bandit Trio", "<:trio:1027914665394720869>");
                     put("Matthias Gabrel", "<:matthias:1027914666875297843>");
+                    put("McLeod the Silent", "<:escort:1062388796051705956>");
                     put("Keep Construct", "<:kc:1027914683996454972>");
                     put("Twisted Castle", "<:twistedcastle:1027914681203052585>");
                     put("Xera", "<:xera:1027914682641698926>");
