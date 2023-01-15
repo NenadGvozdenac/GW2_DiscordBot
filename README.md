@@ -50,8 +50,8 @@
 | /signupcheckmyloadout | All Users     | Sends you your loadout for the raid.                      |
 | /signupplayer         | Administrator | Forcefully signs up a player.                             |
 | /signupdelete         | Administrator | Deletes a signup by force.                                |
-| /signupclear          | Administrator | Deletes all signups.                                      |
-|                       |               |                                                           |
+| /signupclear          | Administrator | Deletes all signups.
+
 
 - Some other commands exist purely for ease-of-life for leading purposes. Backups and full-static roles, alongside Applicant roles can be added using `/staticaddbackup`, `/staticaddplayer`, `/staticaddapplicant`. 
 - All commands have a way to stop the process, and a `HELP` button which gives you information what the command is used for.
