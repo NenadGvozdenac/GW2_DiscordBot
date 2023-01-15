@@ -5,13 +5,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import javax.annotation.Nonnull;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
@@ -21,13 +19,13 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 
 public class StaticApplyEvents extends ListenerAdapter {
     
     @Override
-    public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event) {
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 
         if(!event.isFromGuild()) {
             if(!event.isAcknowledged()) {
@@ -63,7 +61,7 @@ public class StaticApplyEvents extends ListenerAdapter {
         }
     }
 
-    private void STATIC_ADD_BACKUP(@Nonnull SlashCommandInteractionEvent event) {
+    private void STATIC_ADD_BACKUP(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         User user = event.getOption("user").getAsUser();
@@ -84,7 +82,7 @@ public class StaticApplyEvents extends ListenerAdapter {
         );
     }
 
-    private void STATIC_REJECT_TRYOUT(@Nonnull SlashCommandInteractionEvent event) {
+    private void STATIC_REJECT_TRYOUT(SlashCommandInteractionEvent event) {
 
         event.deferReply(true).queue();
 
@@ -105,7 +103,7 @@ public class StaticApplyEvents extends ListenerAdapter {
 
     }
 
-    private void STATIC_GET_ALL_PLAYERS_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void STATIC_GET_ALL_PLAYERS_EVENT(SlashCommandInteractionEvent event) {
 
         event.deferReply(true).queue();
 
@@ -142,7 +140,7 @@ public class StaticApplyEvents extends ListenerAdapter {
 
     }
 
-    private void STATIC_REMOVE_PLAYER_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void STATIC_REMOVE_PLAYER_EVENT(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         ArrayList<String> listOfMembersWithRolesIds = SignupExcelWriting.getAllActiveMembersIds();
@@ -152,7 +150,7 @@ public class StaticApplyEvents extends ListenerAdapter {
             listOfSelectOptions.add(SelectOption.of(event.getGuild().retrieveMemberById(memberId).complete().getUser().getAsTag(), event.getGuild().retrieveMemberById(memberId).complete().getUser().getId()).withEmoji(Emoji.fromFormatted("\uD83D\uDD28")));
         }
 
-        SelectMenu menu = SelectMenu.create("staticremoveplayermenu").setPlaceholder("Select who you wish to remove from the static.").addOptions(listOfSelectOptions).build();
+        StringSelectMenu menu = StringSelectMenu.create("staticremoveplayermenu").setPlaceholder("Select who you wish to remove from the static.").addOptions(listOfSelectOptions).build();
 
         Button buttonCancel = Button.danger("cancelstaticremove", "CANCEL")
             .withEmoji(Emoji.fromFormatted("\uD83D\uDED1"));
@@ -163,7 +161,7 @@ public class StaticApplyEvents extends ListenerAdapter {
     }
 
     @Override
-    public void onButtonInteraction(@Nonnull ButtonInteractionEvent event) {
+    public void onButtonInteraction(ButtonInteractionEvent event) {
         switch(event.getButton().getId()) {
             case "cancelstaticaddtryout":
                 event.deferEdit().setContent("`You cancelled the action.`").setComponents().queue();
@@ -192,8 +190,7 @@ public class StaticApplyEvents extends ListenerAdapter {
 
     }
 
-    private void STATIC_ADD_PLAYER_EVENT(@Nonnull SlashCommandInteractionEvent event) {
-
+    private void STATIC_ADD_PLAYER_EVENT(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         if(!event.isFromGuild()) {
@@ -234,7 +231,7 @@ public class StaticApplyEvents extends ListenerAdapter {
             Row firstRow = sheet.getRow(0);
             Row secondRow = sheet.getRow(1);
 
-            HashSet<String> emptyStaticSlots = new HashSet<>();
+            ArrayList<String> emptyStaticSlots = new ArrayList<String>();
 
             for(int i = 1; i < 11; i++) {
                 if(firstRow.getCell(i).getStringCellValue().equals("EMPTY")) {
@@ -242,13 +239,21 @@ public class StaticApplyEvents extends ListenerAdapter {
                 }
             }
 
-            ArrayList<SelectOption> listOfAvailableSlots = new ArrayList<>();
+            ArrayList<String> listOfAvailableSlots = new ArrayList<>();
 
-            emptyStaticSlots.forEach(string -> {
-                listOfAvailableSlots.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));
-            });
+            for(String option : emptyStaticSlots) {
+                if(!listOfAvailableSlots.contains(option)) {
+                    listOfAvailableSlots.add(option);
+                }
+            }
 
-            SelectMenu menu = SelectMenu.create("staticaddplayermenu").setPlaceholder("Select from available classes you wish to add the player to.").addOptions(listOfAvailableSlots).build();
+            ArrayList<SelectOption> listOfAvailableSlotsSelectMenu = new ArrayList<>();
+
+            for(String string : listOfAvailableSlots) {
+                listOfAvailableSlotsSelectMenu.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));
+            }
+
+            StringSelectMenu menu = StringSelectMenu.create("staticaddplayermenu").setPlaceholder("Select from available classes you wish to add the player to.").addOptions(listOfAvailableSlotsSelectMenu).build();
 
             Button buttonCancel = Button.danger("cancelstaticadd", "CANCEL")
                 .withEmoji(Emoji.fromFormatted("\uD83D\uDED1"));
@@ -256,17 +261,14 @@ public class StaticApplyEvents extends ListenerAdapter {
                 .withEmoji(Emoji.fromFormatted("\u2753"));
 
             event.getHook().sendMessage("`Select from available classes that are still free:`").addActionRow(menu).addActionRow(buttonCancel, buttonHelp).queue();
-        
             workbook.close();
-
             event.getJDA().addEventListener(new StaticMemberAddEvent(user));
         } catch(IOException e) {
             
         }
-
     }
 
-    private void STATIC_ADD_TRYOUT_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void STATIC_ADD_TRYOUT_EVENT(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         if(!event.isFromGuild()) {
@@ -301,21 +303,29 @@ public class StaticApplyEvents extends ListenerAdapter {
             Row firstRow = sheet.getRow(0);
             Row secondRow = sheet.getRow(1);
 
-            HashSet<String> emptyStaticSlots = new HashSet<>();
+            ArrayList<String> emptyStaticSlots = new ArrayList<String>();
 
-            for(int i = 1; i < 12; i++) {
+            for(int i = 1; i < 11; i++) {
                 if(firstRow.getCell(i).getStringCellValue().equals("EMPTY")) {
                     emptyStaticSlots.add(secondRow.getCell(i).getStringCellValue());
                 }
             }
 
-            ArrayList<SelectOption> listOfAvailableSlots = new ArrayList<>();
+            ArrayList<String> listOfAvailableSlots = new ArrayList<>();
 
-            emptyStaticSlots.forEach(string -> {
-                listOfAvailableSlots.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));
-            });
+            for(String option : emptyStaticSlots) {
+                if(!listOfAvailableSlots.contains(option)) {
+                    listOfAvailableSlots.add(option);
+                }
+            }
 
-            SelectMenu menu = SelectMenu.create("staticaddtryout").setPlaceholder("Select from available classes that are still free:").addOptions(listOfAvailableSlots).build();
+            ArrayList<SelectOption> listOfAvailableSlotsSelectMenu = new ArrayList<>();
+
+            for(String string : listOfAvailableSlots) {
+                listOfAvailableSlotsSelectMenu.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));
+            }
+
+            StringSelectMenu menu = StringSelectMenu.create("staticaddtryout").setPlaceholder("Select from available classes that are still free:").addOptions(listOfAvailableSlotsSelectMenu).build();
 
             Button buttonCancel = Button.danger("cancelstaticaddtryout", "CANCEL")
                 .withEmoji(Emoji.fromFormatted("\uD83D\uDED1"));

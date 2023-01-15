@@ -8,15 +8,14 @@ import java.io.IOException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import javax.annotation.Nonnull;
 
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class SignupDeleteMenu extends ListenerAdapter {
     
     @Override
-    public void onSelectMenuInteraction(@Nonnull SelectMenuInteractionEvent event) {
+    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
 
         if(event.getSelectMenu().getId().equals("signupdeletemenu")) {
             try(FileInputStream file = new FileInputStream(new File("static.xlsx"))) {

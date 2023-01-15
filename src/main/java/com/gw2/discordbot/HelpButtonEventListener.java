@@ -8,8 +8,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -77,7 +75,7 @@ public class HelpButtonEventListener extends ListenerAdapter {
     }
 
     @Override
-    public void onButtonInteraction(@Nonnull ButtonInteractionEvent event) {
+    public void onButtonInteraction(ButtonInteractionEvent event) {
 
         if(event.getButton().getId().equals("left")) {
             for(int i = 0; i < embedBuilders.size(); i++) {

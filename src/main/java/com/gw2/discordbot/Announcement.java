@@ -1,7 +1,5 @@
 package com.gw2.discordbot;
 
-import javax.annotation.Nonnull;
-
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -9,7 +7,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class Announcement extends ListenerAdapter {
     
     @Override
-    public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
+    public void onMessageReceived( MessageReceivedEvent event) {
 
         if(!event.getGuild().retrieveMember(event.getMember()).complete().isOwner())
             return;

@@ -1,14 +1,12 @@
 package com.gw2.discordbot;
 
-import javax.annotation.Nonnull;
-
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public  class StaticMemberRemoveEvent extends ListenerAdapter {
 
     @Override
-    public void onSelectMenuInteraction(@Nonnull SelectMenuInteractionEvent event) {
+    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
 
         if(event.getComponentId().equals("staticremoveplayermenu")) {
             String userId = event.getSelectedOptions().get(0).getValue();

@@ -282,6 +282,19 @@
     "CommandName": "test",
     "CommandDescription": "Tests a dev command... `(ADMIN)`",
     "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "STRING",
+        "OptionName": "longstringofbosses",
+        "OptionDescription": "The long string of bosses. \nFORMAT: \nhttps://dps.report/...\nhttps://dps.report/...",
+        "MandatoryOption": true
+      }
+    ]
+  },
+  {
+    "CommandName": "startserver",
+    "CommandDescription": "Starts the server for receiving dps.reports. `(ADMIN)`",
+    "AdminOnly": true,
     "Options": []
   }
 ]

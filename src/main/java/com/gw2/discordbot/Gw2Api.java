@@ -25,6 +25,15 @@ public class Gw2Api {
         }
     }
 
+    public static HttpResponse<String> GET_INFO_FROM_LINK(String string) {
+        try {
+            return Unirest.get(string).asString();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     
     public static HttpResponse<String> GET_REQUEST(String version, String type) {
         try {

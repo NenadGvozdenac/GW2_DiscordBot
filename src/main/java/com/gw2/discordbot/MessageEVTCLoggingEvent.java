@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nonnull;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -27,7 +25,7 @@ import net.dv8tion.jda.api.utils.FileUpload;
 public class MessageEVTCLoggingEvent extends ListenerAdapter {
 
     @Override
-    public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
+    public void onMessageReceived(MessageReceivedEvent event) {
 
         if(event.getMessage().getAttachments().isEmpty())
             return;

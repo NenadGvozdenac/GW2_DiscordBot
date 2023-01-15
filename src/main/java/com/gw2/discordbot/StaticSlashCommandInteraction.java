@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -15,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import javax.annotation.Nonnull;
 
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -26,14 +24,14 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 public class StaticSlashCommandInteraction extends ListenerAdapter {
     
     @Override
-    public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event) {
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 
         if(!event.isFromGuild()) {
             if(!event.isAcknowledged()) {
@@ -89,7 +87,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void SIGNUPCHECKMYLOADOUT(@Nonnull SlashCommandInteractionEvent event) {
+    private void SIGNUPCHECKMYLOADOUT(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         if(!event.isFromGuild()) {
@@ -164,7 +162,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void SIGNUPSHEET_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void SIGNUPSHEET_EVENT(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         if(!event.isFromGuild()) {
@@ -176,7 +174,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         event.getHook().sendFiles(FileUpload.fromData(file)).queue();
     }
 
-    private void SIGNUPDELETE_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void SIGNUPDELETE_EVENT(SlashCommandInteractionEvent event) {
 
         event.deferReply(true).queue();
 
@@ -219,7 +217,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 listOfAvailableSlots.add(option);
             });
 
-            SelectMenu menu = SelectMenu.create("signupdeletemenu")
+            StringSelectMenu menu = StringSelectMenu.create("signupdeletemenu")
                 .setPlaceholder("Which person do you wish to delete from the list?").addOptions(listOfAvailableSlots).build();
 
             event.getHook().sendMessage("`Select which person you wish to delete from signups:`").addActionRow(menu).queue();
@@ -229,7 +227,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void SIGNUPPLAYER_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void SIGNUPPLAYER_EVENT(SlashCommandInteractionEvent event) {
 
         event.deferReply(true).queue();
 
@@ -270,7 +268,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             Row firstOpenRow = sheet.getRow(0);
             Row secondRow = sheet.getRow(1);
 
-            HashSet<String> hashSet = new HashSet<>();
+            ArrayList<String> hashSet = new ArrayList<>();
 
             for(Integer i = 1; i < 11; i++) {
                 if(firstOpenRow.getCell(i).getStringCellValue().equals("EMPTY")) {
@@ -290,7 +288,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 listOfAvailableSlots.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));
             });
 
-            SelectMenu menu = SelectMenu.create("signupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
+            StringSelectMenu menu = StringSelectMenu.create("signupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
 
             Button buttonCancel = Button.danger("cancelsignupmenu", "CANCEL")
                 .withEmoji(Emoji.fromFormatted("\uD83D\uDED1"));
@@ -312,7 +310,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
 
     }
 
-    private void SIGNUPCLEAR_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void SIGNUPCLEAR_EVENT(SlashCommandInteractionEvent event) {
 
         event.deferReply(true).queue();
 
@@ -333,7 +331,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         event.getHook().sendMessage("Cleared the signups!").queue();
     }
 
-    private void SIGNUPCHECK_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void SIGNUPCHECK_EVENT(SlashCommandInteractionEvent event) {
 
         event.deferReply(true).queue();
 
@@ -371,7 +369,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void SIGNUPFORM_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void SIGNUPFORM_EVENT(SlashCommandInteractionEvent event) {
 
         event.deferReply(false).queue();
 
@@ -392,7 +390,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         event.getHook().sendMessage(Token.getSignupForm()).queue();
     }
 
-    private void UNSIGNUP_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void UNSIGNUP_EVENT(SlashCommandInteractionEvent event) {
 
         event.deferReply(true).queue();
 
@@ -439,7 +437,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void SIGNUP_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void SIGNUP_EVENT(SlashCommandInteractionEvent event) {
 
         event.deferReply(true).queue();
 
@@ -469,7 +467,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             Row firstOpenRow = sheet.getRow(0);
             Row secondRow = sheet.getRow(1);
 
-            HashSet<String> hashSet = new HashSet<>();
+            ArrayList<String> hashSet = new ArrayList<>();
 
             for(Integer i = 1; i < 11; i++) {
                 if(firstOpenRow.getCell(i).getStringCellValue().equals("EMPTY")) {
@@ -489,7 +487,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 listOfAvailableSlots.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));
             });
 
-            SelectMenu menu = SelectMenu.create("signupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
+            StringSelectMenu menu = StringSelectMenu.create("signupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
 
             Button buttonCancel = Button.danger("cancelsignupmenu", "CANCEL")
                 .withEmoji(Emoji.fromFormatted("\uD83D\uDED1"));
@@ -503,7 +501,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void STOP_STATIC_RAID_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void STOP_STATIC_RAID_EVENT(SlashCommandInteractionEvent event) {
 
         if(!event.isFromGuild()) {
             event.getHook().sendMessage("This command can not be used in DMs.").queue();
@@ -515,7 +513,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         event.getHook().sendMessage("Stopped the server port.").queue();
     }
 
-    private void START_STATIC_RAID_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void START_STATIC_RAID_EVENT(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         Integer minutesToWait = event.getOption("minutes_to_wait").getAsInt();

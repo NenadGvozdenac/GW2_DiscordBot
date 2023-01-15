@@ -1,8 +1,82 @@
 # GW2 Discord Bot
-- New project I've been working on - GW2 Discord Bot.
+- Discord Bot made specifically for GW2 {[Guild Wars 2](https://www.guildwars2.com/en-gb/)}.
 - Brief overview: GW2 is an MMORPG game that bases around free open-world gameplay, along with high-end gameplay.
 - It has three main gamemodes: PvE, PvP and WvW. 
 - This bot tries to help the users of my Discord Server by providing useful PvE information.
+
+# Constantly be updated about new features
+- This bot comes with many features as an all-rounder for all information PvE related for Guild Wars 2.
+- It tries to help the users by providing useful information regarding raiding, high-end PvE content, etc.
+- News, Patch Notes & Logging are all made on separated webhooks, therefore using different threads, maximising performance.
+## Daily Achievements
+* This bot has the ability to automatically send updates when new achievements drop daily.
+* It will send achievements to the discord server.
+![](READMEImages\DailyAchievements.jpg)
+## News & Updates
+* This bot has the ability to automatically send updates when news & patch notes drop.
+![](READMEImages\News.jpg)
+![](READMEImages\PatchNotes.jpg)
+
+# ArcDPS log uploading
+- Log uploading has never been easier! Simply dragging a `.zevtc`. file in any channel the bot is present in, will upload the log, and give you a small summary.
+* It utilises the DPS.REPORT api POST method for posting logs, and by returning some information about the log, the bot is able to give you some information about it and also provide a link.
+* The user has the ability to look up previous logs in the discord channel that he/she had been previously tagged in.
+* It connects automatically to [dps.report API](https://dps.report/api).
+- DPS summary is saved in the graph in the Embed.
+![](READMEImages\arcdps.gif)
+## Parsing multiple ArcDPS logs in an Embed
+- Getting a nice bit of information has never been easier. By sending a batch of logs in the bot's DMs or in the discord server, you are given a nice embed back as response!
+![](READMEImages\parsingMultipleLogs.gif)
+
+# Account Information
+* This bot, connecting to GW2 api, has the ability to send you information about your account.
+* This information can vary from what you wish to seek: account / character info / daily fractal info, etc.
+* By using `/gw2account`, your account stats are shown to you.
+* By using `/gw2character`, your character's stats are shown to you. You also have the ability to select which character you wish to see stats of.
+* Added API keys are stored in a json file that is secretly saved.
+![](READMEImages/accountInfo.gif)
+
+# Group (static) management
+- Leading a group has been very simplified by commands that are easy to understand, and easy to use.
+- Commands listed below are used for signing up and subscribing for the static (weekly) raid.
+- All data is stored in a `.xlsx`. file, where it can be easily read from the server.
+
+| Command               | Permissions   | Description                                               |
+| --------------------- | ------------- | --------------------------------------------------------- |
+| /signup               | All Users     | Signs you up for the raid.                                |
+| /unsignup             | All Users     | Unsigns you from the raid (if you are already signed up). |
+| /signupcheck          | All Users     | Check your signup status.                                 |
+| /signupform           | All Users     | Sends you the form for signing up.                        |
+| /signupcheckmyloadout | All Users     | Sends you your loadout for the raid.                      |
+| /signupplayer         | Administrator | Forcefully signs up a player.                             |
+| /signupdelete         | Administrator | Deletes a signup by force.                                |
+| /signupclear          | Administrator | Deletes all signups.                                      |
+|                       |               |                                                           |
+
+- Some other commands exist purely for ease-of-life for leading purposes. Backups and full-static roles, alongside Applicant roles can be added using `/staticaddbackup`, `/staticaddplayer`, `/staticaddapplicant`. 
+- All commands have a way to stop the process, and a `HELP` button which gives you information what the command is used for.
+
+# Weekly Raids & Real-Time Logging
+- Every week, one hour before the raid, a countdown can be activated manually by doing `/startstaticraid <time>`. 15m < time < 60m. 
+- 15 minutes before the raid, everyone that is subscribed to the raid is pinged. 
+- In the beginning of the raid, a server is activated for receiving logs. A special port is open for receiving logs. 
+- In combination with [Autouploader](https://github.com/NenadGvozdenac/AutoLogUploader), you can auto upload logs whenever the encounter is finished. 
+![](READMEImages/weeklyLogs.gif)
+
+# All-Rounder moderation tool
+- The Discord bot is overall very useful for its moderation capabilities, useful for its commands and overall discord logging.
+
+| Command  | Description                                          |
+| -------- | ---------------------------------------------------- |
+| /kick    | Kicks the member out of the server.                  |
+| /ban     | Bans the member from the server.                     |
+| /mute    | Mutes the member in the server for x amount of time. |
+| /timeout | Timeouts the user for some time.                     |
+
+# Welcome & Leave messages
+- On member join and leave events, a special message is sent in `#welcome` & `#goodbye`. 
+![](READMEImages/welcome.jpg) ![](READMEImages/goodbye.jpg)
+<!--
 
 # Newest update: v3.3.0
 - Added new static commands and linked them to discord members.
@@ -49,30 +123,6 @@
 
 - `/qtpfires`, gives the picture of the qadim the peerless fires that are optimal.
 
-# Features
-- This bot comes with many features.
-- Current version: v1.1.0
-- List of features will be listed below
-
-### ARCDPS log uploading: 
-* By dragging a .zevtc log anywhere in the server, your log will be uploaded to DPS.REPORT.
-* This is especially helpful.
-* It utilises the DPS.REPORT api POST method for posting logs, and by returning some information about the log, the bot is able to give you some information about it and also provide a link.
-* The user has the ability to look up previous logs in the discord channel that he/she had been previously tagged in.
-* It connects automatically to [dps.report api](https://dps.report/api).
-
-### ACCOUNT information:
-* This bot, connecting to GW2 api, has the ability to send you information about your account.
-* This information can vary from what you wish to seek: account / character info / daily fractal info, etc.
-* By using `/gw2account`, your account stats are shown to you.
-* By using `/gw2character`, your character's stats are shown to you. You also have the ability to select which character you wish to see stats of.
-* Added API keys are stored in a json file that is secretly saved.
-
-### GW2 News & Patch Notes:
-* This bot has been automated to look for new messages from the official [Guild Wars 2](https://www.guildwars2.com/en-gb/) page.
-* Whenever there is news, the bot will send a message to a discord channel that had been previously named correctly.
-* This bot has been automated to also look for news messages from [Guild Wars 2 Forums](https://en-forum.guildwars2.com/forum/6-game-update-notes/) for patch notes.
-
 - News, Patch Notes & Logging are all made on separated webhooks, therefore using different threads, maximising performance.
 
 ### Daily achievements
@@ -81,4 +131,4 @@
 
 ### Welcome & Leave messages
 * Bot is able to send welcome and leave messages whenever a user joins/leaves the guild the bot is in.
-* It also keeps track of current users.
+* It also keeps track of current users. -->

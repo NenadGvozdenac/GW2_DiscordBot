@@ -1,16 +1,14 @@
 package com.gw2.discordbot;
 
-import javax.annotation.Nonnull;
-
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 
 public class CharacterChoosingSelectMenu extends ListenerAdapter {
 
     @Override
-    public void onSelectMenuInteraction(@Nonnull SelectMenuInteractionEvent event) {
+    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
 
         if(event.getSelectMenu().getId().equals("character_choosing")) {
 
@@ -25,8 +23,9 @@ public class CharacterChoosingSelectMenu extends ListenerAdapter {
             else
                 embedForEditing = Gw2Api.GET_CHARACTER_INFO(api.getApiKey(), event.getSelectedOptions().get(0).getLabel());
 
-            SelectMenu selectMenu = event.getSelectMenu();
-            SelectMenu.Builder selectMenuBuilder = selectMenu.createCopy();
+            StringSelectMenu selectMenu = event.getSelectMenu();
+
+            StringSelectMenu.Builder selectMenuBuilder = selectMenu.createCopy();
 
             selectMenuBuilder.setDefaultOptions(event.getSelectedOptions());
             event.getHook().editOriginalEmbeds(embedForEditing).setActionRow(selectMenuBuilder.build()).queue();

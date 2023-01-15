@@ -13,8 +13,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nonnull;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,14 +27,13 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu.Builder;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 
 public class Gw2SlashCommandInteraction extends ListenerAdapter {
     
     @Override
-    public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event) {
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 
         if(!event.isFromGuild()) {
             if(!event.isAcknowledged()) {
@@ -80,14 +77,14 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void QTP_FIRES_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void QTP_FIRES_EVENT( SlashCommandInteractionEvent event) {
         event.deferReply(false).queue();
 
         String qtpFires = Constants.QTP_FIRES;
         event.getHook().sendMessage(qtpFires).queue();
     }
 
-    private void GET_API_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
+    private void GET_API_COMMAND( SlashCommandInteractionEvent event) {
         Gson gson;
         String userId = event.getUser().getId();
         event.deferReply(true).queue();
@@ -134,21 +131,18 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void GW2_DAILIES_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
+    private void GW2_DAILIES_COMMAND( SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
-        event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue(message -> 
-            {
-                try {
-                    message.editMessageEmbeds(new Gw2Dailies().getDailies().get()).queue();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-        );
+        event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue();
+        try {
+            event.getHook().editOriginalEmbeds(new Gw2Dailies().getDailies().get()).queue();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void GW2_ACCOUNT_RAID_INFO_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
+    private void GW2_ACCOUNT_RAID_INFO_COMMAND( SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         UserApi accountInfo = UserApi.GET_API_INFO(event.getUser().getId());
@@ -158,8 +152,7 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue(k -> {
-            
+        event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue();
             EmbedBuilder eb = new EmbedBuilder();
             
             String accountId = accountInfo.getApiKey();
@@ -236,11 +229,10 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
                 (listOfFinishedBosses.contains("qadim_the_peerless") ? "\u2705" : "\u274C") + " " + Constants.bossesNamesGW2.get("qadim_the_peerless"),
             true);
 
-            k.editMessageEmbeds(eb.build()).queue();
-        });
+            event.getHook().editOriginalEmbeds(eb.build()).queue();
     }
 
-    private void GW2_CHARACTER_INFO_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
+    private void GW2_CHARACTER_INFO_COMMAND(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         UserApi accountInfo = UserApi.GET_API_INFO(event.getUser().getId());
         
@@ -249,76 +241,75 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue(k -> {
-            String accountId = accountInfo.getApiKey();
+        event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue();
+        
+        String accountId = accountInfo.getApiKey();
 
-            HttpResponse<String> requestCharacters = Gw2Api.GET_REQUEST(accountId, "v2", "characters");
-            JsonElement jsonElementCharacters = JsonParser.parseString(requestCharacters.getBody().toString());
+        HttpResponse<String> requestCharacters = Gw2Api.GET_REQUEST(accountId, "v2", "characters");
+        JsonElement jsonElementCharacters = JsonParser.parseString(requestCharacters.getBody().toString());
 
-            JsonArray arrayOfCharacters = jsonElementCharacters.getAsJsonArray();
+        JsonArray arrayOfCharacters = jsonElementCharacters.getAsJsonArray();
 
-            List<String> characterList = new ArrayList<>();
-            arrayOfCharacters.forEach(m -> characterList.add(m.getAsString()));
+        List<String> characterList = new ArrayList<>();
+        arrayOfCharacters.forEach(m -> characterList.add(m.getAsString()));
 
-            MessageEmbed embedForSending;
+        MessageEmbed embedForSending;
 
-            if(event.isFromGuild()) {
-                embedForSending = Gw2Api.GET_CHARACTER_INFO(accountId, characterList.get(0), event.getGuild().getName());
-            } else {
-                embedForSending = Gw2Api.GET_CHARACTER_INFO(accountId, characterList.get(0));
-            }
-               
-            HttpResponse<String> requestCharacterInfo = Gw2Api.GET_REQUEST(accountId, "v2", "characters/" + characterList.get(0));
-            JsonElement characterJsonInformation = JsonParser.parseString(requestCharacterInfo.getBody().toString());
+        if(event.isFromGuild()) {
+            embedForSending = Gw2Api.GET_CHARACTER_INFO(accountId, characterList.get(0), event.getGuild().getName());
+        } else {
+            embedForSending = Gw2Api.GET_CHARACTER_INFO(accountId, characterList.get(0));
+        }
+           
+        HttpResponse<String> requestCharacterInfo = Gw2Api.GET_REQUEST(accountId, "v2", "characters/" + characterList.get(0));
+        JsonElement characterJsonInformation = JsonParser.parseString(requestCharacterInfo.getBody().toString());
 
-            String characterProfession = characterJsonInformation.getAsJsonObject().get("profession").getAsString();
-            String characterProfessionIcon = Constants.specializationEmojis.get(characterProfession);
+        String characterProfession = characterJsonInformation.getAsJsonObject().get("profession").getAsString();
+        String characterProfessionIcon = Constants.specializationEmojis.get(characterProfession);
 
-            Builder characterMenu = SelectMenu.create("character_choosing");
+        StringSelectMenu.Builder characterMenu = StringSelectMenu.create("character_choosing");
+        
+        List<SelectOption> characterOptions = new ArrayList<>();
+
+        SelectOption option = SelectOption.of(characterList.get(0), characterList.get(0).toUpperCase()).withDefault(true).withEmoji(Emoji.fromFormatted(characterProfessionIcon));
+        characterOptions.add(option);
+
+        ExecutorService es = Executors.newCachedThreadPool();
+
+        for(int i = 1; i < characterList.size(); i++) {
+            String selectedCharacter = characterList.get(i);
             
-            List<SelectOption> characterOptions = new ArrayList<>();
+            es.execute(new Runnable() {
+                public void run() {
+                    HttpResponse<String> requestCharacterInfo = Gw2Api.GET_REQUEST(accountId, "v2", "characters/" + selectedCharacter);
+                    JsonElement characterJsonInformation = JsonParser.parseString(requestCharacterInfo.getBody().toString());
+                    
+                    String characterProfession = characterJsonInformation.getAsJsonObject().get("profession").getAsString();
+                    String characterProfessionIcon = Constants.specializationEmojis.get(characterProfession);
+    
+                    SelectOption option = SelectOption.of(selectedCharacter, selectedCharacter.toUpperCase())
+                        .withDefault(false)
+                        .withEmoji(Emoji
+                        .fromFormatted(characterProfessionIcon));
+    
+                    characterOptions.add(option);
+                }
+            });
+        }
 
-            SelectOption option = SelectOption.of(characterList.get(0), characterList.get(0).toUpperCase()).withDefault(true).withEmoji(Emoji.fromFormatted(characterProfessionIcon));
-            characterOptions.add(option);
+        es.shutdown();
 
-            ExecutorService es = Executors.newCachedThreadPool();
+        try {
+            while(!es.awaitTermination(1, TimeUnit.MINUTES));
+            characterMenu.addOptions(characterOptions);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        event.getHook().editOriginalEmbeds(embedForSending).setActionRow(characterMenu.build()).queue();
 
-            for(int i = 1; i < characterList.size(); i++) {
-                String selectedCharacter = characterList.get(i);
-                
-                es.execute(new Runnable() {
-                    public void run() {
-                        HttpResponse<String> requestCharacterInfo = Gw2Api.GET_REQUEST(accountId, "v2", "characters/" + selectedCharacter);
-                        JsonElement characterJsonInformation = JsonParser.parseString(requestCharacterInfo.getBody().toString());
-                        
-                        String characterProfession = characterJsonInformation.getAsJsonObject().get("profession").getAsString();
-                        String characterProfessionIcon = Constants.specializationEmojis.get(characterProfession);
-        
-                        SelectOption option = SelectOption.of(selectedCharacter, selectedCharacter.toUpperCase())
-                            .withDefault(false)
-                            .withEmoji(Emoji
-                            .fromFormatted(characterProfessionIcon));
-        
-                        characterOptions.add(option);
-                    }
-                });
-            }
-
-            es.shutdown();
-
-            try {
-                while(!es.awaitTermination(1, TimeUnit.MINUTES));
-                characterMenu.addOptions(characterOptions);
-
-                k.editMessageEmbeds(embedForSending).setActionRow(characterMenu.build()).queue();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
     }
 
-    private void GW2_ACCOUNT_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
-
+    private void GW2_ACCOUNT_COMMAND(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         UserApi accountInfo = UserApi.GET_API_INFO(event.getUser().getId());
 
@@ -327,108 +318,108 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue(k -> {
-            String accountId = accountInfo.getApiKey();
+        event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue();
+
+        String accountId = accountInfo.getApiKey();
         
-            ExecutorService es = Executors.newCachedThreadPool();
+        ExecutorService es = Executors.newCachedThreadPool();
 
-            HttpResponse<String> requestCharacters = Gw2Api.GET_REQUEST(accountId, "v2", "characters");
-            JsonElement jsonElementCharacters = JsonParser.parseString(requestCharacters.getBody().toString());
+        HttpResponse<String> requestCharacters = Gw2Api.GET_REQUEST(accountId, "v2", "characters");
+        JsonElement jsonElementCharacters = JsonParser.parseString(requestCharacters.getBody().toString());
 
-            HttpResponse<String> requestAccount = Gw2Api.GET_REQUEST(accountId, "v2", "account");
-            JsonElement jsonElementAccount = JsonParser.parseString(requestAccount.getBody().toString());
+        HttpResponse<String> requestAccount = Gw2Api.GET_REQUEST(accountId, "v2", "account");
+        JsonElement jsonElementAccount = JsonParser.parseString(requestAccount.getBody().toString());
 
-            HttpResponse<String> requestWalletInformation = Gw2Api.GET_REQUEST(accountId, "v2", "account/wallet");
-            JsonElement jsonElementWallet = JsonParser.parseString(requestWalletInformation.getBody().toString());
+        HttpResponse<String> requestWalletInformation = Gw2Api.GET_REQUEST(accountId, "v2", "account/wallet");
+        JsonElement jsonElementWallet = JsonParser.parseString(requestWalletInformation.getBody().toString());
 
-            JsonArray arrayOfCharacters = jsonElementCharacters.getAsJsonArray();
+        JsonArray arrayOfCharacters = jsonElementCharacters.getAsJsonArray();
 
-            String accountAge = Constants.df.format(jsonElementAccount.getAsJsonObject().get("age").getAsInt() / 60f / 60f);
-            Boolean accountHasCommanderTag = jsonElementAccount.getAsJsonObject().get("commander").getAsBoolean();
-            String accountFractalRank = String.valueOf(jsonElementAccount.getAsJsonObject().get("fractal_level").getAsInt());
-            String accountWvWLevel = String.valueOf(jsonElementAccount.getAsJsonObject().get("wvw_rank").getAsInt());
-            String accountMonthlyAP = String.valueOf(jsonElementAccount.getAsJsonObject().get("monthly_ap").getAsInt());
-            String accountDailyAP = String.valueOf(jsonElementAccount.getAsJsonObject().get("daily_ap").getAsInt());
-            String accountName = jsonElementAccount.getAsJsonObject().get("name").getAsString();
+        String accountAge = Constants.df.format(jsonElementAccount.getAsJsonObject().get("age").getAsInt() / 60f / 60f);
+        Boolean accountHasCommanderTag = jsonElementAccount.getAsJsonObject().get("commander").getAsBoolean();
+        String accountFractalRank = String.valueOf(jsonElementAccount.getAsJsonObject().get("fractal_level").getAsInt());
+        String accountWvWLevel = String.valueOf(jsonElementAccount.getAsJsonObject().get("wvw_rank").getAsInt());
+        String accountMonthlyAP = String.valueOf(jsonElementAccount.getAsJsonObject().get("monthly_ap").getAsInt());
+        String accountDailyAP = String.valueOf(jsonElementAccount.getAsJsonObject().get("daily_ap").getAsInt());
+        String accountName = jsonElementAccount.getAsJsonObject().get("name").getAsString();
 
-            String accountWalletGold = String.valueOf(jsonElementWallet.getAsJsonArray().get(0).getAsJsonObject().get("value").getAsInt() / 100f / 100f);
-            String accountWalletKarma = String.valueOf(jsonElementWallet.getAsJsonArray().get(1).getAsJsonObject().get("value").getAsInt());
-            String accountWalletGems = String.valueOf(jsonElementWallet.getAsJsonArray().get(3).getAsJsonObject().get("value").getAsInt());
+        String accountWalletGold = String.valueOf(jsonElementWallet.getAsJsonArray().get(0).getAsJsonObject().get("value").getAsInt() / 100f / 100f);
+        String accountWalletKarma = String.valueOf(jsonElementWallet.getAsJsonArray().get(1).getAsJsonObject().get("value").getAsInt());
+        String accountWalletGems = String.valueOf(jsonElementWallet.getAsJsonArray().get(3).getAsJsonObject().get("value").getAsInt());
 
-            EmbedBuilder eb = new EmbedBuilder();
-            eb.setColor(Color.pink);
-            eb.setDescription("Basic GW2 Account Information.");
-            eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
-            eb.setThumbnail(event.getUser().getAvatarUrl());
-            eb.setTitle(accountName);
-            eb.addField("Time Played", accountAge + " hours", true);
-            eb.addField(Constants.commanderIconEmoji + " Commander", String.valueOf(accountHasCommanderTag), true);
-            eb.addField(Constants.fractalRelicIconEmoji + "Fractal Level", accountFractalRank, true);
-            eb.addField(Constants.wvwIconEmoji + "WvW Level", accountWvWLevel, true);
-            eb.addField(Constants.achievementPointIconEmoji + "Daily AP", accountDailyAP, true);
-            eb.addField(Constants.achievementPointIconEmoji + "Monthly AP", accountMonthlyAP, true);
-            eb.addField(Constants.goldIconEmoji + "Wallet Gold", accountWalletGold, true);
-            eb.addField(Constants.karmaIconEmoji + "Wallet Karma", accountWalletKarma, true);
-            eb.addField(Constants.gemIconEmoji + "Wallet Gems", accountWalletGems, true);
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setColor(Color.pink);
+        eb.setDescription("Basic GW2 Account Information.");
+        eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
+        eb.setThumbnail(event.getUser().getAvatarUrl());
+        eb.setTitle(accountName);
+        eb.addField("Time Played", accountAge + " hours", true);
+        eb.addField(Constants.commanderIconEmoji + " Commander", String.valueOf(accountHasCommanderTag), true);
+        eb.addField(Constants.fractalRelicIconEmoji + "Fractal Level", accountFractalRank, true);
+        eb.addField(Constants.wvwIconEmoji + "WvW Level", accountWvWLevel, true);
+        eb.addField(Constants.achievementPointIconEmoji + "Daily AP", accountDailyAP, true);
+        eb.addField(Constants.achievementPointIconEmoji + "Monthly AP", accountMonthlyAP, true);
+        eb.addField(Constants.goldIconEmoji + "Wallet Gold", accountWalletGold, true);
+        eb.addField(Constants.karmaIconEmoji + "Wallet Karma", accountWalletKarma, true);
+        eb.addField(Constants.gemIconEmoji + "Wallet Gems", accountWalletGems, true);
 
-            eb.addBlankField(false);
+        eb.addBlankField(false);
 
-            List<String> characterList = new ArrayList<>();
-            arrayOfCharacters.forEach(m -> characterList.add(m.getAsString()));
+        List<String> characterList = new ArrayList<>();
+        arrayOfCharacters.forEach(m -> characterList.add(m.getAsString()));
 
-            for(String character : characterList) {
-                es.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        HttpResponse<String> requestCharacterInfo = Gw2Api.GET_REQUEST(accountId, "v2", "characters/" + character);
-                        JsonElement characterJsonInformation = JsonParser.parseString(requestCharacterInfo.getBody().toString());
-        
-                        String characterName = characterJsonInformation.getAsJsonObject().get("name").getAsString();
-                        
-                        Integer characterDeaths = characterJsonInformation.getAsJsonObject().get("deaths").getAsInt();
-        
-                        HttpResponse<String> requestCharacterTitle = Gw2Api.GET_REQUEST(accountId, "v2", "titles/" + characterJsonInformation.getAsJsonObject().get("title"));
-                        JsonElement characterJsonTitle = JsonParser.parseString(requestCharacterTitle.getBody().toString());
-        
-                        String characterTitle;
+        for(String character : characterList) {
+            es.execute(new Runnable() {
+                @Override
+                public void run() {
+                    HttpResponse<String> requestCharacterInfo = Gw2Api.GET_REQUEST(accountId, "v2", "characters/" + character);
+                    JsonElement characterJsonInformation = JsonParser.parseString(requestCharacterInfo.getBody().toString());
+    
+                    String characterName = characterJsonInformation.getAsJsonObject().get("name").getAsString();
+                    
+                    Integer characterDeaths = characterJsonInformation.getAsJsonObject().get("deaths").getAsInt();
+    
+                    HttpResponse<String> requestCharacterTitle = Gw2Api.GET_REQUEST(accountId, "v2", "titles/" + characterJsonInformation.getAsJsonObject().get("title"));
+                    JsonElement characterJsonTitle = JsonParser.parseString(requestCharacterTitle.getBody().toString());
+    
+                    String characterTitle;
 
-                        try {
-                            characterTitle = characterJsonTitle.getAsJsonObject().get("name").getAsString();
-                        } catch (NullPointerException e) {
-                            characterTitle = "No Title";
-                        }
-        
-                        String characterProfession = characterJsonInformation.getAsJsonObject().get("profession").getAsString();
-                        String characterProfessionIcon = Constants.specializationEmojis.get(characterProfession);
-        
-                        Float characterTimePlayedInHours = characterJsonInformation.getAsJsonObject().get("age").getAsInt() / 60f / 60f;
-                        String characterDeathPerHour = Constants.df.format(characterDeaths / characterTimePlayedInHours);
-        
-                        eb.addField(
-                            characterProfessionIcon + " " + 
-                            characterName, 
-                            "→ " + characterProfession + 
-                            "\n→ Title: " + characterTitle + 
-                            "\n→ Age: " + characterTimePlayedInHours + " h." + 
-                            "\n→ Deaths: " + characterDeaths +
-                            "\n→ DpH: " + characterDeathPerHour
-                        , true);
+                    try {
+                        characterTitle = characterJsonTitle.getAsJsonObject().get("name").getAsString();
+                    } catch (NullPointerException e) {
+                        characterTitle = "No Title";
                     }
-                });
-            }
+    
+                    String characterProfession = characterJsonInformation.getAsJsonObject().get("profession").getAsString();
+                    String characterProfessionIcon = Constants.specializationEmojis.get(characterProfession);
+    
+                    Float characterTimePlayedInHours = characterJsonInformation.getAsJsonObject().get("age").getAsInt() / 60f / 60f;
+                    String characterDeathPerHour = Constants.df.format(characterDeaths / characterTimePlayedInHours);
+    
+                    eb.addField(
+                        characterProfessionIcon + " " + 
+                        characterName, 
+                        "→ " + characterProfession + 
+                        "\n→ Title: " + characterTitle + 
+                        "\n→ Age: " + characterTimePlayedInHours + " h." + 
+                        "\n→ Deaths: " + characterDeaths +
+                        "\n→ DpH: " + characterDeathPerHour
+                    , true);
+                }
+            });
+        }
 
-            es.shutdown();
+        es.shutdown();
 
-            try {
-                while(!es.awaitTermination(1, TimeUnit.MINUTES)) {}
-                k.editMessageEmbeds(eb.build()).queue();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+        try {
+            while(!es.awaitTermination(1, TimeUnit.MINUTES)) {}
+            event.getHook().editOriginalEmbeds(eb.build()).queue();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void DELETE_API_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
+    private void DELETE_API_COMMAND( SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         Gson gson;
         String userId = event.getUser().getId();
@@ -475,7 +466,7 @@ public class Gw2SlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void ADD_API_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
+    private void ADD_API_COMMAND( SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         UserApi api;
         Gson gson;

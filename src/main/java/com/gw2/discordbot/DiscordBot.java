@@ -56,7 +56,7 @@ public class DiscordBot {
             new SlashCommandData("delete_api", "Deletes your APi key from the bot, if you had already added it.", false),
             new SlashCommandData("get_api", "Lists your API key that you added.", false),
             new SlashCommandData("get_raid_json", "Gets json raid thing.", true),
-            new SlashCommandData("test", "Tests a dev command...", true),
+            new SlashCommandData("test", "Tests a dev command...", true, new Option(OptionType.STRING, "longstringofbosses", "The long string of bosses. \nFORMAT: \nhttps://dps.report/...\nhttps://dps.report/...", true)),
             new SlashCommandData("startserver", "Starts the server for receiving dps.reports.", true)
         };
     }
@@ -85,7 +85,8 @@ public class DiscordBot {
             new Gw2SlashCommandInteraction(),
             new ButtonSignUpPressEvent(),
             new StaticApplyEvents(),
-            new StaticMemberRemoveEvent()
+            new StaticMemberRemoveEvent(),
+            new MessageCommands()
         ).enableCache(CacheFlag.CLIENT_STATUS).build();
     
         Thread threadActivity = new Thread(new Runnable() {

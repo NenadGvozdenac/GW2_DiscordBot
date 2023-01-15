@@ -12,11 +12,10 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import javax.annotation.Nonnull;
 
 import kotlin.Pair;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class SignupExcelWriting extends ListenerAdapter {
@@ -32,7 +31,7 @@ public class SignupExcelWriting extends ListenerAdapter {
     }
 
     @Override
-    public void onSelectMenuInteraction(@Nonnull SelectMenuInteractionEvent event) {
+    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
         if(event.getSelectMenu().getId().equals("signupmenu")) {
             String selectedItem = event.getSelectedOptions().get(0).getValue();
 

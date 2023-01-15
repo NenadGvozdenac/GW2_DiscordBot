@@ -2,30 +2,31 @@ package com.gw2.discordbot;
 
 import java.awt.Color;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import kong.unirest.HttpResponse;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 public class SlashCommandInteraction extends ListenerAdapter {
 
     @Override
-    public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event) {
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 
         if(!event.isFromGuild()) {
             if(!event.isAcknowledged()) {
@@ -124,10 +125,9 @@ public class SlashCommandInteraction extends ListenerAdapter {
         }
 
         event.replyFiles(FileUpload.fromData(file)).queue();
-
     }
 
-    private void ANNOUNCE_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void ANNOUNCE_EVENT(SlashCommandInteractionEvent event) {
         Modal modal = Modal.create("announcementmodal", "#" + event.getGuild().getTextChannelById(Constants.announcementChannelID).getName())
             .addActionRows(
                 ActionRow.of(
@@ -147,7 +147,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         event.replyModal(modal).queue();
     }
 
-    private void INVITE_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void INVITE_EVENT(SlashCommandInteractionEvent event) {
 
         if(event.getOptions().isEmpty()) {
             event.reply("Invite to this guild: " + event.getGuild().retrieveInvites().complete().get(0).getUrl()).queue();
@@ -166,7 +166,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void CONTACT_DEVELOPER(@Nonnull SlashCommandInteractionEvent event) {
+    private void CONTACT_DEVELOPER(SlashCommandInteractionEvent event) {
         TextInput subject = TextInput.create("subject", "Subject", TextInputStyle.SHORT)
             .setPlaceholder("Enter the subject")
             .setRequired(true)
@@ -183,17 +183,16 @@ public class SlashCommandInteraction extends ListenerAdapter {
         event.replyModal(modal).queue();
     }
 
-
-
-
-    private void TEST_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
-        
+    private void TEST_COMMAND(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
-        SignupExcelWriting.clearSignups();
-        SignupExcelWriting.writeStaticMembers();
+
+        // String string = event.getOption("longstringofbosses").getAsString();
+        // String[] linksOfBosses = string.split("\n");
+        // Boss[] bosses = Boss.getBossArrayFromLinks(linksOfBosses);
+        // event.getHook().sendMessage(Arrays.toString(bosses)).queue();
     }
 
-    private void SHUTDOWN_EVENT(@Nonnull SlashCommandInteractionEvent event) {
+    private void SHUTDOWN_EVENT(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         event.getHook().sendMessage("`Shutting down in 5 seconds...`").queueAfter(5, TimeUnit.SECONDS, message -> {
             event.getJDA().shutdown();
@@ -208,7 +207,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         });
     }
 
-    private void API_STATUS(@Nonnull SlashCommandInteractionEvent event) {
+    private void API_STATUS(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         EmbedBuilder eb = new EmbedBuilder();
@@ -217,38 +216,38 @@ public class SlashCommandInteraction extends ListenerAdapter {
         eb.setThumbnail(Constants.gw2LogoNoBackground);
         eb.setFooter(RandomFunnyQuote.getFunnyQuote(), Constants.gw2LogoNoBackground);
 
-        event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue(message -> {
-            Boolean everythingOK = true;
-    
-            HttpResponse<String> responseGW2 = Gw2Api.GET_REQUEST("v2", "");
-        
-            if(responseGW2.getStatus() == 200) {
-                eb.addField("GW2 API ?", "\u2705\u2705\u2705", false);   // if success
-            } else {
-                everythingOK = false;
-                eb.addField("GW2 API ?", "\u274C\u274C\u274C", false);   // if not success
-            }
-    
-            HttpResponse<String> responseDPSREPORT = DpsReportApi.GET_TOKEN();
+        event.getHook().sendMessageEmbeds(Constants.loadingEmbedBuilder).queue();
 
-            if(responseDPSREPORT.getStatus() == 200) {
-                eb.addField("DPS.REPORT API ?", "\u2705\u2705\u2705", false);
-            } else {
-                everythingOK = false;
-                eb.addField("DPS.REPORT API ?", "\u274C\u274C\u274C", false);   // if not success
-            }
+        Boolean everythingOK = true;
     
-            if(everythingOK) {
-                eb.setColor(Color.GREEN);
-            } else {
-                eb.setColor(Color.RED);
-            }
+        HttpResponse<String> responseGW2 = Gw2Api.GET_REQUEST("v2", "");
     
-            message.editMessageEmbeds(eb.build()).queue();
-        });
+        if(responseGW2.getStatus() == 200) {
+            eb.addField("GW2 API ?", "\u2705\u2705\u2705", false);   // if success
+        } else {
+            everythingOK = false;
+            eb.addField("GW2 API ?", "\u274C\u274C\u274C", false);   // if not success
+        }
+
+        HttpResponse<String> responseDPSREPORT = DpsReportApi.GET_TOKEN();
+
+        if(responseDPSREPORT.getStatus() == 200) {
+            eb.addField("DPS.REPORT API ?", "\u2705\u2705\u2705", false);
+        } else {
+            everythingOK = false;
+            eb.addField("DPS.REPORT API ?", "\u274C\u274C\u274C", false);   // if not success
+        }
+
+        if(everythingOK) {
+            eb.setColor(Color.GREEN);
+        } else {
+            eb.setColor(Color.RED);
+        }
+
+        event.getHook().editOriginalEmbeds(eb.build()).queue();
     }
 
-    private void PURGE_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
+    private void PURGE_COMMAND(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 		
 		Integer numberOfMessages = event.getOption("number").getAsInt();
@@ -256,24 +255,24 @@ public class SlashCommandInteraction extends ListenerAdapter {
         System.out.println(numberOfMessages);
 
         if(numberOfMessages > 100) {
-            event.getHook().sendMessage("`Unfortunately. Max messages purged -- at once --  can be 100.`").queue();
+            event.getHook().sendMessage("`Unfortunately. Max messages purged at once can be 100.`").queue();
+            return;
+        }
+
+        if(numberOfMessages < 1) {
+            event.getHook().sendMessage("`Unfortunately. Minimum messages purged at once can be 1.`").queue();
             return;
         }
 
 		TextChannel channel = event.getChannel().asTextChannel();
 
-		if(numberOfMessages == 1) {
-			String message = channel.getLatestMessageId();
-			channel.deleteMessageById(message).queue();
-		} else {
-			channel.getIterableHistory().queue(history -> channel.deleteMessages(history).queue());
-		}
+		List<Message> listOfMessages = channel.getHistory().retrievePast(numberOfMessages).complete();
+        channel.purgeMessages(listOfMessages);
 
-
-        event.getHook().sendMessage("Successfully purged " + numberOfMessages + " messages!").queue();
+        event.getHook().sendMessage("Successfully purged " + numberOfMessages + " message(s)!").queue();
     }
 
-    private void RESET_SLASH_COMMANDS(@Nonnull SlashCommandInteractionEvent event) {
+    private void RESET_SLASH_COMMANDS(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         DiscordBot.jda.updateCommands().queue();
 
@@ -290,7 +289,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         event.getHook().sendMessage("I have reset the slash commands of this server, per your request.").queue();
     }
 
-    private void PROFILE_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
+    private void PROFILE_COMMAND(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         if(!event.isFromGuild()) {
@@ -312,7 +311,14 @@ public class SlashCommandInteraction extends ListenerAdapter {
             true);
         eb.addField("ID", event.getMember().getId(), true);
         eb.addField("ACTIVITY", event.getMember().getOnlineStatus().name(), true);
-        eb.addField("ROLES", event.getMember().getRoles().stream().map(n -> n.getName()).collect(Collectors.joining("\n")), true);
+
+        ArrayList<String> arrayOfRoleNames = new ArrayList<>();
+
+        for(Role role : event.getMember().getRoles()) {
+            arrayOfRoleNames.add(role.getName());
+        }
+
+        eb.addField("ROLES", arrayOfRoleNames.toString(), true);
 
         UserApi accountInfo = UserApi.GET_API_INFO(event.getUser().getId());
 
@@ -331,7 +337,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         event.getHook().sendMessageEmbeds(eb.build()).queue();
     }
 
-    private void HELP_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
+    private void HELP_COMMAND(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
 
         if(HelpButtonEventListener.embedBuilders.size() != 1) {
@@ -361,7 +367,7 @@ public class SlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void PING_COMMAND(@Nonnull SlashCommandInteractionEvent event) {
+    private void PING_COMMAND(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
         event.getHook().sendMessage("`BEEP BOOP, CALCULATING PING...`").queue(message -> {
         

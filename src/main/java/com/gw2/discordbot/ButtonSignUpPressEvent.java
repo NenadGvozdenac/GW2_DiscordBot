@@ -1,14 +1,12 @@
 package com.gw2.discordbot;
 
-import javax.annotation.Nonnull;
-
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class ButtonSignUpPressEvent extends ListenerAdapter {
     
     @Override
-    public void onButtonInteraction(@Nonnull ButtonInteractionEvent event) {
+    public void onButtonInteraction( ButtonInteractionEvent event) {
         if(event.getComponentId().equals("cancelsignupmenu")) {
             event.deferEdit().setContent("`You decided to cancel the action.`").setActionRow().queue();
             return;
