@@ -11,11 +11,11 @@
 ## Daily Achievements
 * This bot has the ability to automatically send updates when new achievements drop daily.
 * It will send achievements to the discord server.
-![](READMEImages\DailyAchievements.jpg)
+![](READMEImages/DailyAchievements.jpg)
 ## News & Updates
 * This bot has the ability to automatically send updates when news & patch notes drop.
-![](READMEImages\News.jpg)
-![](READMEImages\PatchNotes.jpg)
+![](READMEImages/News.jpg)
+![](READMEImages/PatchNotes.jpg)
 
 # ArcDPS log uploading
 - Log uploading has never been easier! Simply dragging a `.zevtc`. file in any channel the bot is present in, will upload the log, and give you a small summary.
@@ -23,10 +23,10 @@
 * The user has the ability to look up previous logs in the discord channel that he/she had been previously tagged in.
 * It connects automatically to [dps.report API](https://dps.report/api).
 - DPS summary is saved in the graph in the Embed.
-![](READMEImages\arcdps.gif)
+![](READMEImages/arcdps.gif)
 ## Parsing multiple ArcDPS logs in an Embed
 - Getting a nice bit of information has never been easier. By sending a batch of logs in the bot's DMs or in the discord server, you are given a nice embed back as response!
-![](READMEImages\parsingMultipleLogs.gif)
+![](READMEImages/parsingMultipleLogs.gif)
 
 # Account Information
 * This bot, connecting to GW2 api, has the ability to send you information about your account.
