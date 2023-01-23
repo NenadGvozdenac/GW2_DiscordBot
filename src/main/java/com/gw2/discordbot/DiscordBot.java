@@ -126,24 +126,5 @@ public class DiscordBot {
         }
 
         SlashCommandData.insertIntoJson(commandData);
-
-        new Timer().schedule(new TimerTask() {
-            
-            public void run() {
-                System.out.println("Restarting...");
-
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                System.exit(0);
-
-                this.cancel();
-            }
-
-        }, 48 * 60 * 60 * 1000);
     }
-
 }

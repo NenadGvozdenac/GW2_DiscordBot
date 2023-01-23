@@ -1,8 +1,13 @@
 package com.gw2.discordbot;
 
 import java.awt.Color;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -36,32 +41,69 @@ public class MessageCommands extends ListenerAdapter {
         String[] listOfDpsReportLinks = event.getMessage().getContentRaw().split("\n");
         ArrayList<String> listOfDpsReports = new ArrayList<>();
 
+        EmbedBuilder eb = new EmbedBuilder();
+
+        for(String string : listOfDpsReportLinks) {
+            if(!string.startsWith("https://dps.report/") && !string.startsWith("?logs")) {
+                eb.setColor(Color.RED);
+                eb.setTitle("Parsing error!");
+                eb.setDescription("**Command Usage:**\n```?logs\nhttps://dps.report/...\nhttps://dps.report/...\nhttps://dps.report/...```");
+                message.editMessageEmbeds(eb.build()).queue();
+                return;
+            }
+        }
+
         for(int i = 1; i < listOfDpsReportLinks.length; i++) {
             listOfDpsReports.add(listOfDpsReportLinks[i]);
         }
         
         ArrayList<Boss> listOfBosses = Boss.getBossArrayFromLinks(listOfDpsReports);
-
-        EmbedBuilder eb = new EmbedBuilder();
         eb.setColor(Color.MAGENTA);
     
-        List<List<Boss>> Wings = new ArrayList<>() {
+        LinkedHashMap<String, ArrayList<Boss>> wings = new LinkedHashMap<>() {
             {
-                add(new ArrayList<>());
+                put("Spirit Vale", new ArrayList<>());
+                put("Salvation Pass", new ArrayList<>());
+                put("Stronghold of the Faithful", new ArrayList<>());
+                put("Bastion of the Penitent", new ArrayList<>());
+                put("Hall of Chains", new ArrayList<>());
+                put("Mythwright Gambit", new ArrayList<>());
+                put("The Key of Ahdashim", new ArrayList<>());
+                put("Sunqua Peak", new ArrayList<>());
+                put("Shattered Observatory", new ArrayList<>());
+                put("Nightmare", new ArrayList<>());
+                put("Practice Room", new ArrayList<>());
+                put("Icebrood Saga", new ArrayList<>());
+                put("End of Dragons", new ArrayList<>());
+                put("Unidentified", new ArrayList<>());
             }
         };
 
-        for(int i = 0, j = 0; i < listOfBosses.size(); i++) {
-            if(i == listOfBosses.size() - 1) {
-                Wings.get(j).add(listOfBosses.get(i));
-            } else if(listOfBosses.get(i).wingName.equals(listOfBosses.get(i+1).wingName)) {
-                Wings.get(j).add(listOfBosses.get(i));
-            } else {
-                Wings.get(j).add(listOfBosses.get(i));
-                Wings.add(new ArrayList<>());
-                j++;
+        Boss firstBoss = listOfBosses.get(0);
+        Boss lastBoss = listOfBosses.get(listOfBosses.size() - 1);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss X", Locale.getDefault());
+
+        long startMilis;
+        long endMilis;
+        try {
+            endMilis = sdf.parse(lastBoss.endTime).getTime();
+            startMilis = sdf.parse(firstBoss.startTime).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        float minutes = TimeUnit.MILLISECONDS.toMinutes(endMilis - startMilis);
+
+        for(Boss boss : listOfBosses) {
+            if(wings.containsKey(boss.wingName)) {
+                wings.get(boss.wingName).add(boss);
             }
         }
+
+        String title = minutes > 60 ? (int)Math.floor((minutes / 60)) + " hours, " + (int)Math.floor((minutes % 60)) + " minutes clear" : (int)Math.floor(minutes) + " minutes clear";
+        eb.setTitle(title);
 
         List<Boss> failedBosses = new ArrayList<>();
 
@@ -71,13 +113,17 @@ public class MessageCommands extends ListenerAdapter {
             }
         });
 
-        for(List<Boss> wing : Wings) {
+        for(ArrayList<Boss> wing : new ArrayList<>(wings.values())) {
+
+            if(wing.isEmpty()) {
+                continue;
+            }
 
             String string = "";
 
             boolean toAddField = false;
 
-            String title = wing.get(0).wingName;
+            title = wing.get(0).wingName;
 
             for(Boss boss : wing) {
                 if(boss.isFailed) continue;
@@ -104,10 +150,11 @@ public class MessageCommands extends ListenerAdapter {
         }
 
         message.editMessageEmbeds(eb.build()).queue();
+
         if(!failedBosses.isEmpty()) {
             EmbedBuilder eb1 = new EmbedBuilder();
 
-            eb1.setColor(Color.CYAN);
+            eb1.setColor(Color.MAGENTA);
 
             String failure = "";
 
@@ -139,10 +186,10 @@ public class MessageCommands extends ListenerAdapter {
 
             long seconds1 = timeWiping;
 
-            eb1.setTitle(failedBosses.size() + " fails. Time taken: " + minutes1 + " minutes, " + seconds1 + " seconds.");
+            eb1.setTitle(failedBosses.size() + " fail(s). Time taken: " + minutes1 + " minutes, " + seconds1 + " seconds.");
 
             eb1.setDescription(failure);
-            message.replyEmbeds(eb.build()).queue();
+            message.getChannel().sendMessageEmbeds(eb1.build()).queue();
         }
 
         event.getMessage().delete().queue();

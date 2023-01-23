@@ -16,6 +16,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -93,22 +94,28 @@ public class HttpServerHosting {
     
                 List<Boss> listOfBosses = raidDay.bosses;
     
-                List<List<Boss>> Wings = new ArrayList<>() {
+                LinkedHashMap<String, ArrayList<Boss>> wings = new LinkedHashMap<>() {
                     {
-                        add(new ArrayList<>());
+                        put("Spirit Vale", new ArrayList<>());
+                        put("Salvation Pass", new ArrayList<>());
+                        put("Stronghold of the Faithful", new ArrayList<>());
+                        put("Bastion of the Penitent", new ArrayList<>());
+                        put("Hall of Chains", new ArrayList<>());
+                        put("Mythwright Gambit", new ArrayList<>());
+                        put("The Key of Ahdashim", new ArrayList<>());
                     }
                 };
-
-                for(int i = 0, j = 0; i < listOfBosses.size(); i++) {
-                    if(i == listOfBosses.size() - 1) {
-                        Wings.get(j).add(listOfBosses.get(i));
-                    } else if(listOfBosses.get(i).wingName.equals(listOfBosses.get(i+1).wingName)) {
-                        Wings.get(j).add(listOfBosses.get(i));
-                    } else {
-                        Wings.get(j).add(listOfBosses.get(i));
-                        Wings.add(new ArrayList<>());
-                        j++;
+        
+                float timeSpent = 0;
+        
+                for(Boss boss : listOfBosses) {
+                    if(wings.containsKey(boss.wingName)) {
+                        wings.get(boss.wingName).add(boss);
                     }
+        
+                    float secondsTakenForKill = Math.round(Float.parseFloat(boss.killTime));
+        
+                    timeSpent += secondsTakenForKill;
                 }
 
                 List<Boss> failedBosses = new ArrayList<>();
@@ -119,13 +126,38 @@ public class HttpServerHosting {
                     }
                 });
 
-                for(List<Boss> wing : Wings) {
+                float seconds = 0, minutes = 0, hours = 0;
+
+                if(timeSpent > 60) {
+                    minutes = timeSpent / 60;
+                    timeSpent %= 60;
+        
+                    if(minutes > 60) {
+                        hours = minutes / 60;
+                        timeSpent %= 60;
+                        minutes %= 60;
+                    }
+                }
+
+                String title;
+
+                if(hours == 0 && minutes == 0) {
+                    title = String.valueOf((int)Math.floor(seconds)) + " second(s) clear.";
+                } else if(hours == 0) {
+                    title = String.valueOf((int)Math.floor(minutes)) + "minute(s), " + String.valueOf((int)Math.floor(seconds)) + " second(s) clear.";
+                } else {
+                    title = String.valueOf((int)Math.floor(hours)) + " hour(s), " + String.valueOf((int)Math.floor(minutes)) + " minute(s) clear.";
+                }
+
+                eb.setTitle(title);
+
+                for(ArrayList<Boss> wing : new ArrayList<>(wings.values())) {
 
                     String string = "";
 
                     boolean toAddField = false;
 
-                    String title = wing.get(0).wingName;
+                    title = wing.get(0).wingName;
 
                     for(Boss boss : wing) {
                         if(boss.isFailed) continue;
@@ -146,7 +178,7 @@ public class HttpServerHosting {
                 long startMilis = sdf.parse(firstBoss.startTime).getTime();
                 long endMilis = sdf.parse(lastBoss.endTime).getTime();
 
-                long minutes = TimeUnit.MILLISECONDS.toMinutes(endMilis - startMilis);
+                minutes = TimeUnit.MILLISECONDS.toMinutes(endMilis - startMilis);
 
                 eb.setTitle((minutes > 60 ? (minutes / 60) + " hours, " + (minutes % 60) + " minutes clear" : minutes + " minutes clear"));
 

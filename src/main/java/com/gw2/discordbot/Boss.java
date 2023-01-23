@@ -1,7 +1,11 @@
 package com.gw2.discordbot;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -80,6 +84,20 @@ public class Boss {
         
         this.killTime = String.valueOf(je.getAsJsonObject().get("encounter").getAsJsonObject().get("duration").getAsFloat());
         this.isFailed = !je.getAsJsonObject().get("encounter").getAsJsonObject().get("success").getAsBoolean();
+
+        Instant instant = Instant.ofEpochSecond((long) je.getAsJsonObject().get("encounterTime").getAsInt());
+        Date date = Date.from(instant);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss X");
+        this.startTime = sdf.format(date);
+
+        instant = Instant.ofEpochSecond((long) je.getAsJsonObject().get("encounterTime").getAsInt() + (long)Float.parseFloat(this.killTime));
+        date = Date.from(instant);
+
+        this.endTime = sdf.format(date);
+        
+
+        System.out.println(this.startTime + " - " + this.endTime);
     }
 
     private String getBossName(String endName) {

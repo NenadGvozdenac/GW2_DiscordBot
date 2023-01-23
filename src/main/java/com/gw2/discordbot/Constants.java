@@ -252,6 +252,13 @@ public class Constants {
             put("Cardinal Sabir", "sabir");
             put("Qadim the Peerless", "qpeer");
             put("Qadim", "qadim");
+            put("Elemental Ai, Keeper of the Peak", "ai");
+            put("Skorvald", "skor");
+            put("Artsariiv", "arriv");
+            put("Arkk", "arkk");
+            put("MAMA", "mama");
+            put("Nightmare Oratuss", "siax");
+            put("Ensolyss of the Endless Torment", "enso");
         }
     };
 
