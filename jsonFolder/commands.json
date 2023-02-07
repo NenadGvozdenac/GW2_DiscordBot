@@ -218,6 +218,19 @@
     "Options": []
   },
   {
+    "CommandName": "staticaddsignupform",
+    "CommandDescription": "Adds a picture to be displayed for the sheet. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "STRING",
+        "OptionName": "image_link",
+        "OptionDescription": "The link to the image",
+        "MandatoryOption": true
+      }
+    ]
+  },
+  {
     "CommandName": "resetslashcommands",
     "CommandDescription": "Resets the slash commands of this server `(ADMIN)`",
     "AdminOnly": true,

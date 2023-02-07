@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -31,6 +32,14 @@ public class Token {
 		return tokenValue;
 	}
 
+	public void setTokenName(String tokenName) {
+		this.tokenName = tokenName;
+	}
+
+	public void setTokenValue(String tokenValue) {
+		this.tokenValue = tokenValue;
+	}
+
 	@Override
     public String toString() {
 		return "[" + tokenName + " : " + tokenValue + "]";
@@ -46,23 +55,37 @@ public class Token {
 						 .serializeNulls()
 						 .create();
 	
-			Type founderTypeSet = new TypeToken<Token[]>(){}.getType();
-			Token[] tokens = gson.fromJson(reader, founderTypeSet);
+			Type founderTypeSet = new TypeToken<ArrayList<Token>>(){}.getType();
+			ArrayList<Token> tokens = gson.fromJson(reader, founderTypeSet);
 	
 			for(Token token : tokens) {
 				if(token.getTokenName().equals("loginToken")) {
-					Logging.LOG(Token.class, "Token gotten from JSON file: " + token);
+					Logging.LOG(Token.class, "loginToken gotten from JSON file: " + token);
 					return token.getTokenValue();
 				}
 			}
 	
 		 } catch (IOException e) {
+
+			Scanner scanner = new Scanner(System.in);
+
+			System.out.println("Enter your login token: ");
+			String loginToken = scanner.next();
+			System.out.println("Enter your dps.report token (or write \"default\" for default token): ");
+			String dpsReportToken = scanner.next();
+
+			dpsReportToken = dpsReportToken.toLowerCase();
+
+			if(dpsReportToken.length() < 5 || dpsReportToken.length() > 30) {
+				dpsReportToken = "default";
+			}
+
+			scanner.close();
+			ArrayList<Token> loginTokenObj = new ArrayList<Token>();
+			loginTokenObj.add(new Token("loginToken", loginToken));
+			loginTokenObj.add(new Token("dpsReportsToken", dpsReportToken));
+
 			try(FileWriter writer = new FileWriter(new File(new File("jsonFolder"), "token.json"))) {
-				
-				System.out.println("Enter your token: ");
-				Scanner scanner = new Scanner(System.in);
-				
-				String token = scanner.next();
 
 				Gson gson = new GsonBuilder()
 						 .disableHtmlEscaping()
@@ -71,18 +94,18 @@ public class Token {
 						 .serializeNulls()
 						 .create();
 
-				Token loginToken = new Token("loginToken", token);
-
-				writer.write(gson.toJson(loginToken));
+				writer.write(gson.toJson(loginTokenObj));
 
 				writer.close();
-				scanner.close();
+				Logging.LOG(Token.class, "loginToken gotten from JSON file: " + loginToken);
+				return loginToken;
 
 			} catch(IOException e1) {
-				System.out.println("Error...");
+				System.out.println("Error in opening the file.");
+				return null;
 			}
 		 }
-		return null;	
+		return null;
     }
 
 	public static String getSignupForm() {
@@ -103,6 +126,8 @@ public class Token {
 					return token.getTokenValue();
 				}
 			}
+
+
 	
 		 } catch (IOException e) {
 			 Map<String, String> map = System.getenv();
@@ -110,8 +135,48 @@ public class Token {
 			 if(map.containsKey("token")) {
 				Logging.LOG(Token.class, "Token gotten from OS env. variable: " + map.get("token"));
 				return map.get("token");
-			 }
+			 } else return null;
 		 }
 		return null;	
+	}
+
+	public static void writeNewTokens(Token[] tokens) {
+		try(FileWriter writer = new FileWriter(new File(new File("jsonFolder"), "token.json"))) {
+
+			Gson gson = new GsonBuilder()
+					 .disableHtmlEscaping()
+					 .setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+					 .setPrettyPrinting()
+					 .serializeNulls()
+					 .create();
+
+			writer.write(gson.toJson(tokens));
+
+			writer.close();
+
+		} catch(IOException e1) {
+			System.out.println("Error...");
+		}
+	}
+
+	public static ArrayList<Token> readCurrentlyAddedTokens() {
+		try (Reader reader = new FileReader(new File(new File("jsonFolder"), "token.json"))) {
+
+			Gson gson = new GsonBuilder()
+						 .disableHtmlEscaping()
+						 .setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+						 .setPrettyPrinting()
+						 .serializeNulls()
+						 .create();
+	
+			Type founderTypeSet = new TypeToken<ArrayList<Token>>(){}.getType();
+			ArrayList<Token> tokens = gson.fromJson(reader, founderTypeSet);
+
+			return tokens;
+		} catch(IOException e) {
+			System.out.println("Error accessing file.");
+
+			return null;
+		}
 	}
 }

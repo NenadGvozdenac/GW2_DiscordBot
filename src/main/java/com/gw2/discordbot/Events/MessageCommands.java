@@ -156,7 +156,7 @@ public class MessageCommands extends ListenerAdapter {
                     time += (int)Math.floor(secondsTakenForKill) + "s";
                 }
 
-                string += (boss.emoji.equals("null") ? "" : boss.emoji + " ") + "[" + boss.bossName + "](" + boss.dpsReportLink + ") " + time + "\n";
+                string += (boss.emoji.equals("null") ? "" : boss.emoji + " ") + "[" + boss.bossName + (boss.bossIsCm == true ? " [CM]" : "") + "](" + boss.dpsReportLink + ") " + time + "\n";
             }
 
             if(toAddField)
@@ -188,13 +188,13 @@ public class MessageCommands extends ListenerAdapter {
                     time += (int)Math.floor(secondsTakenForKill) + "s";
                 }
 
-                failure += (boss.emoji.equals("null") ? "" : boss.emoji + " ") + "[" + boss.bossName + "](" + boss.dpsReportLink + ") " + time + "\n";
+                System.out.println("Failed boss: " + (boss.emoji.equals("null") ? "" : boss.emoji + " ") + "[" + boss.bossName + (boss.bossIsCm == true ? " [CM]" : "") + "](" + boss.dpsReportLink + ") " + time);
+
+                failure += (boss.emoji.equals("null") ? "" : boss.emoji + " ") + "[" + boss.bossName + (boss.bossIsCm == true ? " [CM]" : "") + "](" + boss.dpsReportLink + ") " + time + "\n";
                 timeWiping += Float.parseFloat(boss.killTime);
             }
 
             long minutes1 = timeWiping / 60;
-
-            System.out.println("FAILURE : '" + failure + "'");
 
             timeWiping %= 60;
 

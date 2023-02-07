@@ -66,6 +66,7 @@ public class DiscordBot {
             new SlashCommandData("gw2dailies", "Displays currently active dailies.", false),
             new SlashCommandData("gw2accountraidinfo", "Displays information about your weekly raids. [API key req.]", false),
             new SlashCommandData("gw2account", "Displays information about your guild wars 2 profile. [API key req.]", false),
+            new SlashCommandData("staticaddsignupform", "Adds a picture to be displayed for the sheet.", true, new Option(OptionType.STRING, "image_link", "The link to the image", true)),
             new SlashCommandData("resetslashcommands", "Resets the slash commands of this server", true),
             new SlashCommandData("gw2character",  "Displays information about your character in guild wars 2. [API key req.]", false),
             new SlashCommandData("profile", "Displays your profile for this server.", false),

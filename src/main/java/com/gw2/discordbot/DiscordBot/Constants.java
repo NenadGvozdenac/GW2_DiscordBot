@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -327,13 +328,21 @@ public class Constants {
             Type founderTypeSet = new TypeToken<Token[]>(){}.getType();
             Token[] tokens = gson.fromJson(reader, founderTypeSet);
 
-            DPS_REPORT_TOKEN = null;
-
             for(Token token : tokens) {
-                if(token.getTokenName().equals("dpsReportsToken")) {
+                if(token != null && token.getTokenName().equals("dpsReportsToken")) {
                     DPS_REPORT_TOKEN = token;
                     break;
                 }
+            }
+
+            if(DPS_REPORT_TOKEN == null) {
+                System.out.println("Enter your DPS.REPORT token: ");
+                Scanner sc = new Scanner(System.in);
+                String dpsReportToken = sc.next();
+                sc.close();
+                DPS_REPORT_TOKEN = new Token("dpsReportsToken", dpsReportToken);
+                tokens[1] = DPS_REPORT_TOKEN;
+                Token.writeNewTokens(tokens);
             }
 
             Logging.LOG(Main.class, "DPSREPORTTOKEN gotten from .JSON file: " + DPS_REPORT_TOKEN);

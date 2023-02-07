@@ -2,16 +2,23 @@ package com.gw2.discordbot.Events;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.gw2.discordbot.DiscordBot.Constants;
+import com.gw2.discordbot.DiscordBot.DiscordBot;
+import com.gw2.discordbot.DiscordBot.Logging;
+import com.gw2.discordbot.DiscordBot.Token;
 import com.gw2.discordbot.Miscellaneous.RandomFunnyQuote;
 import com.gw2.discordbot.Miscellaneous.SignupExcelWriting;
 
@@ -55,6 +62,10 @@ public class StaticApplyEvents extends ListenerAdapter {
                 STATIC_REJECT_TRYOUT(event);
             break;
 
+            case "staticaddsignupform":
+                STATIC_ADD_SIGNUP_FORM(event);
+            break;
+
             case "staticremoveplayer":
                 STATIC_REMOVE_PLAYER_EVENT(event);
             break;  
@@ -62,6 +73,48 @@ public class StaticApplyEvents extends ListenerAdapter {
             case "staticplayersget":
                 STATIC_GET_ALL_PLAYERS_EVENT(event);
             break;
+        }
+    }
+
+    private void STATIC_ADD_SIGNUP_FORM(SlashCommandInteractionEvent event) {
+        event.deferReply(true).queue();
+        String linkToImage = event.getOption("image_link").getAsString();
+
+        if(!linkToImage.startsWith("http")) {
+            event.getHook().sendMessage("Your link is not actually an image. Aborting.").queue();
+            return;
+        }
+
+        ArrayList<Token> loginTokenObj = Token.readCurrentlyAddedTokens();
+
+        try(FileWriter writer = new FileWriter(new File(new File("jsonFolder"), "token.json"))) {
+
+            Gson gson = new GsonBuilder()
+                     .disableHtmlEscaping()
+                     .setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+                     .setPrettyPrinting()
+                     .serializeNulls()
+                     .create();
+
+            for(int i = 0; i < loginTokenObj.size(); i++) {
+                if(loginTokenObj.get(i).getTokenName().equalsIgnoreCase("staticSignupForm")) {
+                    loginTokenObj.get(i).setTokenValue(linkToImage);
+                    writer.write(gson.toJson(loginTokenObj));
+                    writer.close();
+                    event.getHook().sendMessage("Changed image! If you wish to change it again, run this command again.").queue();
+                    return;
+                }
+            }
+
+            loginTokenObj.add(new Token("staticSignupForm", linkToImage));
+            writer.write(gson.toJson(loginTokenObj));
+
+            writer.close();
+            Logging.LOG(Token.class, "Added image for signup form: " + linkToImage);
+
+            event.getHook().sendMessage("Added image! If you wish to change it, run this command again.").queue();
+        } catch(IOException e1) {
+            System.out.println("Error in opening the file.");
         }
     }
 
@@ -123,7 +176,7 @@ public class StaticApplyEvents extends ListenerAdapter {
             return;
         }
 
-        HashMap<String, String> playerRolePairs = new HashMap<>();
+        LinkedHashMap<String, String> playerRolePairs = new LinkedHashMap<>();
 
         playerRolePairs = SignupExcelWriting.getActiveStaticMembers();
 
@@ -133,7 +186,7 @@ public class StaticApplyEvents extends ListenerAdapter {
         String string = "```";
 
         for(Map.Entry<String, String> entry : playerRolePairs.entrySet()) {
-            string += String.format("%-20s | %s\n", event.getGuild().retrieveMemberById(entry.getKey()).complete().getUser().getName(), entry.getValue());
+            string += String.format("%-20s | %s\n", DiscordBot.jda.retrieveUserById(entry.getKey()).complete().getName(), entry.getValue());
         }
 
         string += "```";
@@ -151,7 +204,7 @@ public class StaticApplyEvents extends ListenerAdapter {
         ArrayList<SelectOption> listOfSelectOptions = new ArrayList<>();
 
         for(String memberId : listOfMembersWithRolesIds) {
-            listOfSelectOptions.add(SelectOption.of(event.getGuild().retrieveMemberById(memberId).complete().getUser().getAsTag(), event.getGuild().retrieveMemberById(memberId).complete().getUser().getId()).withEmoji(Emoji.fromFormatted("\uD83D\uDD28")));
+            listOfSelectOptions.add(SelectOption.of(DiscordBot.jda.retrieveUserById(memberId).complete().getAsTag(), DiscordBot.jda.retrieveUserById(memberId).complete().getId()).withEmoji(Emoji.fromFormatted("\uD83D\uDD28")));
         }
 
         StringSelectMenu menu = StringSelectMenu.create("staticremoveplayermenu").setPlaceholder("Select who you wish to remove from the static.").addOptions(listOfSelectOptions).build();

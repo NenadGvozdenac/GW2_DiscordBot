@@ -25,6 +25,7 @@ public class DpsReportApi {
         try {
             return Unirest.post("https://dps.report/uploadContent?json=1&generator=ei")
                 .field("file", fileTest)
+                .queryString("userToken", Constants.DPS_REPORT_TOKEN)
                 .asStringAsync();
 
         } catch (UnirestException e) {

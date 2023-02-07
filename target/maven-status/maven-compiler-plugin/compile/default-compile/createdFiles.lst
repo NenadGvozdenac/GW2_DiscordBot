@@ -45,6 +45,7 @@ com\gw2\discordbot\HttpParsing\HttpServerHosting$StaticFileHandler.class
 com\gw2\discordbot\HttpParsing\Gw2Dailies$1.class
 com\gw2\discordbot\Events\StaticSlashCommandInteraction$1$2.class
 com\gw2\discordbot\Events\StaticSlashCommandInteraction$1.class
+com\gw2\discordbot\DiscordBot\Token$3.class
 com\gw2\discordbot\DiscordBot\Constants$1$5.class
 com\gw2\discordbot\DiscordBot\RssReaderClass$1.class
 com\gw2\discordbot\Miscellaneous\RandomFunnyQuote.class

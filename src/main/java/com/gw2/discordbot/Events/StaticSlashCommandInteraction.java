@@ -393,7 +393,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        event.getHook().sendMessage(Token.getSignupForm()).queue();
+        event.getHook().sendMessage(Token.getSignupForm() == null ? "The image cannot be found. Try using `/staticaddsignupform` to add the image." : Token.getSignupForm()).queue();
     }
 
     private void UNSIGNUP_EVENT(SlashCommandInteractionEvent event) {

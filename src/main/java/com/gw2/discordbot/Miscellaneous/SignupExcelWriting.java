@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -199,7 +199,6 @@ public class SignupExcelWriting extends ListenerAdapter {
         } catch(IOException e) {
             
         }
-
     }
 
     public static ArrayList<String> getAllActiveMembersIds() {
@@ -224,7 +223,7 @@ public class SignupExcelWriting extends ListenerAdapter {
         }
     }
 
-    public static HashMap<String, String> getActiveStaticMembers() {
+    public static LinkedHashMap<String, String> getActiveStaticMembers() {
 
         try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
@@ -233,7 +232,7 @@ public class SignupExcelWriting extends ListenerAdapter {
             Row firstRow = sheet.getRow(0);
             Row secondRow = sheet.getRow(1);
 
-            HashMap<String, String> listToReturn = new HashMap<>();
+            LinkedHashMap<String, String> listToReturn = new LinkedHashMap<>();
 
             for(int i = 1; i < 11; i++) {
                 if(!firstRow.getCell(i).getStringCellValue().equals("EMPTY")) {

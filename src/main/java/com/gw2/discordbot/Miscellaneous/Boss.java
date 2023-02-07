@@ -26,6 +26,7 @@ public class Boss {
     public Boolean isFailed;
     public String startTime;
     public String endTime;
+    public Boolean bossIsCm;
 
     public Boss(String bossLogPermaLink, String bossLogName, String bossIsCm, Boolean bossLogSuccess,
             String bossLogTime, String startTime, String endTime) {
@@ -90,6 +91,7 @@ public class Boss {
             
             this.killTime = String.valueOf(je.getAsJsonObject().get("encounter").getAsJsonObject().get("duration").getAsFloat());
             this.isFailed = !je.getAsJsonObject().get("encounter").getAsJsonObject().get("success").getAsBoolean();
+            this.bossIsCm = je.getAsJsonObject().get("encounter").getAsJsonObject().get("isCm").getAsBoolean();
 
             Instant instant = Instant.ofEpochSecond((long) je.getAsJsonObject().get("encounterTime").getAsInt());
             Date date = Date.from(instant);
