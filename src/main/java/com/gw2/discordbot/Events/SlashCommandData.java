@@ -84,7 +84,7 @@ public class SlashCommandData {
                 net.dv8tion.jda.api.interactions.commands.build.SlashCommandData data = Commands.slash(this.commandName, this.commandDescription);
                             
                 for(Option option : this.options) {
-                    data.addOption(option.getOptionType(), option.getOptionName(), option.getOptionDesc(), option.getMandatoryOption());
+                    data.addOption(option.getOptionType(), option.getOptionName(), option.getOptionDesc(), option.getMandatoryOption(), option.getAutocomplete());
                 }
                             
                 if(adminOnly) {
@@ -122,7 +122,7 @@ public class SlashCommandData {
                 net.dv8tion.jda.api.interactions.commands.build.SlashCommandData data = Commands.slash(this.commandName, this.commandDescription);
                             
                 for(Option option : this.options) {
-                    data.addOption(option.getOptionType(), option.getOptionName(), option.getOptionDesc(), option.getMandatoryOption());
+                    data.addOption(option.getOptionType(), option.getOptionName(), option.getOptionDesc(), option.getMandatoryOption(), option.getAutocomplete());
                 }
                             
                 if(adminOnly) {

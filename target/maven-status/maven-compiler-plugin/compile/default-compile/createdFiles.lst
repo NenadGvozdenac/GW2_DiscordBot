@@ -8,6 +8,7 @@ com\gw2\discordbot\DiscordBot\RssReaderClass.class
 com\gw2\discordbot\Events\StaticAddTryout.class
 com\gw2\discordbot\Events\MessageCommands.class
 com\gw2\discordbot\Events\SignupDeleteMenu.class
+com\gw2\discordbot\Miscellaneous\AutocompleteTimezone.class
 com\gw2\discordbot\DiscordBot\Constants$1$7.class
 com\gw2\discordbot\Events\MessageCommands$1.class
 com\gw2\discordbot\Miscellaneous\NewUserReactEmoteEvent.class

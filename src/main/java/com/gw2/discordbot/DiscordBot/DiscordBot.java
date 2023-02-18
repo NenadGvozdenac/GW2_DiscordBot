@@ -20,6 +20,7 @@ import com.gw2.discordbot.Events.SlashCommandInteraction;
 import com.gw2.discordbot.Events.StaticApplyEvents;
 import com.gw2.discordbot.Events.StaticMemberRemoveEvent;
 import com.gw2.discordbot.Events.StaticSlashCommandInteraction;
+import com.gw2.discordbot.Miscellaneous.AutocompleteTimezone;
 import com.gw2.discordbot.Miscellaneous.ModalContactDeveloper;
 import com.gw2.discordbot.Miscellaneous.NewUserReactEmoteEvent;
 import com.gw2.discordbot.Miscellaneous.SignupExcelWriting;
@@ -69,6 +70,7 @@ public class DiscordBot {
             new SlashCommandData("staticaddsignupform", "Adds a picture to be displayed for the sheet.", true, new Option(OptionType.STRING, "image_link", "The link to the image", true)),
             new SlashCommandData("resetslashcommands", "Resets the slash commands of this server", true),
             new SlashCommandData("gw2character",  "Displays information about your character in guild wars 2. [API key req.]", false),
+            new SlashCommandData("calculate_time", "Calculate time which you want.", false, new Option(OptionType.INTEGER, "day", "The day happening.", true), new Option(OptionType.INTEGER, "month", "The month happening.", true), new Option(OptionType.INTEGER, "year", "The year happening.", true), new Option(OptionType.INTEGER, "hour", "The hour happening.", true), new Option(OptionType.INTEGER, "minute", "The minute happening", true), new Option(OptionType.STRING, "timezone", "Your timezone.", true, true)),
             new SlashCommandData("profile", "Displays your profile for this server.", false),
             new SlashCommandData("help", "Lists all commands from this bot.", false),
             new SlashCommandData("ping", "Returns the ping of the bot.", false),
@@ -106,7 +108,8 @@ public class DiscordBot {
             new ButtonSignUpPressEvent(),
             new StaticApplyEvents(),
             new StaticMemberRemoveEvent(),
-            new MessageCommands()
+            new MessageCommands(),
+            new AutocompleteTimezone()
         ).enableCache(CacheFlag.CLIENT_STATUS).build();
     
         Thread threadActivity = new Thread(new Runnable() {

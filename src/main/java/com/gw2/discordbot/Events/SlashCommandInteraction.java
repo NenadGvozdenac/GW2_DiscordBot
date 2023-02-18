@@ -2,8 +2,12 @@ package com.gw2.discordbot.Events;
 
 import java.awt.Color;
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.JsonElement;
@@ -98,6 +102,55 @@ public class SlashCommandInteraction extends ListenerAdapter {
             case "stopserver":
                 STOP_SERVER_EVENT(event);
             break;
+
+            case "calculate_time":
+                CALCULATE_TIME(event);
+            break;
+        }
+    }
+
+    private void CALCULATE_TIME(SlashCommandInteractionEvent event) {
+
+        event.deferReply(false).queue();
+
+        Integer day = event.getOption("day").getAsInt();
+        Integer month = event.getOption("month").getAsInt();
+        Integer year = event.getOption("year").getAsInt();
+        Integer hour = event.getOption("hour").getAsInt();
+        Integer minute = event.getOption("minute").getAsInt();
+        String timezone = event.getOption("timezone").getAsString();
+
+        if(timezone.contains("+")) {
+
+            Integer plus = Character.getNumericValue(timezone.charAt(timezone.indexOf("+") + 1));
+
+            if(hour - plus < 0) {
+                hour = (hour - plus) + 24;
+            } else hour = hour - plus;
+
+            timezone = timezone.substring(0, timezone.length() - 2);
+        } 
+
+        String dateString = ((day < 10) ? ("0" + day) : day)+ "-" + month + "-" + year + " " + hour + ":" + minute + ":00" + " ";
+        dateString += timezone;
+
+        System.out.println(dateString);
+
+        SimpleDateFormat f1 = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss zzz", Locale.getDefault());
+
+        try {
+
+            Date date = f1.parse(dateString);
+
+            Long millis = date.getTime() / 1000L;
+
+            String string = "<t:" + millis + ":F>";
+
+            event.getHook().sendMessage(string + "\n`" + string + "`").queue();
+
+        } catch (ParseException e) {
+            event.getHook().sendMessage("Parsing error. Probably inserted wrong time?").queue();
+            e.printStackTrace();
         }
     }
 

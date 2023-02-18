@@ -8,6 +8,7 @@ public class Option {
     private String optionName;
     private String optionDescription;
     private Boolean mandatoryOption;
+    private Boolean autocomplete;
 
     Option() {
 
@@ -18,6 +19,15 @@ public class Option {
         this.optionName = oN;
         this.optionDescription = oD;
         this.mandatoryOption = mD;
+        this.autocomplete = false;
+    }
+
+    Option(OptionType oT, String oN, String oD, Boolean mD, Boolean autoComplete) {
+        this.optionType = oT;
+        this.optionName = oN;
+        this.optionDescription = oD;
+        this.mandatoryOption = mD;
+        this.autocomplete = autoComplete;
     }
 
     public OptionType getOptionType() {
@@ -34,5 +44,9 @@ public class Option {
 
     public boolean getMandatoryOption() {
         return mandatoryOption;
+    }    
+    
+    public Boolean getAutocomplete() {
+        return this.autocomplete;
     }
 }
