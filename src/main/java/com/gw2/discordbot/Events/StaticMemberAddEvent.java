@@ -1,6 +1,7 @@
 package com.gw2.discordbot.Events;
 
 import com.gw2.discordbot.Miscellaneous.SignupExcelWriting;
+import com.gw2.discordbot.Miscellaneous.SignupExcelWriting.Type;
 
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
@@ -9,9 +10,11 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class StaticMemberAddEvent extends ListenerAdapter {
 
     private User user;
+    private Type type;
 
-    public StaticMemberAddEvent(User user) {
+    public StaticMemberAddEvent(User user, Type TYPE) {
         this.user = user;
+        this.type = TYPE;
     }
 
     @Override
@@ -19,7 +22,7 @@ public class StaticMemberAddEvent extends ListenerAdapter {
         if(event.getComponentId().equals("staticaddplayermenu")) {
             String value = event.getSelectedOptions().get(0).getValue();
 
-            SignupExcelWriting.addStaticMember(user, value);
+            SignupExcelWriting.addStaticMember(user, value, type);
 
             event.deferEdit().setContent("`Added user " + user.getAsMention() + " as " + value + "!`").setComponents().queue();
 

@@ -32,37 +32,37 @@
     "Options": []
   },
   {
-    "CommandName": "signup",
+    "CommandName": "raid_signup",
     "CommandDescription": "Signs you up for the static raid.",
     "AdminOnly": false,
     "Options": []
   },
   {
-    "CommandName": "unsignup",
+    "CommandName": "raid_unsignup",
     "CommandDescription": "Unsigns you from the static raid.",
     "AdminOnly": false,
     "Options": []
   },
   {
-    "CommandName": "signupform",
+    "CommandName": "raid_signup_form",
     "CommandDescription": "Sends the signup form.",
     "AdminOnly": false,
     "Options": []
   },
   {
-    "CommandName": "signupcheck",
+    "CommandName": "raid_signup_check",
     "CommandDescription": "Check signups!",
     "AdminOnly": false,
     "Options": []
   },
   {
-    "CommandName": "signupclear",
+    "CommandName": "raid_signup_clear",
     "CommandDescription": "Clears the current week's signups. `(ADMIN)`",
     "AdminOnly": true,
     "Options": []
   },
   {
-    "CommandName": "signupplayer",
+    "CommandName": "raid_signup_player",
     "CommandDescription": "Signs up a player to the current week's signups. `(ADMIN)`",
     "AdminOnly": true,
     "Options": [
@@ -76,25 +76,25 @@
     ]
   },
   {
-    "CommandName": "signupdelete",
+    "CommandName": "raid_signup_delete",
     "CommandDescription": "Deletes a signup by will. `(ADMIN)`",
     "AdminOnly": true,
     "Options": []
   },
   {
-    "CommandName": "signupsheet",
+    "CommandName": "raid_signup_sheet",
     "CommandDescription": "Returns the signup sheet. `(ADMIN)`",
     "AdminOnly": true,
     "Options": []
   },
   {
-    "CommandName": "signupcheckmyloadout",
+    "CommandName": "raid_signup_check_my_loadout",
     "CommandDescription": "Returns your loadout for this week's static.",
     "AdminOnly": false,
     "Options": []
   },
   {
-    "CommandName": "staticaddtryout",
+    "CommandName": "raid_static_add_tryout",
     "CommandDescription": "Command that lets you add a tryout for the static. `(ADMIN)`",
     "AdminOnly": true,
     "Options": [
@@ -108,7 +108,7 @@
     ]
   },
   {
-    "CommandName": "staticrejecttryout",
+    "CommandName": "raid_static_reject_tryout",
     "CommandDescription": "Command that lets you reject a tryout for the static `(ADMIN)`",
     "AdminOnly": true,
     "Options": [
@@ -122,7 +122,7 @@
     ]
   },
   {
-    "CommandName": "staticaddplayer",
+    "CommandName": "raid_static_add_player",
     "CommandDescription": "Command that lets you add this member to the static. `(ADMIN)`",
     "AdminOnly": true,
     "Options": [
@@ -136,7 +136,7 @@
     ]
   },
   {
-    "CommandName": "staticaddbackup",
+    "CommandName": "raid_static_add_backup",
     "CommandDescription": "Command that lets you add this member as a backup to the static. `(ADMIN)`",
     "AdminOnly": true,
     "Options": [
@@ -150,16 +150,174 @@
     ]
   },
   {
-    "CommandName": "staticremoveplayer",
+    "CommandName": "raid_static_remove_player",
     "CommandDescription": "Command that removes a player from the static. `(ADMIN)`",
     "AdminOnly": true,
     "Options": []
   },
   {
-    "CommandName": "staticplayersget",
+    "CommandName": "raid_static_players_get",
     "CommandDescription": "Returns a list of static members and they roles.",
     "AdminOnly": false,
     "Options": []
+  },
+  {
+    "CommandName": "strikes_signup",
+    "CommandDescription": "Signs you up for the static raid.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "strikes_unsignup",
+    "CommandDescription": "Unsigns you from the static raid.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "strikes_signup_form",
+    "CommandDescription": "Sends the signup form.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "strikes_signup_check",
+    "CommandDescription": "Check signups!",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "strikes_signup_clear",
+    "CommandDescription": "Clears the current week's signups. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
+    "CommandName": "strikes_signup_player",
+    "CommandDescription": "Signs up a player to the current week's signups. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "USER",
+        "OptionName": "user",
+        "OptionDescription": "Which user do you wish to sign up?",
+        "MandatoryOption": true,
+        "Autocomplete": false
+      }
+    ]
+  },
+  {
+    "CommandName": "strikes_signup_delete",
+    "CommandDescription": "Deletes a signup by will. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
+    "CommandName": "strikes_signup_sheet",
+    "CommandDescription": "Returns the signup sheet. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
+    "CommandName": "strikes_signup_check_my_loadout",
+    "CommandDescription": "Returns your loadout for this week's static.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "strikes_static_add_tryout",
+    "CommandDescription": "Command that lets you add a tryout for the static. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "USER",
+        "OptionName": "user",
+        "OptionDescription": "User to add as a tryout",
+        "MandatoryOption": true,
+        "Autocomplete": false
+      }
+    ]
+  },
+  {
+    "CommandName": "strikes_static_reject_tryout",
+    "CommandDescription": "Command that lets you reject a tryout for the static `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "USER",
+        "OptionName": "user",
+        "OptionDescription": "User to reject for this static",
+        "MandatoryOption": true,
+        "Autocomplete": false
+      }
+    ]
+  },
+  {
+    "CommandName": "strikes_static_add_player",
+    "CommandDescription": "Command that lets you add this member to the static. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "USER",
+        "OptionName": "user",
+        "OptionDescription": "User you wish to add to the static.",
+        "MandatoryOption": true,
+        "Autocomplete": false
+      }
+    ]
+  },
+  {
+    "CommandName": "strikes_static_add_backup",
+    "CommandDescription": "Command that lets you add this member as a backup to the static. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "USER",
+        "OptionName": "user",
+        "OptionDescription": "User you wish to add to the static.",
+        "MandatoryOption": true,
+        "Autocomplete": false
+      }
+    ]
+  },
+  {
+    "CommandName": "strikes_static_remove_player",
+    "CommandDescription": "Command that removes a player from the static. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": []
+  },
+  {
+    "CommandName": "strikes_static_players_get",
+    "CommandDescription": "Returns a list of static members and they roles.",
+    "AdminOnly": false,
+    "Options": []
+  },
+  {
+    "CommandName": "raid_static_add_signup_form",
+    "CommandDescription": "Adds a signup form for the static.",
+    "AdminOnly": false,
+    "Options": [
+      {
+        "OptionType": "USER",
+        "OptionName": "image_link",
+        "OptionDescription": "Link to your image!",
+        "MandatoryOption": true,
+        "Autocomplete": false
+      }
+    ]
+  },
+  {
+    "CommandName": "strikes_static_add_signup_form",
+    "CommandDescription": "Adds a signup form for the static.",
+    "AdminOnly": false,
+    "Options": [
+      {
+        "OptionType": "USER",
+        "OptionName": "image_link",
+        "OptionDescription": "Link to your image!",
+        "MandatoryOption": true,
+        "Autocomplete": false
+      }
+    ]
   },
   {
     "CommandName": "announce",
@@ -174,7 +332,7 @@
     "Options": []
   },
   {
-    "CommandName": "startstaticraid",
+    "CommandName": "start_static_raid",
     "CommandDescription": "Starts the static raid time. `(ADMIN)`",
     "AdminOnly": true,
     "Options": [
@@ -188,7 +346,21 @@
     ]
   },
   {
-    "CommandName": "stopstaticraid",
+    "CommandName": "start_static_strikes",
+    "CommandDescription": "Starts the static raid time. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "INTEGER",
+        "OptionName": "minutes_to_wait",
+        "OptionDescription": "How many minutes before I ping everyone for the start?",
+        "MandatoryOption": true,
+        "Autocomplete": false
+      }
+    ]
+  },
+  {
+    "CommandName": "stop_static_raid",
     "CommandDescription": "Stops the static raid time. `(ADMIN)`",
     "AdminOnly": true,
     "Options": []

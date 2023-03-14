@@ -24,38 +24,42 @@ public class Constants {
 
     public static final DecimalFormat df = new DecimalFormat("0.00");
 
-    public static String commanderIconEmoji = "<:Commander:1008363131904466975>";
-    public static String fractalRelicIconEmoji = "<:Fractal_Relic:1008365970177400842>";
-    public static String achievementPointIconEmoji = "<:Achievement_Point:1008366225891536966>";
-    public static String wvwIconEmoji = "<:WvW_Castle:1008366636983660554>";
-    public static String goldIconEmoji = "<:Gold:1008370020516114563>";
-    public static String karmaIconEmoji = "<:Karma:1008370018641260614>";
-    public static String gemIconEmoji = "<:Gems:1008370017106141344>";
-    public static String fractalIconEmoji = "<:Fractals:1008640406373810237>";
-    public static String gw2IconEmoji = "<:gw2:1009081342916571196>";
-    public static String gw2LogoNoBackground = "https://cdn.discordapp.com/attachments/1007924091015143474/1010499402735030332/kisspng-guild-wars-2-heart-of-thorns-guild-wars-2-path-o-5b37c7ef657558.1878307415303823194156.png";
-    public static String loadingIconImage = "https://emoji.discord.st/emojis/8104LoadingEmote.gif";
+    public static final String commanderIconEmoji = "<:Commander:1008363131904466975>";
+    public static final String fractalRelicIconEmoji = "<:Fractal_Relic:1008365970177400842>";
+    public static final String achievementPointIconEmoji = "<:Achievement_Point:1008366225891536966>";
+    public static final String wvwIconEmoji = "<:WvW_Castle:1008366636983660554>";
+    public static final String goldIconEmoji = "<:Gold:1008370020516114563>";
+    public static final String karmaIconEmoji = "<:Karma:1008370018641260614>";
+    public static final String gemIconEmoji = "<:Gems:1008370017106141344>";
+    public static final String fractalIconEmoji = "<:Fractals:1008640406373810237>";
+    public static final String gw2IconEmoji = "<:gw2:1009081342916571196>";
+    public static final String gw2LogoNoBackground = "https://cdn.discordapp.com/attachments/1007924091015143474/1010499402735030332/kisspng-guild-wars-2-heart-of-thorns-guild-wars-2-path-o-5b37c7ef657558.1878307415303823194156.png";
+    public static final String loadingIconImage = "https://emoji.discord.st/emojis/8104LoadingEmote.gif";
 
-    public static String guildID = "1007915730928418856";
-    public static String newsChannelID = "1007916728648478730";
-    public static String dailyAchievementsChannelID = "1009751860258820136";
-    public static String patchNotesChannelID = "1007916992197558282";
+    public static final String guildID = "1007915730928418856";
+    public static final String newsChannelID = "1007916728648478730";
+    public static final String dailyAchievementsChannelID = "1009751860258820136";
+    public static final String patchNotesChannelID = "1007916992197558282";
 
-    public static String generalLogUploadsChannelID = "1009064617038843914";
-    public static String staticLogUploadsChannelID = "1007917782601572352";
-    public static String announcementChannelID = "1011718027080904725";
-    public static String logsChannelID = "1011932036711321641";
-    public static String staticAnnouncementChannelID = "1007917722413322300";
-    public static String staticChatChannelID = "1007917741711294504";
-    public static String staticApplicationsChannelID = "1013186195376832522";
+    public static final String generalLogUploadsChannelID = "1009064617038843914";
+    public static final String raidStaticLogUploadsChannelID = "1007917782601572352";
+    public static final String announcementChannelID = "1011718027080904725";
+    public static final String raidStaticAnnouncementChannelID = "1007917722413322300";
+    public static final String raidStaticChatChannelID = "1007917741711294504";
+    public static final String raidStaticApplicationsChannelID = "1013186195376832522";
 
-    public static String QTP_FIRES = "https://cdn.discordapp.com/attachments/1007924091015143474/1012710546224709692/download_1.png";
+    public static final String strikeStaticInfoID = "1084871545400336435";
 
-    public static String staticRoleID = "1007918310190501948";
-    public static String staticApplicantRoleID = "1013185863116660838";
-    public static String staticBackupRoleID = "1013696001023942656";
+    public static final String QTP_FIRES = "https://cdn.discordapp.com/attachments/1007924091015143474/1012710546224709692/download_1.png";
 
-    public static Map<String, String> specializationEmojis;
+    public static final String staticRoleID = "1007918310190501948";
+    public static final String staticApplicantRoleID = "1013185863116660838";
+    public static final String staticBackupRoleID = "1013696001023942656";
+
+    public static final String strikeStaticRoleID = "1084865852467327066";
+    public static final String strikeStaticBackupID = "1084956671455010906";
+
+    public static final Map<String, String> specializationEmojis;
 
     static {
         specializationEmojis = new HashMap<String, String>();
@@ -108,7 +112,7 @@ public class Constants {
         bossesNamesGW2.put("qadim_the_peerless", "Qadim the Peerless");
     }
 
-    public static HashMap<String, ArrayList<String>> listOfBossesAndWings = new HashMap<>(){
+    public static final HashMap<String, ArrayList<String>> listOfBossesAndWings = new HashMap<>(){
         {
             put("Spirit Vale", new ArrayList<String>() {
                 {
@@ -226,7 +230,7 @@ public class Constants {
         }
     };
 
-    public static HashMap<String, String> listOfShortNamesOfBosses = new HashMap<>() {
+    public static final HashMap<String, String> listOfShortNamesOfBosses = new HashMap<>() {
         {
             put("Vale Guardian", "vg");
             put("Gorseval the Multifarious", "gors");
@@ -264,7 +268,7 @@ public class Constants {
         }
     };
 
-    public static HashMap<String, String> listOfEmojisAndBosses = new HashMap<>(){
+    public static final HashMap<String, String> listOfEmojisAndBosses = new HashMap<>(){
         {
             put("Vale Guardian", "<:valeguardian:1027914648361644053>");
             put("Gorseval the Multifarious", "<:gorseval:1027914649825456128>");
@@ -362,7 +366,7 @@ public class Constants {
         }
     }
 
-    public static MessageEmbed loadingEmbedBuilder;
+    public static final MessageEmbed loadingEmbedBuilder;
 
     static {
         EmbedBuilder eb = new EmbedBuilder();

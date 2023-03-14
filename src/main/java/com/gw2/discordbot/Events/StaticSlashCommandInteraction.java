@@ -20,6 +20,7 @@ import com.gw2.discordbot.DiscordBot.Token;
 import com.gw2.discordbot.HttpParsing.HttpServerHosting;
 import com.gw2.discordbot.Miscellaneous.RandomFunnyQuote;
 import com.gw2.discordbot.Miscellaneous.SignupExcelWriting;
+import com.gw2.discordbot.Miscellaneous.SignupExcelWriting.Type;
 
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -47,53 +48,81 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         }
 
         switch(event.getName()) {
-            case "startstaticraid":
-                START_STATIC_RAID_EVENT(event);
+            case "start_static_raid":
+                START_STATIC_EVENT(event, Type.RAID);
             break;
 
-            case "stopstaticraid":
+            case "start_static_strikes":
+                START_STATIC_EVENT(event, Type.STRIKES);
+            break;
+
+            case "stop_static_raid":
                 STOP_STATIC_RAID_EVENT(event);
             break;
 
-            case "signup":
-                SIGNUP_EVENT(event);
+            case "raid_signup":
+                SIGNUP_RAID_EVENT(event, Type.RAID);
             break;
 
-            case "unsignup":
-                UNSIGNUP_EVENT(event);
+            case "strikes_signup":
+                SIGNUP_RAID_EVENT(event, Type.STRIKES);
             break;
 
-            case "signupform":
-                SIGNUPFORM_EVENT(event);
+            case "raid_unsignup":
+                UNSIGNUP_RAID_EVENT(event, Type.RAID);
             break;
 
-            case "signupcheck":
-                SIGNUPCHECK_EVENT(event);
+            case "strikes_unsignup":
+                UNSIGNUP_RAID_EVENT(event, Type.STRIKES);
             break;
 
-            case "signupclear":
-                SIGNUPCLEAR_EVENT(event);
+            case "raid_signup_form":
+                SIGNUPFORM_EVENT(event, Type.RAID);
             break;
 
-            case "signupplayer":
-                SIGNUPPLAYER_EVENT(event);
+            case "strikes_signup_form":
+                SIGNUPFORM_EVENT(event, Type.STRIKES);
             break;
 
-            case "signupdelete":
-                SIGNUPDELETE_EVENT(event);
+            case "raid_signup_check":
+                SIGNUPCHECK_RAID_EVENT(event, Type.RAID);
             break;
 
-            case "signupsheet":
+            case "strikes_signup_clear":
+                SIGNUPCLEAR_EVENT(event, Type.STRIKES);
+            break;
+
+            case "raid_signup_player":
+                SIGNUPPLAYER_RAID_EVENT(event, Type.RAID);
+            break;
+
+            case "strikes_signup_player":
+                SIGNUPPLAYER_RAID_EVENT(event, Type.STRIKES);
+            break;
+
+            case "raid_signup_delete":
+                SIGNUPDELETE_EVENT(event, Type.RAID);
+            break;
+
+            case "strikes_signup_delete":
+                SIGNUPDELETE_EVENT(event, Type.STRIKES);
+            break;
+
+            case "signup_sheet":
                 SIGNUPSHEET_EVENT(event);
             break;
 
-            case "signupcheckmyloadout":
-                SIGNUPCHECKMYLOADOUT(event);
+            case "raid_signup_check_my_loadout":
+                SIGNUP_RAID_CHECKMYLOADOUT(event, Type.RAID);
+            break;
+
+            case "strikes_signup_check_my_loadout":
+                SIGNUP_RAID_CHECKMYLOADOUT(event, Type.STRIKES);
             break;
         }
     }
 
-    private void SIGNUPCHECKMYLOADOUT(SlashCommandInteractionEvent event) {
+    private void SIGNUP_RAID_CHECKMYLOADOUT(SlashCommandInteractionEvent event, Type type) {
         event.deferReply(true).queue();
 
         if(!event.isFromGuild()) {
@@ -101,16 +130,30 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
-        Role staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
-        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
+        Role staticRole;
+        Role staticApplicantRole;
+        Role staticBackupRole;
 
-        if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
-            event.getHook().sendMessage("You cannot sign for the raid as of this time.").queue();
-            return;
+        if(type == Type.RAID) {
+            staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+            staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+            staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
+        
+            if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+                event.getHook().sendMessage("You cannot do this command as of this time.").queue();
+                return;
+            }
+        } else {
+            staticRole = event.getGuild().getRoleById(Constants.strikeStaticRoleID);
+            staticBackupRole = event.getGuild().getRoleById(Constants.strikeStaticBackupID);
+
+            if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+                event.getHook().sendMessage("You cannot do this command as of this time.").queue();
+                return;
+            }
         }
 
-        if(!SignupExcelWriting.checkIfUserAlreadyPresent(event.getUser())) {
+        if(!SignupExcelWriting.checkIfUserAlreadyPresent(event.getUser(), type)) {
             event.getHook().sendMessage("You are not present in the signups!").queue();
             return;
         }
@@ -118,7 +161,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet signupSheet = workbook.getSheetAt(0);
-            XSSFSheet compositionSheet = workbook.getSheetAt(1);
+            XSSFSheet compositionSheet = type == Type.RAID ? workbook.getSheetAt(1) : workbook.getSheetAt(5);
 
             Row firstRowFirstSheet = signupSheet.getRow(0);
 
@@ -141,6 +184,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
 
             for(int i = 0; i < 25; i++) {
                 Row currentOpenRow = compositionSheet.getRow(i);
+                if(currentOpenRow == null) break;
                 pairBossRoleList.add(new Pair<String, String>(currentOpenRow.getCell(0).getStringCellValue(), currentOpenRow.getCell(columnNumber).getStringCellValue()));
             }
 
@@ -180,7 +224,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         event.getHook().sendFiles(FileUpload.fromData(file)).queue();
     }
 
-    private void SIGNUPDELETE_EVENT(SlashCommandInteractionEvent event) {
+    private void SIGNUPDELETE_EVENT(SlashCommandInteractionEvent event, Type type) {
 
         event.deferReply(true).queue();
 
@@ -189,9 +233,9 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+        Role ownerRole = event.getGuild().getRoleById("1007918142384779335");
 
-        if(!event.getMember().getRoles().contains(staticRole)) {
+        if(!event.getMember().getRoles().contains(ownerRole)) {
             event.getHook().sendMessage("You cannot do that command as of this time.").queue();
             return;
         }
@@ -200,7 +244,13 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(0);
 
-            Row firstOpenRow = sheet.getRow(0);
+            Row firstOpenRow;
+
+            if(type == Type.RAID)
+                firstOpenRow = sheet.getRow(0);
+            else {
+                firstOpenRow = sheet.getRow(3);
+            }
 
             List<String> listOfIds = new ArrayList<>();
 
@@ -223,8 +273,15 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 listOfAvailableSlots.add(option);
             });
 
-            StringSelectMenu menu = StringSelectMenu.create("signupdeletemenu")
-                .setPlaceholder("Which person do you wish to delete from the list?").addOptions(listOfAvailableSlots).build();
+            StringSelectMenu menu;
+
+            if(type == Type.RAID) {
+                menu = StringSelectMenu.create("raidsignupdeletemenu")
+                    .setPlaceholder("Which person do you wish to delete from the list?").addOptions(listOfAvailableSlots).build();
+            } else {
+                menu = StringSelectMenu.create("strikeignupdeletemenu")
+                    .setPlaceholder("Which person do you wish to delete from the list?").addOptions(listOfAvailableSlots).build();
+            }
 
             event.getHook().sendMessage("`Select which person you wish to delete from signups:`").addActionRow(menu).queue();
             workbook.close();
@@ -233,7 +290,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void SIGNUPPLAYER_EVENT(SlashCommandInteractionEvent event) {
+    private void SIGNUPPLAYER_RAID_EVENT(SlashCommandInteractionEvent event, Type type) {
 
         event.deferReply(true).queue();
 
@@ -244,25 +301,30 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
 
         User user = event.getOption("user").getAsUser();
 
-        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+        Role staticRole;
+        Role staticApplicantRole;
+        Role staticBackupRole;
 
-        if(!event.getMember().getRoles().contains(staticRole)) {
-            event.getHook().sendMessage("You cannot do that command as of this time.").queue();
-            return;
+        if(type == Type.RAID) {
+            staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+            staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+            staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
+        
+            if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+                event.getHook().sendMessage("You cannot sign for the raid as of this time.").queue();
+                return;
+            }
+        } else {
+            staticRole = event.getGuild().getRoleById(Constants.strikeStaticRoleID);
+            staticBackupRole = event.getGuild().getRoleById(Constants.strikeStaticBackupID);
+
+            if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+                event.getHook().sendMessage("You cannot sign for the raid as of this time.").queue();
+                return;
+            }
         }
 
-        Role staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
-        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
-
-        if(!(       event.getGuild().retrieveMember(user).complete().getRoles().contains(staticRole) 
-                ||  event.getGuild().retrieveMember(user).complete().getRoles().contains(staticApplicantRole) 
-                ||  event.getGuild().retrieveMember(user).complete().getRoles().contains(staticBackupRole))
-            ) {
-            event.getHook().sendMessage("That player cannot be signed up, they aren't a static member.").queue();
-            return;
-        }
-
-        if(SignupExcelWriting.checkIfUserAlreadyPresent(user)) {
+        if(SignupExcelWriting.checkIfUserAlreadyPresent(user, type)) {
             event.getHook().sendMessage("That user is already present in the signups!").queue();
             return;
         }
@@ -271,8 +333,16 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(0);
 
-            Row firstOpenRow = sheet.getRow(0);
-            Row secondRow = sheet.getRow(1);
+            Row firstOpenRow;
+            Row secondRow;
+
+            if(type == Type.RAID) {
+                firstOpenRow = sheet.getRow(0);
+                secondRow = sheet.getRow(1);
+            } else {
+                firstOpenRow = sheet.getRow(0);
+                secondRow = sheet.getRow(1);
+            }
 
             ArrayList<String> hashSet = new ArrayList<>();
 
@@ -294,7 +364,13 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 listOfAvailableSlots.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));
             });
 
-            StringSelectMenu menu = StringSelectMenu.create("signupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
+            StringSelectMenu menu;
+
+            if(type == Type.RAID) {
+                menu = StringSelectMenu.create("raidsignupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
+            } else {
+                menu = StringSelectMenu.create("strikesignupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
+            }
 
             Button buttonCancel = Button.danger("cancelsignupmenu", "CANCEL")
                 .withEmoji(Emoji.fromFormatted("\uD83D\uDED1"));
@@ -308,7 +384,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 }
             }
 
-            event.getJDA().addEventListener(new SignupExcelWriting(user));
+            event.getJDA().addEventListener(new SignupExcelWriting(user, type));
             workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -316,7 +392,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
 
     }
 
-    private void SIGNUPCLEAR_EVENT(SlashCommandInteractionEvent event) {
+    private void SIGNUPCLEAR_EVENT(SlashCommandInteractionEvent event, Type type) {
 
         event.deferReply(true).queue();
 
@@ -325,19 +401,19 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+        Role ownerRole = event.getGuild().getRoleById("1007918142384779335");
 
-        if(!event.getMember().getRoles().contains(staticRole)) {
+        if(!event.getMember().getRoles().contains(ownerRole)) {
             event.getHook().sendMessage("You cannot do that command as of this time.").queue();
             return;
         }
 
-        SignupExcelWriting.clearSignups();
+        SignupExcelWriting.clearSignups(type);
 
         event.getHook().sendMessage("Cleared the signups!").queue();
     }
 
-    private void SIGNUPCHECK_EVENT(SlashCommandInteractionEvent event) {
+    private void SIGNUPCHECK_RAID_EVENT(SlashCommandInteractionEvent event, Type type) {
 
         event.deferReply(true).queue();
 
@@ -346,16 +422,30 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
-        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
-        Role staticTryoutRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+        Role staticRole;
+        Role staticApplicantRole;
+        Role staticBackupRole;
 
-        if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticBackupRole) || event.getMember().getRoles().contains(staticTryoutRole))) {
-            event.getHook().sendMessage("You cannot do that command as of this time.").queue();
-            return;
+        if(type == Type.RAID) {
+            staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+            staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+            staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
+        
+            if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+                event.getHook().sendMessage("You cannot sign for the raid as of this time.").queue();
+                return;
+            }
+        } else {
+            staticRole = event.getGuild().getRoleById(Constants.strikeStaticRoleID);
+            staticBackupRole = event.getGuild().getRoleById(Constants.strikeStaticBackupID);
+
+            if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+                event.getHook().sendMessage("You cannot sign for the raid as of this time.").queue();
+                return;
+            }
         }
         
-        List<Pair<String, String>> listOfPeopleSignedUp = SignupExcelWriting.getCurrentSignups();
+        List<Pair<String, String>> listOfPeopleSignedUp = SignupExcelWriting.getCurrentSignups(type);
 
         if(listOfPeopleSignedUp.isEmpty()) {
             event.getHook().sendMessage("```Nobody signed up yet!```").queue();
@@ -375,7 +465,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void SIGNUPFORM_EVENT(SlashCommandInteractionEvent event) {
+    private void SIGNUPFORM_EVENT(SlashCommandInteractionEvent event, Type type) {
 
         event.deferReply(false).queue();
 
@@ -384,19 +474,33 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
-        Role staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
-        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
+        Role staticRole;
+        Role staticApplicantRole;
+        Role staticBackupRole;
 
-        if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
-            event.getHook().sendMessage("You cannot get the form as of this time.").queue();
-            return;
+        if(type == Type.RAID) {
+            staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+            staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+            staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
+        
+            if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+                event.getHook().sendMessage("You cannot get the form as of this time.").queue();
+                return;
+            }
+        } else {
+            staticRole = event.getGuild().getRoleById(Constants.strikeStaticRoleID);
+            staticBackupRole = event.getGuild().getRoleById(Constants.strikeStaticBackupID);
+
+            if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+                event.getHook().sendMessage("You cannot get the form as of this time.").queue();
+                return;
+            }
         }
 
-        event.getHook().sendMessage(Token.getSignupForm() == null ? "The image cannot be found. Try using `/staticaddsignupform` to add the image." : Token.getSignupForm()).queue();
+        event.getHook().sendMessage(Token.getSignupForm(type) == null ? "The image cannot be found. Try using `/staticaddsignupform` to add the image." : Token.getSignupForm(type)).queue();
     }
 
-    private void UNSIGNUP_EVENT(SlashCommandInteractionEvent event) {
+    private void UNSIGNUP_RAID_EVENT(SlashCommandInteractionEvent event, Type type) {
 
         event.deferReply(true).queue();
 
@@ -405,16 +509,30 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
-        Role staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
-        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
+        Role staticRole;
+        Role staticApplicantRole;
+        Role staticBackupRole;
 
-        if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
-            event.getHook().sendMessage("You cannot unsign for the raid as of this time.").queue();
-            return;
+        if(type == Type.RAID) {
+            staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+            staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+            staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
+        
+            if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+                event.getHook().sendMessage("You cannot unsign for the raid as of this time.").queue();
+                return;
+            }
+        } else {
+            staticRole = event.getGuild().getRoleById(Constants.strikeStaticRoleID);
+            staticBackupRole = event.getGuild().getRoleById(Constants.strikeStaticBackupID);
+
+            if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+                event.getHook().sendMessage("You cannot unsign for the raid as of this time.").queue();
+                return;
+            }
         }
 
-        if(!SignupExcelWriting.checkIfUserAlreadyPresent(event.getUser())) {
+        if(!SignupExcelWriting.checkIfUserAlreadyPresent(event.getUser(), type)) {
             event.getHook().sendMessage("You aren't signed up for this week in the first place!").queue();
             return;
         }
@@ -423,7 +541,14 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(0);
 
-            Row firstOpenRow = sheet.getRow(0);
+            Row firstOpenRow;
+
+            if(type == Type.RAID) {
+                firstOpenRow = sheet.getRow(0);
+            } else {
+                firstOpenRow = sheet.getRow(3);
+            }
+            
 
             for(Integer i = 1; i < 11; i++) {
                 if(firstOpenRow.getCell(i).getStringCellValue().equals(event.getUser().getId())) {
@@ -443,7 +568,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         }
     }
 
-    private void SIGNUP_EVENT(SlashCommandInteractionEvent event) {
+    private void SIGNUP_RAID_EVENT(SlashCommandInteractionEvent event, Type type) {
 
         event.deferReply(true).queue();
 
@@ -452,16 +577,31 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
-        Role staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
-        Role staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
+        Role staticRole;
+        Role staticApplicantRole;
+        Role staticBackupRole;
 
-        if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
-            event.getHook().sendMessage("You cannot sign for the raid as of this time.").queue();
-            return;
+        if(type == Type.RAID) {
+            staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+            staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID);
+            staticBackupRole = event.getGuild().getRoleById(Constants.staticBackupRoleID);
+        
+            if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticApplicantRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+                event.getHook().sendMessage("You cannot sign for the raid as of this time.").queue();
+                return;
+            }
+        } else {
+            staticRole = event.getGuild().getRoleById(Constants.strikeStaticRoleID);
+            staticBackupRole = event.getGuild().getRoleById(Constants.strikeStaticBackupID);
+
+            if(!(event.getMember().getRoles().contains(staticRole) || event.getMember().getRoles().contains(staticBackupRole))) {
+                event.getHook().sendMessage("You cannot sign for the raid as of this time.").queue();
+                return;
+            }
         }
+        
 
-        if(SignupExcelWriting.checkIfUserAlreadyPresent(event.getUser())) {
+        if(SignupExcelWriting.checkIfUserAlreadyPresent(event.getUser(), type)) {
             event.getHook().sendMessage("You already signed up this week! Please use `/unsignup` first.").queue();
             return;
         }
@@ -470,8 +610,17 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheet("Signups");
 
-            Row firstOpenRow = sheet.getRow(0);
-            Row secondRow = sheet.getRow(1);
+            Row firstOpenRow;
+            Row secondRow;
+
+            if(type == Type.RAID) {
+                firstOpenRow = sheet.getRow(0);
+                secondRow = sheet.getRow(1);
+            } else {
+                firstOpenRow = sheet.getRow(0);
+                secondRow = sheet.getRow(1);
+            }
+
 
             ArrayList<String> hashSet = new ArrayList<>();
 
@@ -493,7 +642,13 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 listOfAvailableSlots.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));
             });
 
-            StringSelectMenu menu = StringSelectMenu.create("signupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
+            StringSelectMenu menu;
+
+            if(type == Type.RAID) {
+                menu = StringSelectMenu.create("raidsignupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
+            } else {
+                menu = StringSelectMenu.create("strikesignupmenu").setPlaceholder("Select from available classes.").addOptions(listOfAvailableSlots).build();
+            }
 
             Button buttonCancel = Button.danger("cancelsignupmenu", "CANCEL")
                 .withEmoji(Emoji.fromFormatted("\uD83D\uDED1"));
@@ -519,7 +674,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         event.getHook().sendMessage("Stopped the server port.").queue();
     }
 
-    private void START_STATIC_RAID_EVENT(SlashCommandInteractionEvent event) {
+    private void START_STATIC_EVENT(SlashCommandInteractionEvent event, Type type) {
         event.deferReply(true).queue();
 
         Integer minutesToWait = event.getOption("minutes_to_wait").getAsInt();
@@ -541,7 +696,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             public void run() {
                 if(HttpServerHosting.activateServer()) {
                     EmbedBuilder eb = new EmbedBuilder();
-                    List<Pair<String, String>> listOfPeopleSignedUp = SignupExcelWriting.getCurrentSignups();
+                    List<Pair<String, String>> listOfPeopleSignedUp = SignupExcelWriting.getCurrentSignups(type);
         
                     if(listOfPeopleSignedUp.isEmpty()) {
                         event.getHook().sendMessage("Nobody signed up, but I opened the port to receive raid logs.").queue();
@@ -561,13 +716,13 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                     eb.setColor(Color.CYAN);
                     eb.setAuthor("/sqjoin NenadG.4682", null, event.getMember().getAvatarUrl());
         
-                    event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID)
+                    event.getGuild().getTextChannelById(type == Type.RAID ? Constants.raidStaticAnnouncementChannelID : Constants.strikeStaticInfoID)
                         .sendMessage("<@&1007918310190501948>, <@&1013185863116660838>, **STATIC** weekly clear is starting in 15 minutes. We have " + listOfPeopleSignedUp.size() + "/10 people signed up!")
                         .setEmbeds(eb.build()).queue(message -> message.delete().queueAfter(3, TimeUnit.HOURS));
 
                     new Timer().schedule(new TimerTask() {
                         public void run() {
-                            event.getGuild().getTextChannelById(Constants.staticAnnouncementChannelID)
+                            event.getGuild().getTextChannelById(type == Type.RAID ? Constants.raidStaticAnnouncementChannelID : Constants.strikeStaticInfoID)
                                 .sendMessage("<@&1007918310190501948>, <@&1013185863116660838>, **STATIC** weekly clear is starting **now**!").queue(message -> message.delete().queueAfter(180 - minutesToWait, TimeUnit.MINUTES));
         
                             event.getUser().openPrivateChannel().queue(channel -> channel.sendMessage("Make sure to enable the autouploading tool for the static run!").queue());
@@ -578,17 +733,23 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
         
                     new Timer().schedule(new TimerTask() {
                         public void run() {
-                            SignupExcelWriting.getCurrentSignups().forEach(pair -> {
+                            SignupExcelWriting.getCurrentSignups(type).forEach(pair -> {
                                 event.getGuild().retrieveMember(UserSnowflake.fromId(pair.getFirst())).queue(member -> {
-                                    if(!(member.getRoles().contains(event.getGuild().getRoleById(Constants.staticRoleID)) || member.getRoles().contains(event.getGuild().getRoleById(Constants.staticApplicantRoleID)))) {
+                                    if(!(member.getRoles().contains(event.getGuild().getRoleById(Constants.staticRoleID)) || member.getRoles().contains(event.getGuild().getRoleById(Constants.staticApplicantRoleID)) || member.getRoles().contains(event.getGuild().getRoleById(Constants.strikeStaticRoleID)))) {
                                         member.getUser().openPrivateChannel().queue(channel -> channel.sendMessage("Your signup has been removed for next week's static. If you are called again, feel free to sign up again!").queue());
                                         
                                         try (FileInputStream file = new FileInputStream(new File("static.xlsx"))) {
                                             XSSFWorkbook workbook = new XSSFWorkbook(file);
                                             XSSFSheet sheet = workbook.getSheetAt(0);
-                                
-                                            Row firstOpenRow = sheet.getRow(0);
-                                
+
+                                            Row firstOpenRow;
+
+                                            if(type == Type.RAID)
+                                                firstOpenRow = sheet.getRow(0);
+                                            else {
+                                                firstOpenRow = sheet.getRow(3);
+                                            }
+
                                             for(Integer i = 1; i < 11; i++) {
                                                 if(firstOpenRow.getCell(i).getStringCellValue().equals(pair.getFirst())) {
                                                     firstOpenRow.getCell(i).setCellValue("EMPTY");

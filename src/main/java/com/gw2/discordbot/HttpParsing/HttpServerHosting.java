@@ -327,7 +327,7 @@ public class HttpServerHosting {
                 Boolean needToCreateWebhook = true;
                 Webhook webhook = null;
 
-                List<Webhook> availableWebhooks = DiscordBot.jda.getTextChannelById(Constants.staticLogUploadsChannelID).retrieveWebhooks().complete();
+                List<Webhook> availableWebhooks = DiscordBot.jda.getTextChannelById(Constants.raidStaticLogUploadsChannelID).retrieveWebhooks().complete();
 
                 for(Webhook webhookName : availableWebhooks) {
                     if(webhookName.getName().equals("Guild Wars 2 Autouploader")) {
@@ -338,7 +338,7 @@ public class HttpServerHosting {
                 }
 
                 if(needToCreateWebhook) {
-                    webhook = DiscordBot.jda.getTextChannelById(Constants.staticLogUploadsChannelID).createWebhook("Guild Wars 2 Autouploader").complete();
+                    webhook = DiscordBot.jda.getTextChannelById(Constants.raidStaticLogUploadsChannelID).createWebhook("Guild Wars 2 Autouploader").complete();
                 }
 
                 WebhookClientBuilder builder = WebhookClientBuilder.fromJDA(webhook);

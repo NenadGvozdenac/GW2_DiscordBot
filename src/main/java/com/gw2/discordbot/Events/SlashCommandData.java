@@ -136,7 +136,6 @@ public class SlashCommandData {
 
         });
     }
-
     
     public static void insertIntoJson(SlashCommandData[] commandData) {
 

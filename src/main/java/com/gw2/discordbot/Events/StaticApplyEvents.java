@@ -21,6 +21,7 @@ import com.gw2.discordbot.DiscordBot.Logging;
 import com.gw2.discordbot.DiscordBot.Token;
 import com.gw2.discordbot.Miscellaneous.RandomFunnyQuote;
 import com.gw2.discordbot.Miscellaneous.SignupExcelWriting;
+import com.gw2.discordbot.Miscellaneous.SignupExcelWriting.Type;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
@@ -46,37 +47,58 @@ public class StaticApplyEvents extends ListenerAdapter {
         }
 
         switch(event.getName()) {
-            case "staticaddtryout":
-                STATIC_ADD_TRYOUT_EVENT(event);
+            case "raid_static_add_tryout":
+                STATIC_ADD_TRYOUT_EVENT(event, Type.RAID);
             break;
 
-            case "staticaddplayer":
-                STATIC_ADD_PLAYER_EVENT(event);
+            case "raid_static_add_player":
+                STATIC_ADD_PLAYER_EVENT(event, Type.RAID);
             break;
 
-            case "staticaddbackup":
-                STATIC_ADD_BACKUP(event);
+            case "raid_static_add_backup":
+                STATIC_ADD_BACKUP(event, Type.RAID);
             break;
 
-            case "staticrejecttryout":
+            case "raid_static_reject_tryout":
                 STATIC_REJECT_TRYOUT(event);
             break;
 
-            case "staticaddsignupform":
-                STATIC_ADD_SIGNUP_FORM(event);
+            case "raid_static_add_signup_form":
+                STATIC_ADD_SIGNUP_FORM(event, Type.RAID);
             break;
 
-            case "staticremoveplayer":
-                STATIC_REMOVE_PLAYER_EVENT(event);
+            case "raid_static_remove_player":
+                STATIC_REMOVE_PLAYER_EVENT(event, Type.RAID);
             break;  
 
-            case "staticplayersget":
-                STATIC_GET_ALL_PLAYERS_EVENT(event);
+            case "raid_static_players_get":
+                STATIC_GET_ALL_PLAYERS_EVENT(event, Type.RAID);
             break;
+
+            case "strikes_static_add_player":
+                STATIC_ADD_PLAYER_EVENT(event, Type.STRIKES);
+            break;
+
+            case "strikes_static_add_backup":
+                STATIC_ADD_BACKUP(event, Type.STRIKES);
+            break;
+
+            case "strikes_static_add_signup_form":
+                STATIC_ADD_SIGNUP_FORM(event, Type.STRIKES);
+            break;
+
+            case "strikes_static_remove_player":
+                STATIC_REMOVE_PLAYER_EVENT(event, Type.STRIKES);
+            break;  
+
+            case "strikes_static_players_get":
+                STATIC_GET_ALL_PLAYERS_EVENT(event, Type.STRIKES);
+            break;
+            
         }
     }
 
-    private void STATIC_ADD_SIGNUP_FORM(SlashCommandInteractionEvent event) {
+    private void STATIC_ADD_SIGNUP_FORM(SlashCommandInteractionEvent event, Type TYPE) {
         event.deferReply(true).queue();
         String linkToImage = event.getOption("image_link").getAsString();
 
@@ -97,7 +119,7 @@ public class StaticApplyEvents extends ListenerAdapter {
                      .create();
 
             for(int i = 0; i < loginTokenObj.size(); i++) {
-                if(loginTokenObj.get(i).getTokenName().equalsIgnoreCase("staticSignupForm")) {
+                if(loginTokenObj.get(i).getTokenName().equalsIgnoreCase(TYPE == Type.RAID ? "raidStaticSignupForm" : "strikeStaticSignupForm")) {
                     loginTokenObj.get(i).setTokenValue(linkToImage);
                     writer.write(gson.toJson(loginTokenObj));
                     writer.close();
@@ -106,7 +128,7 @@ public class StaticApplyEvents extends ListenerAdapter {
                 }
             }
 
-            loginTokenObj.add(new Token("staticSignupForm", linkToImage));
+            loginTokenObj.add(new Token(TYPE == Type.RAID ? "raidStaticSignupForm" : "strikeStaticSignupForm", linkToImage));
             writer.write(gson.toJson(loginTokenObj));
 
             writer.close();
@@ -118,25 +140,43 @@ public class StaticApplyEvents extends ListenerAdapter {
         }
     }
 
-    private void STATIC_ADD_BACKUP(SlashCommandInteractionEvent event) {
+    private void STATIC_ADD_BACKUP(SlashCommandInteractionEvent event, Type TYPE) {
         event.deferReply(true).queue();
 
         User user = event.getOption("user").getAsUser();
 
-        event.getGuild().addRoleToMember(event.getGuild().retrieveMember(user).complete(), event.getGuild().getRoleById(Constants.staticBackupRoleID)).queue(
-            message ->  {
-                event.getHook().sendMessage("`You gave that person a static backup role!`").queue();
+        if(TYPE == Type.RAID) {
+            event.getGuild().addRoleToMember(event.getGuild().retrieveMember(user).complete(), event.getGuild().getRoleById(Constants.staticBackupRoleID)).queue(
+                message ->  {
+                    event.getHook().sendMessage("`You gave that person a static backup role!`").queue();
 
-                EmbedBuilder eb = new EmbedBuilder();
-                eb.setFooter(RandomFunnyQuote.getFunnyQuote());
-                eb.setTitle(user.getAsTag());
-                eb.setDescription("```" + user.getAsTag() + " got the backup role!```");
-    
-                event.getGuild().getTextChannelById(Constants.staticApplicationsChannelID).sendMessageEmbeds(eb.build()).queue();
+                    EmbedBuilder eb = new EmbedBuilder();
+                    eb.setFooter(RandomFunnyQuote.getFunnyQuote());
+                    eb.setTitle(user.getAsTag());
+                    eb.setDescription("```" + user.getAsTag() + " got the backup role!```");
+        
+                    event.getGuild().getTextChannelById(Constants.raidStaticApplicationsChannelID).sendMessageEmbeds(eb.build()).queue();
 
-                user.openPrivateChannel().queue(channel -> channel.sendMessage("`You have been given a static backup role!`").queue());
-            }
-        );
+                    user.openPrivateChannel().queue(channel -> channel.sendMessage("`You have been given a static backup role!`").queue());
+                }
+            );
+        } else if (TYPE == Type.STRIKES) {
+            event.getGuild().addRoleToMember(event.getGuild().retrieveMember(user).complete(), event.getGuild().getRoleById(Constants.strikeStaticBackupID)).queue(
+                message ->  {
+                    event.getHook().sendMessage("`You gave that person a static backup role!`").queue();
+
+                    EmbedBuilder eb = new EmbedBuilder();
+                    eb.setFooter(RandomFunnyQuote.getFunnyQuote());
+                    eb.setTitle(user.getAsTag());
+                    eb.setDescription("```" + user.getAsTag() + " got the backup role!```");
+        
+                    event.getGuild().getTextChannelById(Constants.raidStaticApplicationsChannelID).sendMessageEmbeds(eb.build()).queue();
+
+                    user.openPrivateChannel().queue(channel -> channel.sendMessage("`You have been given a strike static backup role!`").queue());
+                }
+            );
+        }
+        
     }
 
     private void STATIC_REJECT_TRYOUT(SlashCommandInteractionEvent event) {
@@ -145,7 +185,7 @@ public class StaticApplyEvents extends ListenerAdapter {
 
         User user = event.getOption("user").getAsUser();
 
-        Role staticApplicantRole = event.getGuild().getRoleById("1013185863116660838");
+        Role staticApplicantRole = event.getGuild().getRoleById(Constants.staticApplicantRoleID); 
 
         if(event.getGuild().retrieveMember(user).complete().getRoles().contains(staticApplicantRole)) {
             event.getHook().sendMessage("Rejected the user " + user.getAsTag() + " for this static!").queue(message -> 
@@ -160,7 +200,7 @@ public class StaticApplyEvents extends ListenerAdapter {
 
     }
 
-    private void STATIC_GET_ALL_PLAYERS_EVENT(SlashCommandInteractionEvent event) {
+    private void STATIC_GET_ALL_PLAYERS_EVENT(SlashCommandInteractionEvent event, Type TYPE) {
 
         event.deferReply(true).queue();
 
@@ -169,7 +209,13 @@ public class StaticApplyEvents extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById("1007918310190501948");
+        Role staticRole;
+
+        if(TYPE == Type.RAID) {
+            staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+        } else {
+            staticRole = event.getGuild().getRoleById(Constants.strikeStaticRoleID);
+        }
 
         if(!event.getMember().getRoles().contains(staticRole)) {
             event.getHook().sendMessage("You cannot do that command as of this time.").queue();
@@ -178,7 +224,7 @@ public class StaticApplyEvents extends ListenerAdapter {
 
         LinkedHashMap<String, String> playerRolePairs = new LinkedHashMap<>();
 
-        playerRolePairs = SignupExcelWriting.getActiveStaticMembers();
+        playerRolePairs = SignupExcelWriting.getActiveStaticMembers(TYPE);
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("ALL STATIC MEMBERS");
@@ -197,18 +243,23 @@ public class StaticApplyEvents extends ListenerAdapter {
 
     }
 
-    private void STATIC_REMOVE_PLAYER_EVENT(SlashCommandInteractionEvent event) {
+    private void STATIC_REMOVE_PLAYER_EVENT(SlashCommandInteractionEvent event, Type TYPE) {
         event.deferReply(true).queue();
 
-        ArrayList<String> listOfMembersWithRolesIds = SignupExcelWriting.getAllActiveMembersIds();
+        ArrayList<String> listOfMembersWithRolesIds = SignupExcelWriting.getAllActiveMembersIds(TYPE);
         ArrayList<SelectOption> listOfSelectOptions = new ArrayList<>();
 
         for(String memberId : listOfMembersWithRolesIds) {
             listOfSelectOptions.add(SelectOption.of(DiscordBot.jda.retrieveUserById(memberId).complete().getAsTag(), DiscordBot.jda.retrieveUserById(memberId).complete().getId()).withEmoji(Emoji.fromFormatted("\uD83D\uDD28")));
         }
 
-        StringSelectMenu menu = StringSelectMenu.create("staticremoveplayermenu").setPlaceholder("Select who you wish to remove from the static.").addOptions(listOfSelectOptions).build();
-
+        StringSelectMenu menu;
+        if(TYPE == Type.RAID) {
+            menu = StringSelectMenu.create("raidstaticremoveplayermenu").setPlaceholder("Select who you wish to remove from the static.").addOptions(listOfSelectOptions).build();
+        } else {
+            menu = StringSelectMenu.create("strikestaticremoveplayermenu").setPlaceholder("Select who you wish to remove from the static.").addOptions(listOfSelectOptions).build();
+        }
+        
         Button buttonCancel = Button.danger("cancelstaticremove", "CANCEL")
             .withEmoji(Emoji.fromFormatted("\uD83D\uDED1"));
         Button buttonHelp = Button.primary("helpstaticremove", "HELP")
@@ -247,7 +298,7 @@ public class StaticApplyEvents extends ListenerAdapter {
 
     }
 
-    private void STATIC_ADD_PLAYER_EVENT(SlashCommandInteractionEvent event) {
+    private void STATIC_ADD_PLAYER_EVENT(SlashCommandInteractionEvent event, Type TYPE) {
         event.deferReply(true).queue();
 
         if(!event.isFromGuild()) {
@@ -260,7 +311,13 @@ public class StaticApplyEvents extends ListenerAdapter {
             return;
         }
 
-        Role staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+        Role staticRole;
+
+        if(TYPE == Type.RAID) {
+            staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
+        } else {
+            staticRole = event.getGuild().getRoleById(Constants.strikeStaticRoleID);
+        }
 
         if(!event.getMember().getRoles().contains(staticRole)) {
             event.getHook().sendMessage("You cannot do that command as of this time.").queue();
@@ -285,8 +342,16 @@ public class StaticApplyEvents extends ListenerAdapter {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheet("StaticMembers");
 
-            Row firstRow = sheet.getRow(0);
-            Row secondRow = sheet.getRow(1);
+            Row firstRow;
+            Row secondRow;
+
+            if(TYPE == Type.RAID) {
+                firstRow = sheet.getRow(0);
+                secondRow = sheet.getRow(1);
+            } else {
+                firstRow = sheet.getRow(3);
+                secondRow = sheet.getRow(4);
+            }
 
             ArrayList<String> emptyStaticSlots = new ArrayList<String>();
 
@@ -319,13 +384,13 @@ public class StaticApplyEvents extends ListenerAdapter {
 
             event.getHook().sendMessage("`Select from available classes that are still free:`").addActionRow(menu).addActionRow(buttonCancel, buttonHelp).queue();
             workbook.close();
-            event.getJDA().addEventListener(new StaticMemberAddEvent(user));
+            event.getJDA().addEventListener(new StaticMemberAddEvent(user, TYPE));
         } catch(IOException e) {
             
         }
     }
 
-    private void STATIC_ADD_TRYOUT_EVENT(SlashCommandInteractionEvent event) {
+    private void STATIC_ADD_TRYOUT_EVENT(SlashCommandInteractionEvent event, Type TYPE) {
         event.deferReply(true).queue();
 
         if(!event.isFromGuild()) {
