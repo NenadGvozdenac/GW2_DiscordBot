@@ -73,7 +73,7 @@ public class SignupExcelWriting extends ListenerAdapter {
                 if(this.user != null) {
                     if(!this.user.equals(event.getJDA().getSelfUser())) {
                         this.user.openPrivateChannel().queue(channel -> 
-                        channel.sendMessage("`You have been signed up as " + selectedItem.toUpperCase() + " by " + event.getUser().getAsTag() + " for this week's static raid!`").queue()
+                        channel.sendMessage("`You have been signed up as " + selectedItem.toUpperCase() + " by " + event.getUser().getAsTag() + " for this week's static!`").queue()
                         );
                     }
                 }
@@ -118,7 +118,7 @@ public class SignupExcelWriting extends ListenerAdapter {
                 if(this.user != null) {
                     if(!this.user.equals(event.getJDA().getSelfUser())) {
                         this.user.openPrivateChannel().queue(channel -> 
-                        channel.sendMessage("`You have been signed up as " + selectedItem.toUpperCase() + " by " + event.getUser().getAsTag() + " for this week's static raid!`").queue()
+                        channel.sendMessage("`You have been signed up as " + selectedItem.toUpperCase() + " by " + event.getUser().getAsTag() + " for this week's static!`").queue()
                         );
                     }
                 }

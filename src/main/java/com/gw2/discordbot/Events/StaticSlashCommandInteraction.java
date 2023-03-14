@@ -6,9 +6,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -24,6 +27,7 @@ import com.gw2.discordbot.Miscellaneous.SignupExcelWriting.Type;
 
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
@@ -88,6 +92,10 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 SIGNUPCHECK_RAID_EVENT(event, Type.RAID);
             break;
 
+            case "strikes_signup_check":
+                SIGNUPCHECK_RAID_EVENT(event, Type.STRIKES);
+            break;
+
             case "strikes_signup_clear":
                 SIGNUPCLEAR_EVENT(event, Type.STRIKES);
             break;
@@ -119,6 +127,33 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
             case "strikes_signup_check_my_loadout":
                 SIGNUP_RAID_CHECKMYLOADOUT(event, Type.STRIKES);
             break;
+
+            case "upload_signupsheet":
+                UPLOAD_SIGNUP_SHEET(event);
+            break;
+        }
+    }
+
+    private void UPLOAD_SIGNUP_SHEET(SlashCommandInteractionEvent event) {
+        event.deferReply(true).queue();
+
+        if(!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+            event.getHook().sendMessage("You don't have permission to change this.").queue();
+            return;
+        }
+
+        File file = new File("static.xlsx");
+
+        try {
+            File fileNew = event.getOption("file").getAsAttachment().getProxy().downloadToFile(file).get();
+
+            if(fileNew.exists()) {
+                event.getHook().sendMessage("Everything went good. The file has been overwritten.").queue();
+            }
+
+        } catch (InterruptedException | ExecutionException e) {
+            event.getHook().sendMessage("Something went wrong with this command. Contact an administrator!").queue();
+            return;
         }
     }
 
@@ -208,7 +243,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
 
             workbook.close();
         } catch(IOException e) {
-
+            event.getHook().sendMessage("There was an error accessing the database. Contact and administrator.").queue();
         }
     }
 
@@ -279,7 +314,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 menu = StringSelectMenu.create("raidsignupdeletemenu")
                     .setPlaceholder("Which person do you wish to delete from the list?").addOptions(listOfAvailableSlots).build();
             } else {
-                menu = StringSelectMenu.create("strikeignupdeletemenu")
+                menu = StringSelectMenu.create("strikesignupdeletemenu")
                     .setPlaceholder("Which person do you wish to delete from the list?").addOptions(listOfAvailableSlots).build();
             }
 
@@ -340,11 +375,11 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 firstOpenRow = sheet.getRow(0);
                 secondRow = sheet.getRow(1);
             } else {
-                firstOpenRow = sheet.getRow(0);
-                secondRow = sheet.getRow(1);
+                firstOpenRow = sheet.getRow(3);
+                secondRow = sheet.getRow(4);
             }
 
-            ArrayList<String> hashSet = new ArrayList<>();
+            Set<String> hashSet = new HashSet<>();
 
             for(Integer i = 1; i < 11; i++) {
                 if(firstOpenRow.getCell(i).getStringCellValue().equals("EMPTY")) {
@@ -358,7 +393,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 return;
             }
 
-            List<SelectOption> listOfAvailableSlots = new ArrayList<>();
+            Set<SelectOption> listOfAvailableSlots = new HashSet<>();
 
             hashSet.forEach(string -> {
                 listOfAvailableSlots.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));
@@ -617,12 +652,12 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 firstOpenRow = sheet.getRow(0);
                 secondRow = sheet.getRow(1);
             } else {
-                firstOpenRow = sheet.getRow(0);
-                secondRow = sheet.getRow(1);
+                firstOpenRow = sheet.getRow(3);
+                secondRow = sheet.getRow(4);
             }
 
 
-            ArrayList<String> hashSet = new ArrayList<>();
+            Set<String> hashSet = new HashSet<>();
 
             for(Integer i = 1; i < 11; i++) {
                 if(firstOpenRow.getCell(i).getStringCellValue().equals("EMPTY")) {
@@ -636,7 +671,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                 return;
             }
 
-            List<SelectOption> listOfAvailableSlots = new ArrayList<>();
+            Set<SelectOption> listOfAvailableSlots = new HashSet<>();
 
             hashSet.forEach(string -> {
                 listOfAvailableSlots.add(SelectOption.of(string, string).withEmoji(Emoji.fromFormatted("\u2694")));

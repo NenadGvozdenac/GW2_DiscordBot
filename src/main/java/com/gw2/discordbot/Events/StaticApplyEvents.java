@@ -153,11 +153,11 @@ public class StaticApplyEvents extends ListenerAdapter {
                     EmbedBuilder eb = new EmbedBuilder();
                     eb.setFooter(RandomFunnyQuote.getFunnyQuote());
                     eb.setTitle(user.getAsTag());
-                    eb.setDescription("```" + user.getAsTag() + " got the backup role!```");
+                    eb.setDescription("```" + user.getAsTag() + " got the backup role for the raid static!```");
         
                     event.getGuild().getTextChannelById(Constants.raidStaticApplicationsChannelID).sendMessageEmbeds(eb.build()).queue();
 
-                    user.openPrivateChannel().queue(channel -> channel.sendMessage("`You have been given a static backup role!`").queue());
+                    user.openPrivateChannel().queue(channel -> channel.sendMessage("`You have been given a raid static backup role!`").queue());
                 }
             );
         } else if (TYPE == Type.STRIKES) {
@@ -168,7 +168,7 @@ public class StaticApplyEvents extends ListenerAdapter {
                     EmbedBuilder eb = new EmbedBuilder();
                     eb.setFooter(RandomFunnyQuote.getFunnyQuote());
                     eb.setTitle(user.getAsTag());
-                    eb.setDescription("```" + user.getAsTag() + " got the backup role!```");
+                    eb.setDescription("```" + user.getAsTag() + " got the backup role for the strikes static!```");
         
                     event.getGuild().getTextChannelById(Constants.raidStaticApplicationsChannelID).sendMessageEmbeds(eb.build()).queue();
 

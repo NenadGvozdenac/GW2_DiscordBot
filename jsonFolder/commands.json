@@ -82,10 +82,24 @@
     "Options": []
   },
   {
-    "CommandName": "raid_signup_sheet",
+    "CommandName": "signup_sheet",
     "CommandDescription": "Returns the signup sheet. `(ADMIN)`",
     "AdminOnly": true,
     "Options": []
+  },
+  {
+    "CommandName": "upload_signupsheet",
+    "CommandDescription": "Lets you upload the new signup sheet. `(ADMIN)`",
+    "AdminOnly": true,
+    "Options": [
+      {
+        "OptionType": "ATTACHMENT",
+        "OptionName": "file",
+        "OptionDescription": "Sheet to upload.",
+        "MandatoryOption": true,
+        "Autocomplete": false
+      }
+    ]
   },
   {
     "CommandName": "raid_signup_check_my_loadout",
@@ -212,44 +226,10 @@
     "Options": []
   },
   {
-    "CommandName": "strikes_signup_sheet",
-    "CommandDescription": "Returns the signup sheet. `(ADMIN)`",
-    "AdminOnly": true,
-    "Options": []
-  },
-  {
     "CommandName": "strikes_signup_check_my_loadout",
     "CommandDescription": "Returns your loadout for this week's static.",
     "AdminOnly": false,
     "Options": []
-  },
-  {
-    "CommandName": "strikes_static_add_tryout",
-    "CommandDescription": "Command that lets you add a tryout for the static. `(ADMIN)`",
-    "AdminOnly": true,
-    "Options": [
-      {
-        "OptionType": "USER",
-        "OptionName": "user",
-        "OptionDescription": "User to add as a tryout",
-        "MandatoryOption": true,
-        "Autocomplete": false
-      }
-    ]
-  },
-  {
-    "CommandName": "strikes_static_reject_tryout",
-    "CommandDescription": "Command that lets you reject a tryout for the static `(ADMIN)`",
-    "AdminOnly": true,
-    "Options": [
-      {
-        "OptionType": "USER",
-        "OptionName": "user",
-        "OptionDescription": "User to reject for this static",
-        "MandatoryOption": true,
-        "Autocomplete": false
-      }
-    ]
   },
   {
     "CommandName": "strikes_static_add_player",
@@ -297,7 +277,7 @@
     "AdminOnly": false,
     "Options": [
       {
-        "OptionType": "USER",
+        "OptionType": "STRING",
         "OptionName": "image_link",
         "OptionDescription": "Link to your image!",
         "MandatoryOption": true,
@@ -311,7 +291,7 @@
     "AdminOnly": false,
     "Options": [
       {
-        "OptionType": "USER",
+        "OptionType": "STRING",
         "OptionName": "image_link",
         "OptionDescription": "Link to your image!",
         "MandatoryOption": true,
@@ -398,20 +378,6 @@
     "Options": []
   },
   {
-    "CommandName": "staticaddsignupform",
-    "CommandDescription": "Adds a picture to be displayed for the sheet. `(ADMIN)`",
-    "AdminOnly": true,
-    "Options": [
-      {
-        "OptionType": "STRING",
-        "OptionName": "image_link",
-        "OptionDescription": "The link to the image",
-        "MandatoryOption": true,
-        "Autocomplete": false
-      }
-    ]
-  },
-  {
     "CommandName": "resetslashcommands",
     "CommandDescription": "Resets the slash commands of this server `(ADMIN)`",
     "AdminOnly": true,
@@ -481,12 +447,6 @@
   {
     "CommandName": "help",
     "CommandDescription": "Lists all commands from this bot.",
-    "AdminOnly": false,
-    "Options": []
-  },
-  {
-    "CommandName": "ping",
-    "CommandDescription": "Returns the ping of the bot.",
     "AdminOnly": false,
     "Options": []
   },

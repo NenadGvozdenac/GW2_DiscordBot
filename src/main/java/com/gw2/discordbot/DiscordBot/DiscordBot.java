@@ -52,7 +52,10 @@ public class DiscordBot {
             new SlashCommandData("raid_signup_clear", "Clears the current week's signups.", true),
             new SlashCommandData("raid_signup_player", "Signs up a player to the current week's signups.", true, new Option(OptionType.USER, "user", "Which user do you wish to sign up?", true)),
             new SlashCommandData("raid_signup_delete", "Deletes a signup by will.", true),
-            new SlashCommandData("raid_signup_sheet", "Returns the signup sheet.", true),
+
+            new SlashCommandData("signup_sheet", "Returns the signup sheet.", true),
+            new SlashCommandData("upload_signupsheet", "Lets you upload the new signup sheet.", true, new Option(OptionType.ATTACHMENT, "file", "Sheet to upload.", true)),
+
             new SlashCommandData("raid_signup_check_my_loadout", "Returns your loadout for this week's static.", false),
             new SlashCommandData("raid_static_add_tryout", "Command that lets you add a tryout for the static.", true, new Option(OptionType.USER, "user", "User to add as a tryout", true)),
             new SlashCommandData("raid_static_reject_tryout", "Command that lets you reject a tryout for the static", true, new Option(OptionType.USER, "user", "User to reject for this static", true)),
@@ -68,7 +71,6 @@ public class DiscordBot {
             new SlashCommandData("strikes_signup_clear", "Clears the current week's signups.", true),
             new SlashCommandData("strikes_signup_player", "Signs up a player to the current week's signups.", true, new Option(OptionType.USER, "user", "Which user do you wish to sign up?", true)),
             new SlashCommandData("strikes_signup_delete", "Deletes a signup by will.", true),
-            new SlashCommandData("strikes_signup_sheet", "Returns the signup sheet.", true),
             new SlashCommandData("strikes_signup_check_my_loadout", "Returns your loadout for this week's static.", false),
             new SlashCommandData("strikes_static_add_player", "Command that lets you add this member to the static.", true, new Option(OptionType.USER, "user", "User you wish to add to the static.", true)),
             new SlashCommandData("strikes_static_add_backup", "Command that lets you add this member as a backup to the static.", true, new Option(OptionType.USER, "user", "User you wish to add to the static.", true)),
@@ -91,14 +93,13 @@ public class DiscordBot {
             new SlashCommandData("gw2accountraidinfo", "Displays information about your weekly raids. [API key req.]", false),
             new SlashCommandData("gw2account", "Displays information about your guild wars 2 profile. [API key req.]", false),
             
-            new SlashCommandData("staticaddsignupform", "Adds a picture to be displayed for the sheet.", true, new Option(OptionType.STRING, "image_link", "The link to the image", true)),
             new SlashCommandData("resetslashcommands", "Resets the slash commands of this server", true),
             
             new SlashCommandData("gw2character",  "Displays information about your character in guild wars 2. [API key req.]", false),
             new SlashCommandData("calculate_time", "Calculate time which you want.", false, new Option(OptionType.INTEGER, "day", "The day happening.", true), new Option(OptionType.INTEGER, "month", "The month happening.", true), new Option(OptionType.INTEGER, "year", "The year happening.", true), new Option(OptionType.INTEGER, "hour", "The hour happening.", true), new Option(OptionType.INTEGER, "minute", "The minute happening", true), new Option(OptionType.STRING, "timezone", "Your timezone.", true, true)),
             new SlashCommandData("profile", "Displays your profile for this server.", false),
             new SlashCommandData("help", "Lists all commands from this bot.", false),
-            new SlashCommandData("ping", "Returns the ping of the bot.", false),
+            // new SlashCommandData("ping", "Returns the ping of the bot.", false),
             
             new SlashCommandData("add_api",  "Adds your API key to the bot.", false, new Option(OptionType.STRING, "apikey", "The designated API key you wish to assign to your account.", true)),
             new SlashCommandData("delete_api", "Deletes your APi key from the bot, if you had already added it.", false),

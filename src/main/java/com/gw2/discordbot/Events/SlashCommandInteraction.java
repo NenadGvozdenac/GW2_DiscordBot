@@ -429,16 +429,16 @@ public class SlashCommandInteraction extends ListenerAdapter {
 
     private void PING_COMMAND(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
-        event.getHook().sendMessage("`BEEP BOOP, CALCULATING PING...`").queue(message -> {
-        
-            EmbedBuilder eb = new EmbedBuilder();
-            eb.setColor(Color.pink);     
 
-            DiscordBot.jda.getRestPing().queue(ping -> {
-                eb.addField("\uD83E\uDD16 BOT PING \uD83E\uDD16", ping + " ms.", true);
-                eb.addField("\uD83E\uDD16 WEBSOCKET PING \uD83E\uDD16", event.getJDA().getGatewayPing() + " ms.", true);
-                message.editMessage("`BEEP BOOP, PING CALCULATED...`").setEmbeds(eb.build()).queueAfter(2, TimeUnit.SECONDS);
-            });
+        long ping = DiscordBot.jda.getRestPing().complete();
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setColor(Color.pink);     
+    
+        event.getHook().sendMessage("`PING CALCULATED...`").queue(message -> {
+            eb.addField("\uD83E\uDD16 BOT PING \uD83E\uDD16", ping + " ms.", true);
+            eb.addField("\uD83E\uDD16 WEBSOCKET PING \uD83E\uDD16", event.getJDA().getGatewayPing() + " ms.", true);
+            message.editMessage("`BEEP BOOP, PING CALCULATED...`").setEmbeds(eb.build()).queueAfter(2, TimeUnit.SECONDS);
         });
     }
 }

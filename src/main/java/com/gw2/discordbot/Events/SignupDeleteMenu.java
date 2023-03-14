@@ -40,7 +40,7 @@ public class SignupDeleteMenu extends ListenerAdapter {
 
                 if(!event.getUser().equals(event.getJDA().getSelfUser())) {
                     event.getJDA().retrieveUserById(key).complete().openPrivateChannel().queue(channel -> 
-                        channel.sendMessage("`Your signup has been deleted by an administrator " + event.getUser().getAsTag() + "!`").queue()
+                        channel.sendMessage("`Your RAID static signup has been deleted by an administrator " + event.getUser().getAsTag() + "!`").queue()
                     );
                 }
 
@@ -71,7 +71,7 @@ public class SignupDeleteMenu extends ListenerAdapter {
 
                 if(!event.getUser().equals(event.getJDA().getSelfUser())) {
                     event.getJDA().retrieveUserById(key).complete().openPrivateChannel().queue(channel -> 
-                        channel.sendMessage("`Your signup has been deleted by an administrator " + event.getUser().getAsTag() + "!`").queue()
+                        channel.sendMessage("`Your STRIKES static signup has been deleted by an administrator " + event.getUser().getAsTag() + "!`").queue()
                     );
                 }
 
