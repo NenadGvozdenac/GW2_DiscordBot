@@ -311,17 +311,19 @@ public class StaticApplyEvents extends ListenerAdapter {
             return;
         }
 
+        Role ownerRole = event.getGuild().getRoleById("1007918142384779335");
+
+        if(!event.getMember().getRoles().contains(ownerRole)) {
+            event.getHook().sendMessage("You cannot do that command as of this time.").queue();
+            return;
+        }
+
         Role staticRole;
 
         if(TYPE == Type.RAID) {
             staticRole = event.getGuild().getRoleById(Constants.staticRoleID);
         } else {
             staticRole = event.getGuild().getRoleById(Constants.strikeStaticRoleID);
-        }
-
-        if(!event.getMember().getRoles().contains(staticRole)) {
-            event.getHook().sendMessage("You cannot do that command as of this time.").queue();
-            return;
         }
 
         User user = event.getOption("user").getAsUser();

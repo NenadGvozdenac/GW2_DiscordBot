@@ -713,7 +713,7 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                     string += "```";
         
                     eb.setDescription(string);
-                    eb.setColor(Color.CYAN);
+                    eb.setColor(type == Type.RAID ? Color.CYAN : Color.WHITE);
                     eb.setAuthor("/sqjoin NenadG.4682", null, event.getMember().getAvatarUrl());
         
                     event.getGuild().getTextChannelById(type == Type.RAID ? Constants.raidStaticAnnouncementChannelID : Constants.strikeStaticInfoID)

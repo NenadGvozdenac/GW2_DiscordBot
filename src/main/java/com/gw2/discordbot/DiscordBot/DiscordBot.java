@@ -70,8 +70,6 @@ public class DiscordBot {
             new SlashCommandData("strikes_signup_delete", "Deletes a signup by will.", true),
             new SlashCommandData("strikes_signup_sheet", "Returns the signup sheet.", true),
             new SlashCommandData("strikes_signup_check_my_loadout", "Returns your loadout for this week's static.", false),
-            new SlashCommandData("strikes_static_add_tryout", "Command that lets you add a tryout for the static.", true, new Option(OptionType.USER, "user", "User to add as a tryout", true)),
-            new SlashCommandData("strikes_static_reject_tryout", "Command that lets you reject a tryout for the static", true, new Option(OptionType.USER, "user", "User to reject for this static", true)),
             new SlashCommandData("strikes_static_add_player", "Command that lets you add this member to the static.", true, new Option(OptionType.USER, "user", "User you wish to add to the static.", true)),
             new SlashCommandData("strikes_static_add_backup", "Command that lets you add this member as a backup to the static.", true, new Option(OptionType.USER, "user", "User you wish to add to the static.", true)),
             new SlashCommandData("strikes_static_remove_player", "Command that removes a player from the static.", true),
