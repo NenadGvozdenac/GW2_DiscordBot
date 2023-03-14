@@ -108,7 +108,7 @@ public class Token {
 		return null;
     }
 
-	public static String getSignupForm() {
+	public static String getSignupForm(com.gw2.discordbot.Miscellaneous.SignupExcelWriting.Type type) {
 		try (Reader reader = new FileReader(new File(new File("jsonFolder"), "token.json"))) {
 
 			Gson gson = new GsonBuilder()
@@ -118,11 +118,13 @@ public class Token {
 						 .serializeNulls()
 						 .create();
 	
-			Type founderTypeSet = new TypeToken<Token[]>(){}.getType();
+			java.lang.reflect.Type founderTypeSet = new TypeToken<Token[]>(){}.getType();
 			Token[] tokens = gson.fromJson(reader, founderTypeSet);
 	
 			for(Token token : tokens) {
-				if(token.getTokenName().equals("staticSignupForm")) {
+				if(token.getTokenName().equals("raidStaticSignupForm") && type == com.gw2.discordbot.Miscellaneous.SignupExcelWriting.Type.RAID) {
+					return token.getTokenValue();
+				} else if(token.getTokenName().equals("strikeStaticSignupForm") && type == com.gw2.discordbot.Miscellaneous.SignupExcelWriting.Type.RAID) {
 					return token.getTokenValue();
 				}
 			}

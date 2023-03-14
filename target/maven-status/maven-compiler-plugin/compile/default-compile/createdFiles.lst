@@ -69,6 +69,7 @@ com\gw2\discordbot\DiscordBot\Constants$1$13.class
 com\gw2\discordbot\DiscordBot\Constants$1$6.class
 com\gw2\discordbot\Events\StaticSlashCommandInteraction.class
 com\gw2\discordbot\DiscordBot\DiscordBot.class
+com\gw2\discordbot\Miscellaneous\SignupExcelWriting$Type.class
 com\gw2\discordbot\HttpParsing\HttpServerHosting$StopFileUpload.class
 com\gw2\discordbot\Events\CharacterChoosingSelectMenu.class
 com\gw2\discordbot\Events\Gw2SlashCommandInteraction$5.class
