@@ -717,13 +717,13 @@ public class StaticSlashCommandInteraction extends ListenerAdapter {
                     eb.setAuthor("/sqjoin NenadG.4682", null, event.getMember().getAvatarUrl());
         
                     event.getGuild().getTextChannelById(type == Type.RAID ? Constants.raidStaticAnnouncementChannelID : Constants.strikeStaticInfoID)
-                        .sendMessage("<@&1007918310190501948>, <@&1013185863116660838>, **STATIC** weekly clear is starting in 15 minutes. We have " + listOfPeopleSignedUp.size() + "/10 people signed up!")
+                        .sendMessage("<@&" + (type == Type.RAID ? Constants.staticRoleID : Constants.strikeStaticRoleID) + ">, **STATIC** weekly clear is starting in 15 minutes. We have " + listOfPeopleSignedUp.size() + "/10 people signed up!")
                         .setEmbeds(eb.build()).queue(message -> message.delete().queueAfter(3, TimeUnit.HOURS));
 
                     new Timer().schedule(new TimerTask() {
                         public void run() {
                             event.getGuild().getTextChannelById(type == Type.RAID ? Constants.raidStaticAnnouncementChannelID : Constants.strikeStaticInfoID)
-                                .sendMessage("<@&1007918310190501948>, <@&1013185863116660838>, **STATIC** weekly clear is starting **now**!").queue(message -> message.delete().queueAfter(180 - minutesToWait, TimeUnit.MINUTES));
+                                .sendMessage("<@&" + (type == Type.RAID ? Constants.staticRoleID : Constants.strikeStaticRoleID) + ">, **STATIC** weekly clear is starting **now**!").queue(message -> message.delete().queueAfter(180 - minutesToWait, TimeUnit.MINUTES));
         
                             event.getUser().openPrivateChannel().queue(channel -> channel.sendMessage("Make sure to enable the autouploading tool for the static run!").queue());
 
