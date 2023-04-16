@@ -1,5 +1,6 @@
 package com.gw2.discordbot.Events;
 
+import com.gw2.discordbot.DiscordBot.Constants;
 import com.gw2.discordbot.DiscordBot.DiscordBot;
 import com.gw2.discordbot.Miscellaneous.SignupExcelWriting;
 import com.gw2.discordbot.Miscellaneous.SignupExcelWriting.Type;
@@ -20,7 +21,7 @@ public  class StaticMemberRemoveEvent extends ListenerAdapter {
 
             String returnMessage = "";
 
-            Role role = event.getGuild().getRoleById("1007918310190501948");
+            Role role = event.getGuild().getRoleById(Constants.staticRoleID);
 
             if(event.getGuild().getMember(DiscordBot.jda.retrieveUserById(userId).complete()) != null) {
                 event.getGuild().removeRoleFromMember(DiscordBot.jda.retrieveUserById(userId).complete(), role).queue();
@@ -36,7 +37,7 @@ public  class StaticMemberRemoveEvent extends ListenerAdapter {
 
             String returnMessage = "";
 
-            Role role = event.getGuild().getRoleById("1007918310190501948");
+            Role role = event.getGuild().getRoleById(Constants.strikeStaticRoleID);
 
             if(event.getGuild().getMember(DiscordBot.jda.retrieveUserById(userId).complete()) != null) {
                 event.getGuild().removeRoleFromMember(DiscordBot.jda.retrieveUserById(userId).complete(), role).queue();
